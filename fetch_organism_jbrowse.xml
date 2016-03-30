@@ -67,5 +67,7 @@ This will be fixed at a later date.
 **What it does**
 
 Fetches the JBrowse directory from Apollo back into Galaxy.
+
+@REFERENCES@
 ]]></help>
 </tool>
