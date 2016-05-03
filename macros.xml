@@ -7,11 +7,11 @@
     </requirements>
   </xml>
   <token name="@URL@">
-https://cpt.tamu.edu/apollo
+\$GALAXY_WEBAPOLLO_URL
   </token>
   <token name="@AUTH@">
 @URL@
-galaxy@cpt.tamu.edu
+galaxy@gmod.org
 \$GALAXY_WEBAPOLLO_PASSWORD
   </token>
   <xml name="auth_file">
