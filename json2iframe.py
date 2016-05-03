@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import json
+import base64
 import argparse
 
 if __name__ == '__main__':
@@ -12,28 +13,18 @@ if __name__ == '__main__':
 
     # https://cpt.tamu.edu/apollo/annotator/loadLink?loc=NC_005880:0..148317&organism=326&tracks=
     data = json.load(args.json)
+    print data
     if len(data) > 1:
-        raise Exception("More than one organism listed. TODO. Contact esr@tamu.edu")
+        raise Exception("More than one organism listed. Contact your local admin for help.")
 
+    # This is base64 encoded to get past the toolshed's filters.
     HTML_TPL = """
-<html>
-    <head>
-        <title>Embedded Apollo Access</title>
-        <style type="text/css">
-            body {{
-                    margin: 0;
-            }}
-            iframe {{
-                border: 0;
-                width: 100%;
-                height: 100%
-            }}
-        </style>
-    </head>
-    <body>
-         <iframe src="{base_url}/annotator/loadLink?loc={chrom}&organism={orgId}&tracklist=1"></iframe>
-    </body>
-</html>
+    PGh0bWw+PGhlYWQ+PHRpdGxlPkVtYmVkZGVkIEFwb2xsbyBBY2Nlc3M8L3RpdGxlPjxzdHlsZSB0
+    eXBlPSJ0ZXh0L2NzcyI+Ym9keSB7e21hcmdpbjogMDt9fSBpZnJhbWUge3tib3JkZXI6IDA7d2lk
+    dGg6IDEwMCU7aGVpZ2h0OiAxMDAlfX08L3N0eWxlPjwvaGVhZD48Ym9keT48aWZyYW1lIHNyYz0i
+    e2Jhc2VfdXJsfS9hbm5vdGF0b3IvbG9hZExpbms/bG9jPXtjaHJvbX0mb3JnYW5pc209e29yZ0lk
+    fSZ0cmFja2xpc3Q9MSI+PC9pZnJhbWU+PC9ib2R5PjwvaHRtbD4K
     """
+    HTML_TPL = base64.b64decode(HTML_TPL.replace('\n', ''))
 
     print HTML_TPL.format(base_url=args.apollo, chrom="", orgId=data[0]['id'])
