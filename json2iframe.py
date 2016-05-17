@@ -7,13 +7,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
     parser.add_argument('apollo', help='Complete Apollo URL')
     parser.add_argument('json', type=file, help='JSON Data')
+    parser.add_argument('external_apollo_url')
 
     args = parser.parse_args()
 
 
-    # https://cpt.tamu.edu/apollo/annotator/loadLink?loc=NC_005880:0..148317&organism=326&tracks=
+    # https://fqdn/apollo/annotator/loadLink?loc=NC_005880:0..148317&organism=326&tracks=
     data = json.load(args.json)
-    print data
     if len(data) > 1:
         raise Exception("More than one organism listed. Contact your local admin for help.")
 
@@ -27,4 +27,4 @@ if __name__ == '__main__':
     """
     HTML_TPL = base64.b64decode(HTML_TPL.replace('\n', ''))
 
-    print HTML_TPL.format(base_url=args.apollo, chrom="", orgId=data[0]['id'])
+    print HTML_TPL.format(base_url=args.external_apollo_url, chrom="", orgId=data[0]['id'])

@@ -6,6 +6,12 @@
       <yield/>
     </requirements>
   </xml>
+  <token name="@DATA_DIR@">
+/opt/apollo/data/galaxy
+  </token>
+  <token name="@EXT_URL@">
+\$GALAXY_WEBAPOLLO_EXT_URL
+  </token>
   <token name="@URL@">
 \$GALAXY_WEBAPOLLO_URL
   </token>

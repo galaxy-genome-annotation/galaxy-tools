@@ -9,6 +9,7 @@
 python $__tool_directory__/json2iframe.py
 @URL@
 $json_file
+@EXT_URL@
 > $output]]></command>
   <inputs>
     <param name="json_file" type="data" format="json" label="WebApollo Organism Listing" />

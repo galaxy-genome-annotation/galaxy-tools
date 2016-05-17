@@ -27,11 +27,6 @@ if __name__ == '__main__':
     user = [u for u in wa.users.loadUsers()
             if u.username == args.email][0]
 
-    bich464 = GroupObj(name="bich464-2016-spring")
-
     # Update name, regen password if the user ran it again
     wa.users.updateUser(user, args.email, args.first, args.last, password)
-    # Add to bich464 group
-    wa.users.addUserToGroup(bich464, user)
-
     print 'Username: %s\nPassword: %s' % (args.email, password)
