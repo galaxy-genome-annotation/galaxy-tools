@@ -16,7 +16,7 @@
 \$GALAXY_WEBAPOLLO_URL
   </token>
   <token name="@AUTH@">
-@URL@
+\$GALAXY_WEBAPOLLO_URL
 galaxy@gmod.org
 \$GALAXY_WEBAPOLLO_PASSWORD
   </token>
