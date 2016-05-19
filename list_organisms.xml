@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<tool id="edu.tamu.cpt2.webapollo.list_organism" name="WA2: List Organisms" version="1.2">
-  <description>lists all organisms know to Apollo</description>
+<tool id="edu.tamu.cpt2.webapollo.list_organism" name="List Organisms" version="2.0">
+  <description>in Apollo</description>
   <macros>
     <import>macros.xml</import>
   </macros>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<tool id="edu.tamu.cpt2.webapollo.export" name="WA2: Retrieve/Export data" version="1.4">
-  <description>from WebApollo into Galaxy</description>
+<tool id="edu.tamu.cpt2.webapollo.export" name="Retrieve Data" version="2.0">
+  <description>from Apollo into Galaxy</description>
   <macros>
     <import>macros.xml</import>
   </macros>
@@ -26,7 +26,7 @@ python $__tool_directory__/export.py
   <help><![CDATA[
 **What it does**
 
-Exports the GFF3/Fasta sequence from WebApollo.
+Exports the GFF3/Fasta sequence from Apollo.
 
 @REFERENCES@
       ]]></help>
