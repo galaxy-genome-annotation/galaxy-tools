@@ -8,7 +8,7 @@
   <command detect_errors="aggressive"><![CDATA[
 python $__tool_directory__/create_account.py
 
-@AUTH@
+@ADMIN_AUTH@
 
 $__user_email__
 

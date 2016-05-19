@@ -7,7 +7,7 @@
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
 python $__tool_directory__/list_organisms.py
-@AUTH@
+@USER_AUTH_REMOTE@
 > $output]]></command>
   <inputs>
   </inputs>

@@ -9,9 +9,9 @@
 mkdir -p $jbrowse.files_path/;
 
 python $__tool_directory__/fetch_organism_jbrowse.py
-@AUTH@
+@USER_AUTH_REMOTE@
+
 @CN_OR_GUESS@
-$__user_email__
 $jbrowse.files_path/;
 
 cp $dummyIndex $jbrowse;

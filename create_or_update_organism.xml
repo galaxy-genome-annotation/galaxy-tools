@@ -12,10 +12,6 @@ python $__tool_directory__/create_or_update_organism.py
 
 @AUTH@
 
-#if str($blatdb) != "None":
-    --blatdb "$blatdb"
-#end if
-
 --genus "$genus"
 --species "$species"
 $public
@@ -29,8 +25,6 @@ $__user_email__
 > $output]]></command>
   <inputs>
     <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
-    <param name="blatdb" type="data" label="Blat DB" optional="True" />
-
     <expand macro="cn_or_guess" />
     <param name="genus" type="text" label="Host Bacteria" optional="True" />
     <param name="species" type="text" label="Phage Name" optional="True" />

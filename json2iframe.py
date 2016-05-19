@@ -11,11 +11,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-
     # https://fqdn/apollo/annotator/loadLink?loc=NC_005880:0..148317&organism=326&tracks=
     data = json.load(args.json)
-    if len(data) > 1:
-        raise Exception("More than one organism listed. Contact your local admin for help.")
 
     # This is base64 encoded to get past the toolshed's filters.
     HTML_TPL = """
