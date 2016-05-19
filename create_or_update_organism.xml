@@ -26,8 +26,8 @@ $__user_email__
   <inputs>
     <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
     <expand macro="cn_or_guess" />
-    <param name="genus" type="text" label="Host Bacteria" optional="True" />
-    <param name="species" type="text" label="Phage Name" optional="True" />
+    <param name="genus" type="text" label="Genus" optional="False" />
+    <param name="species" type="text" label="Species" optional="True" />
     <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
   </inputs>
   <outputs>
