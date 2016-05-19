@@ -20,10 +20,6 @@
 galaxy@gmod.org
 \$GALAXY_WEBAPOLLO_PASSWORD
   </token>
-  <xml name="auth_file">
-    <param label="Apollo Authentication File"
-    name="apolloCredentialsFile" type="data" format="json" />
-  </xml>
 
   <token name="@CN_OR_GUESS@">
 <![CDATA[
