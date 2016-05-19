@@ -47,7 +47,7 @@ galaxy@gmod.org
     "${cn_source.organism_cn}"
     #for $item in $cn_source.refseqs:
         "${item.refseq}"
-    #endfor
+    #end for
 #end if
 ]]>
   </token>

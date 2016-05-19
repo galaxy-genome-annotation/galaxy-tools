@@ -8,7 +8,7 @@
   <command detect_errors="aggressive"><![CDATA[
 python $__tool_directory__/export.py
 
-@USER_AUTH_REMOTE@
+@ADMIN_AUTH@
 
 @CN_OR_GUESS@
 

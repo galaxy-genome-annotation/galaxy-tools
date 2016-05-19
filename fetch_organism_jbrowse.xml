@@ -9,7 +9,7 @@
 mkdir -p $jbrowse.files_path/;
 
 python $__tool_directory__/fetch_organism_jbrowse.py
-@USER_AUTH_REMOTE@
+@ADMIN_AUTH@
 
 @ORG_OR_GUESS@
 $jbrowse.files_path/;

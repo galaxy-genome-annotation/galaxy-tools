@@ -10,13 +10,13 @@ cp -R ${jbrowse.extra_files_path}/data/ @DATA_DIR@/${jbrowse.id};
 
 python $__tool_directory__/create_or_update_organism.py
 
-@AUTH@
+@ADMIN_AUTH@
 
 --genus "$genus"
 --species "$species"
 $public
 
-@CN_OR_GUESS@
+@ORG_OR_GUESS@
 
 "@DATA_DIR@/${jbrowse.id}"
 
@@ -25,7 +25,7 @@ $__user_email__
 > $output]]></command>
   <inputs>
     <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
-    <expand macro="cn_or_guess" />
+    <expand macro="org_or_guess" />
     <param name="genus" type="text" label="Genus" optional="False" />
     <param name="species" type="text" label="Species" optional="True" />
     <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
