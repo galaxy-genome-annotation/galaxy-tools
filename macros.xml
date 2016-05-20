@@ -27,10 +27,10 @@ galaxy@gmod.org
 
   <token name="@ORG_OR_GUESS@">
 <![CDATA[
-#if $cn_source.source_select == "auto_json":
-    \$(cat $cn_source.cn_file | grep 'commonName' | head -n 1| sed 's/.*: "//g;s/".*//g')
+#if $org_source.source_select == "auto_json":
+    \$(cat $org_source.org_file | grep 'commonName' | head -n 1| sed 's/.*: "//g;s/".*//g')
 #else
-    "${cn_source.organism_cn}"
+    "${org_source.organism_cn}"
 #end if
 ]]>
   </token>
