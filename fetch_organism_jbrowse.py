@@ -32,5 +32,4 @@ if __name__ == '__main__':
         org['directory'],
         os.path.join(args.target_dir, 'data')
     ]
-    print ' '.join(cmd)
     subprocess.check_call(cmd)

@@ -656,7 +656,6 @@ class WebApolloSeqRecord(object):
 
     def __getattr__(self, key):
         if key in ('_sr', '_wa'):
-            print self.__dict__
             return self.__dict__[key]
         else:
             if key == 'features':
@@ -671,7 +670,6 @@ class WebApolloSeqRecord(object):
         else:
             self._sr.__dict__[key] = value
             # Methods acting on the SeqRecord object
-            print key, value
 
 
 class WebApolloSeqFeature(object):
@@ -708,7 +706,6 @@ class WebApolloSeqFeature(object):
                 self._sf.__dict__[key] = value
             else:
                 self._sf.__dict__[key] = value
-                print key, value
 
 def _tnType(feature):
     if feature.type in ('gene', 'mRNA', 'exon', 'CDS'):
