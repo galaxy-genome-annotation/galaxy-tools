@@ -54,4 +54,3 @@ if __name__ == '__main__':
         GFF.write([record], args.gff)
         record.description = ""
         SeqIO.write([record], args.fasta, 'fasta')
-        sys.exit()
