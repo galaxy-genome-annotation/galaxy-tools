@@ -21,14 +21,14 @@ $__user_email__
   </token>
   <token name="@ADMIN_AUTH@">
 \$GALAXY_WEBAPOLLO_URL
-galaxy@gmod.org
+\$GALAXY_WEBAPOLLO_USER
 \$GALAXY_WEBAPOLLO_PASSWORD
   </token>
 
   <token name="@ORG_OR_GUESS@">
 <![CDATA[
 #if $org_source.source_select == "auto_json":
-    --org_json "${org_source.org_raw}"
+    --org_json "${org_source.org_file}"
 #else
     --org_raw "${org_source.org_raw}"
 #end if
