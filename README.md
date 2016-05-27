@@ -1,4 +1,4 @@
-# galaxy-webapollo
+# galaxy-apollo
 
 Galaxy tools to interface with Apollo
 The webapollo.py file is also [separately available](https://github.com/erasche/python-apollo) as a pip-installable package.
