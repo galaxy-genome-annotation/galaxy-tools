@@ -17,8 +17,6 @@ if __name__ == '__main__':
     parser.add_argument('--last', help='Last Name', default='Aggie')
     args = parser.parse_args()
 
-    print args
-
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
     password = pwgen(12)
@@ -29,8 +27,7 @@ if __name__ == '__main__':
             if u.username == args.email]
 
     if len(user)==1:
-	    # Update name, regen password if the user ran it again
-       #print "Updating user"
+       # Update name, regen password if the user ran it again
        wa.users.updateUser(user, args.email, args.first, args.last, password)
        print 'Updated User\nUsername%s\nPassword: %s' % (args.email, password)
     else:
