@@ -20,7 +20,6 @@ if __name__ == '__main__':
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
     password = pwgen(12)
-    wa.users.createUser(args.email, args.first, args.last, password, role='user')
     time.sleep(1)
     users = wa.users.loadUsers() 
     user = [u for u in users 
@@ -28,10 +27,12 @@ if __name__ == '__main__':
 
     if len(user)==1:
        # Update name, regen password if the user ran it again
-       wa.users.updateUser(user, args.email, args.first, args.last, password)
-       print 'Updated User\nUsername%s\nPassword: %s' % (args.email, password)
+       userObj = user[0]
+       returnData = wa.users.updateUser(userObj, args.email, args.first, args.last, password)
+       print 'Updated User\nUsername: %s\nPassword: %s' % (args.email, password)
     else:
-       wa.users.createUser(args.email,args.first,args.last,password,role='user') 
+       returnData = wa.users.createUser(args.email,args.first,args.last,password,role='user') 
        print 'Created User\nUsername: %s\nPassword: %s' % (args.email, password)
   
+    print "Return data: " + str(returnData)
 

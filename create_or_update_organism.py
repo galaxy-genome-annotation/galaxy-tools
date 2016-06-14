@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
     # User must have an account
+    wa.users.loadUsers()
     gx_user = wa.users.loadUsers(email=args.email)
     if len(gx_user) == 0:
         raise Exception("Unknown user. Please register first")
