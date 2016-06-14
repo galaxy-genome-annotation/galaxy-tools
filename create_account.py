@@ -22,9 +22,16 @@ if __name__ == '__main__':
     password = pwgen(12)
     wa.users.createUser(args.email, args.first, args.last, password, role='user')
     time.sleep(1)
-    user = [u for u in wa.users.loadUsers()
-            if u.username == args.email][0]
+    users = wa.users.loadUsers() 
+    user = [u for u in users 
+            if u.username == args.email]
 
-    # Update name, regen password if the user ran it again
-    wa.users.updateUser(user, args.email, args.first, args.last, password)
-    print 'Username: %s\nPassword: %s' % (args.email, password)
+    if len(user)==1:
+       # Update name, regen password if the user ran it again
+       wa.users.updateUser(user, args.email, args.first, args.last, password)
+       print 'Updated User\nUsername%s\nPassword: %s' % (args.email, password)
+    else:
+       wa.users.createUser(args.email,args.first,args.last,password,role='user') 
+       print 'Created User\nUsername: %s\nPassword: %s' % (args.email, password)
+  
+
