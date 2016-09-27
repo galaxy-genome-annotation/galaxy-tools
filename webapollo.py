@@ -628,6 +628,9 @@ class UsersClient(Client):
     def loadUsers(self, email=None):
         res = self.request('loadUsers', {})
         data = [UserObj(**x) for x in res]
+        print "# of users: " +str(len(data))  + "\n"
+        print "loading user with email; "+str(email) + "\n"
+        print "first email; "+str(data[0]) + "\n"
         if email is not None:
             data = [x for x in data if x.username == email]
 
