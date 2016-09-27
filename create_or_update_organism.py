@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+import sys
 import json
 import argparse
 import time
-from webapollo import WAAuth, WebApolloInstance, OrgOrGuess, GuessOrg
+from webapollo import WAAuth, WebApolloInstance, OrgOrGuess, GuessOrg, AssertUser
 import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -20,17 +21,14 @@ if __name__ == '__main__':
     parser.add_argument('--public', action='store_true', help='Make organism public')
 
     args = parser.parse_args()
+    wa = WebApolloInstance(args.apollo, args.username, args.password)
 
-    org_cn = GuessOrg(args)
+    org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    wa = WebApolloInstance(args.apollo, args.username, args.password)
     # User must have an account
-    wa.users.loadUsers()
-    gx_user = wa.users.loadUsers(email=args.email)
-    if len(gx_user) == 0:
-        raise Exception("Unknown user. Please register first")
+    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
 
     log.info("Determining if add or update required")
     try:
@@ -63,9 +61,9 @@ if __name__ == '__main__':
 
         # Must sleep before we're ready to handle
         time.sleep(2)
-        log.info("Updating permissions for %s on %s", gx_user[0], org_cn)
+        log.info("Updating permissions for %s on %s", gx_user, org_cn)
         wa.users.updateOrganismPermission(
-            gx_user[0], org_cn,
+            gx_user, org_cn,
             write=True,
             export=True,
             read=True,
