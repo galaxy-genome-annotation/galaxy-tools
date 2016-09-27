@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import StringIO
 import json
 import argparse
@@ -37,13 +38,19 @@ def export(org_cn, seqs):
     # Seek back to start
     data.seek(0)
 
-    for record in GFF.parse(data):
-        record.annotations = {}
-        if args.gff:
-            GFF.write([record], args.gff)
-        record.description = ""
-        if args.fasta:
-            SeqIO.write([record], args.fasta, 'fasta')
+    records = list(GFF.parse(data))
+    if len(records) == 0:
+        print "Could not find any sequences or annotations for this organism + reference sequence"
+        sys.exit(2)
+    else:
+        for record in records:
+            record.annotations = {}
+            if args.gff:
+                GFF.write([record], args.gff)
+            record.description = ""
+            if args.fasta:
+                SeqIO.write([record], args.fasta, 'fasta')
+
     return org_data
 
 if __name__ == '__main__':
@@ -58,7 +65,7 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
-    org_cn_list, seqs = GuessCn(args)
+    org_cn_list, seqs = GuessCn(args, wa)
 
     org_data = []
     for org_cn in org_cn_list:
