@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 import collections
 import StringIO
 import logging
@@ -19,6 +20,7 @@ def WAAuth(parser):
 def OrgOrGuess(parser):
     parser.add_argument('--org_json', type=file, help='Apollo JSON output, source for common name')
     parser.add_argument('--org_raw', help='Common Name')
+    parser.add_argument('--org_id', help='Organism ID')
 
 
 def CnOrGuess(parser):
@@ -27,7 +29,7 @@ def CnOrGuess(parser):
     parser.add_argument('--seq_raw', nargs='*', help='Sequence Names')
 
 
-def GuessOrg(args):
+def GuessOrg(args, wa):
     if args.org_json:
         orgs = [x.get('commonName', None)
                 for x in json.load(args.org_json)]
@@ -39,12 +41,14 @@ def GuessOrg(args):
             return [org]
         else:
             raise Exception("Organism Common Name not provided")
+    elif args.org_id:
+        return [wa.organism.findOrganismById(args.org_id)]
     else:
         raise Exception("Organism Common Name not provided")
 
 
-def GuessCn(args):
-    org = GuessOrg(args)
+def GuessCn(args, wa):
+    org = GuessOrg(args, wa)
     seqs = []
     if args.seq_fasta:
         # If we have a fasta, pull all rec ids from that.
@@ -55,6 +59,20 @@ def GuessCn(args):
         seqs = [x.strip() for x in args.seq_raw if len(x.strip()) > 0]
 
     return org, seqs
+
+
+def AssertUser(user_list):
+    if len(user_list) == 0:
+        raise Exception("Unknown user. Please register first")
+    else:
+        return user_list[0]
+
+
+def AssertAdmin(user):
+    if user.role == 'ADMIN':
+        return True
+    else:
+        raise Exception("User is not an administrator. Permission denied")
 
 
 class WebApolloInstance(object):
@@ -566,6 +584,14 @@ class OrganismsClient(Client):
         else:
             return orgs[0]
 
+    def findOrganismById(self, id_number):
+        orgs = self.findAllOrganisms()
+        orgs = [x for x in orgs if x['id'] == id_number]
+        if len(orgs) == 0:
+            raise Exception("Unknown ID")
+        else:
+            return orgs[0]
+
     def deleteOrganism(self, organismId):
         return self.request('deleteOrganism', {'id': organismId})
 
@@ -596,11 +622,16 @@ class OrganismsClient(Client):
 class UsersClient(Client):
     CLIENT_BASE = '/user/'
 
+    # Real one
+    # def getOrganismPermissionsForUser(self, user):
+    # data = {
+    # 'userId': user.userId,
+    # }
+    # return self.request('getOrganismPermissionsForUser', data)
+
+    # Utter frigging hack
     def getOrganismPermissionsForUser(self, user):
-        data = {
-            'userId': user.userId,
-        }
-        return self.request('getOrganismPermissionsForUser', data)
+        return self.loadUser(user).organismPermissions
 
     def updateOrganismPermission(self, user, organism, administrate=False,
                                  write=False, export=False, read=False):
@@ -628,9 +659,6 @@ class UsersClient(Client):
     def loadUsers(self, email=None):
         res = self.request('loadUsers', {})
         data = [UserObj(**x) for x in res]
-        print "# of users: " +str(len(data))  + "\n"
-        print "loading user with email; "+str(email) + "\n"
-        print "first email; "+str(data[0]) + "\n"
         if email is not None:
             data = [x for x in data if x.username == email]
 
@@ -795,3 +823,37 @@ def featuresToFeatureSchema(features):
         for x in _yieldFeatData([feature]):
             compiled.append(x)
     return compiled
+
+
+def accessible_organisms(user, orgs):
+    permissionMap = {
+        x['organism']: x['permissions']
+        for x in user.organismPermissions
+        if 'WRITE' in x['permissions'] \
+        or 'READ' in x['permissions'] \
+        or 'ADMINISTRATE' in x['permissions'] \
+        or user.role == 'ADMIN'
+    }
+    return  [
+        (org['commonName'], org['id'], False)
+        for org in sorted(orgs, key=lambda x: x['commonName'])
+        if org['commonName'] in permissionMap
+    ]
+
+
+
+def galaxy_list_orgs(trans, *args, **kwargs):
+    email = trans.get_user().email
+
+    wa = WebApolloInstance(
+        os.environ.get('GALAXY_WEBAPOLLO_URL', 'https://example.com'),
+        os.environ.get('GALAXY_WEBAPOLLO_USER', 'admin'),
+        os.environ.get('GALAXY_WEBAPOLLO_PASSWORD', 'admin')
+    )
+
+    gx_user = AssertUser(wa.users.loadUsers(email=email))
+    all_orgs = wa.organisms.findAllOrganisms()
+
+    orgs = accessible_organisms(gx_user, all_orgs)
+
+    return orgs
