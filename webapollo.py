@@ -829,17 +829,16 @@ def accessible_organisms(user, orgs):
     permissionMap = {
         x['organism']: x['permissions']
         for x in user.organismPermissions
-        if 'WRITE' in x['permissions'] \
-        or 'READ' in x['permissions'] \
-        or 'ADMINISTRATE' in x['permissions'] \
-        or user.role == 'ADMIN'
+        if 'WRITE' in x['permissions'] or
+        'READ' in x['permissions'] or
+        'ADMINISTRATE' in x['permissions'] or
+        user.role == 'ADMIN'
     }
-    return  [
+    return [
         (org['commonName'], org['id'], False)
         for org in sorted(orgs, key=lambda x: x['commonName'])
         if org['commonName'] in permissionMap
     ]
-
 
 
 def galaxy_list_orgs(trans, *args, **kwargs):

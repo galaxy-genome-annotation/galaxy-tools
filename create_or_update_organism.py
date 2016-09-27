@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 import json
 import argparse
 import time
