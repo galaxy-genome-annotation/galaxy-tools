@@ -6,6 +6,14 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="aggressive"><![CDATA[
+
+        if [ -z "@DATA_DIR@" ]; then
+            echo '@DATA_DIR@ variable must be set to use this tool';
+            exit 1;
+        fi
+
+        &&
+
         rm -rf "@DATA_DIR@/"*
 
         &&
@@ -30,7 +38,7 @@
 
         &&
 
-        python $__tool_directory__/jbrowse_to_container.py @JBROWSE_BASE_URL@ ${dataset_name} > $output
+        python $__tool_directory__/jbrowse_to_container.py @JBROWSE_BASE_URL@ > $output
       ]]></command>
     <configfiles>
         <configfile name="trackList">
