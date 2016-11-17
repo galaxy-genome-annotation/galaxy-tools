@@ -10,7 +10,7 @@
         if [ -z "@DATA_DIR@" ]; then
             echo '@DATA_DIR@ variable must be set to use this tool';
             exit 1;
-        fi
+        fi;
 
         rm -rf "@DATA_DIR@/"*
 
