@@ -2,9 +2,14 @@ import requests
 import json
 import os
 import collections
-import StringIO
+try:
+    import StringIO as io
+except:
+    import io
 import logging
 import time
+import argparse
+import sys
 from BCBio import GFF
 from Bio import SeqIO
 logging.getLogger("requests").setLevel(logging.CRITICAL)
@@ -19,14 +24,14 @@ def WAAuth(parser):
 
 
 def OrgOrGuess(parser):
-    parser.add_argument('--org_json', type=file, help='Apollo JSON output, source for common name')
+    parser.add_argument('--org_json', type=argparse.FileType("r"), help='Apollo JSON output, source for common name')
     parser.add_argument('--org_raw', help='Common Name')
     parser.add_argument('--org_id', help='Organism ID')
 
 
 def CnOrGuess(parser):
     OrgOrGuess(parser)
-    parser.add_argument('--seq_fasta', type=file, help='Fasta file, IDs used as sequence sources')
+    parser.add_argument('--seq_fasta', type=argparse.FileType("r"), help='Fasta file, IDs used as sequence sources')
     parser.add_argument('--seq_raw', nargs='*', help='Sequence Names')
 
 
@@ -82,6 +87,7 @@ class WebApolloInstance(object):
         self.apollo_url = url
         self.username = username
         self.password = password
+        # TODO: Remove after apollo 2.0.6.
         self.clientToken = time.time()
 
         self.annotations = AnnotationsClient(self)
@@ -94,6 +100,9 @@ class WebApolloInstance(object):
 
     def __str__(self):
         return '<WebApolloInstance at %s>' % self.apollo_url
+
+    def requireUser(self, email):
+        return AssertUser(self.users.loadUsers(email=email))
 
 
 class GroupObj(object):
@@ -269,9 +278,22 @@ class AnnotationsClient(Client):
         data.update(self._extra_data)
         return self.request('setSymbol', data)
 
-    def getComments(self, features):
+    def getComments(self, feature_id):
         data = {
-            'features': features,
+            'features': [{'uniquename': feature_id}],
+        }
+        data = self._update_data(data)
+        return self.request('getComments', data)
+
+    def addComments(self, feature_id, comment):
+        #TODO: This is probably not great and will delete comments, if I had to guess...
+        data = {
+            'features': [
+                {
+                    'uniquename': feature_id,
+                    'comments': [comment]
+                }
+            ],
         }
         data = self._update_data(data)
         return self.request('getComments', data)
@@ -729,7 +751,7 @@ class RemoteRecord(Client):
         org = self._wa.organisms.findOrganismByCn(cn)
         self._wa.annotations.setSequence(org['commonName'], org['id'])
 
-        data = StringIO.StringIO(self._wa.io.write(
+        data = io.StringIO(self._wa.io.write(
             exportType='GFF3',
             seqType='genomic',
             exportAllSequences=False,
@@ -868,18 +890,61 @@ def accessible_organisms(user, orgs):
     ]
 
 
+def galaxy_list_groups(trans, *args, **kwargs):
+    email = trans.get_user().email
+
+    wa = WebApolloInstance(
+        os.environ['GALAXY_WEBAPOLLO_URL'],
+        os.environ['GALAXY_WEBAPOLLO_USER'],
+        os.environ['GALAXY_WEBAPOLLO_PASSWORD']
+    )
+
+    gx_user = wa.requireUser(email)
+    for group in wa.groups.loadGroups():
+        yield (group.name, group.groupId, False)
+
 def galaxy_list_orgs(trans, *args, **kwargs):
     email = trans.get_user().email
 
     wa = WebApolloInstance(
-        os.environ.get('GALAXY_WEBAPOLLO_URL', 'https://example.com'),
-        os.environ.get('GALAXY_WEBAPOLLO_USER', 'admin'),
-        os.environ.get('GALAXY_WEBAPOLLO_PASSWORD', 'admin')
+        os.environ['GALAXY_WEBAPOLLO_URL'],
+        os.environ['GALAXY_WEBAPOLLO_USER'],
+        os.environ['GALAXY_WEBAPOLLO_PASSWORD']
     )
 
-    gx_user = AssertUser(wa.users.loadUsers(email=email))
+    gx_user = wa.requireUser(email)
     all_orgs = wa.organisms.findAllOrganisms()
 
     orgs = accessible_organisms(gx_user, all_orgs)
 
     return orgs
+
+## This is all for implementing the command line interface for testing.
+
+class obj(object):
+    pass
+
+
+class fakeTrans(object):
+
+    def __init__(self, username):
+        self.un = username
+
+    def get_user(self):
+        o = obj()
+        o.email = self.un
+        return o
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Test access to apollo server')
+    parser.add_argument('email', help='Email of user to test')
+    parser.add_argument('--action', choices=['org', 'group'], default='org', help='Data set to test, fetch a list of groups or users known to the requesting user.')
+    args = parser.parse_args()
+
+    trans = fakeTrans(args.email)
+    if args.action == 'org':
+        for f in galaxy_list_orgs(trans):
+            print(f)
+    else:
+        for f in galaxy_list_groups(trans):
+            print(f)
