@@ -15,7 +15,11 @@ python $__tool_directory__/create_or_update_organism.py
 
 --genus "$genus"
 --species "$species"
-$public
+#if $perms.public == "yes":
+    --public
+#else if $perms.group:
+    --group '${perms.group}'
+#end if
 
 @ORG_OR_GUESS@
 
@@ -29,7 +33,16 @@ $__user_email__
     <expand macro="org_or_guess" />
     <param name="genus" type="text" label="Genus" optional="False" />
     <param name="species" type="text" label="Species" optional="True" />
-    <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
+    <conditional name="perms">
+        <param name="public" type="select" label="Is Organism Public">
+            <option value="no" selected="true">No</option>
+            <option value="yes">Yes</option>
+        </param>
+        <when value="yes"/>
+        <when value="no">
+            <param name="group" type="text" label="Grant access to a user group" optional="True" />
+        </when>
+    </conditional>
   </inputs>
   <outputs>
     <data format="json" name="output"/>

@@ -4,6 +4,7 @@ import os
 import collections
 import StringIO
 import logging
+import time
 from BCBio import GFF
 from Bio import SeqIO
 logging.getLogger("requests").setLevel(logging.CRITICAL)
@@ -81,6 +82,7 @@ class WebApolloInstance(object):
         self.apollo_url = url
         self.username = username
         self.password = password
+        self.clientToken = time.time()
 
         self.annotations = AnnotationsClient(self)
         self.groups = GroupsClient(self)
@@ -162,6 +164,7 @@ class Client(object):
         data.update({
             'username': self._wa.username,
             'password': self._wa.password,
+            'clientToken': self._wa.clientToken,
         })
 
         r = requests.post(url, data=json.dumps(data), headers=headers,
@@ -465,12 +468,32 @@ class GroupsClient(Client):
         }
         return self.request('getOrganismPermissionsForGroup', data)
 
-    def loadGroups(self, group=None):
-        data = {}
-        if group is not None:
-            data['groupId'] = group.groupId
+    def loadGroup(self, group):
+        return self.loadGroupById(group.groupId)
 
-        return self.request('loadGroups', data)
+    def loadGroupById(self, groupId):
+        res = self.request('loadGroups', {'groupId': groupId})
+        if isinstance(res, list):
+            # We can only match one, right?
+            return GroupObj(**res[0])
+        else:
+            return res
+
+    def loadGroupByName(self, name):
+        res = self.request('loadGroups', {'name': name})
+        if isinstance(res, list):
+            # We can only match one, right?
+            return GroupObj(**res[0])
+        else:
+            return res
+
+    def loadGroups(self, group=None):
+        res = self.request('loadGroups', {})
+        data = [GroupObj(**x) for x in res]
+        if group is not None:
+            data = [x for x in data if x.name == group]
+
+        return data
 
     def deleteGroup(self, group):
         data = {
@@ -493,11 +516,11 @@ class GroupsClient(Client):
                                  export=False):
         data = {
             'groupId': group.groupId,
-            'name': organismName,
-            'administrate': administrate,
-            'write': write,
-            'export': export,
-            'read': read,
+            'organism': organismName,
+            'ADMINISTRATE': administrate,
+            'WRITE': write,
+            'EXPORT': export,
+            'READ': read,
         }
         return self.request('updateOrganismPermission', data)
 
@@ -834,6 +857,10 @@ def accessible_organisms(user, orgs):
         'ADMINISTRATE' in x['permissions'] or
         user.role == 'ADMIN'
     }
+
+    if 'error' in orgs:
+        raise Exception("Error received from Apollo server: \"%s\"" % orgs['error'])
+
     return [
         (org['commonName'], org['id'], False)
         for org in sorted(orgs, key=lambda x: x['commonName'])
