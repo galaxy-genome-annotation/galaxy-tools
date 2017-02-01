@@ -388,7 +388,13 @@ cache = TTLCache(
     100, # Up to 100 items
     5 * 60 # 5 minute cache life
 )
+userCache = TTLCache(
+    2, # Up to 2 items
+    60 # 1 minute cache life
+)
 
+class UnknownUserException(Exception):
+    pass
 
 def WAAuth(parser):
     parser.add_argument('apollo', help='Complete Apollo URL')
@@ -443,9 +449,11 @@ def GuessCn(args, wa):
 
 def AssertUser(user_list):
     if len(user_list) == 0:
-        raise Exception("Unknown user. Please register first")
-    else:
+        raise UnknownUserException()
+    elif len(user_list) == 1:
         return user_list[0]
+    else:
+        raise Exception("Too many users!")
 
 
 def AssertAdmin(user):
@@ -476,7 +484,18 @@ class WebApolloInstance(object):
         return '<WebApolloInstance at %s>' % self.apollo_url
 
     def requireUser(self, email):
-        return AssertUser(self.users.loadUsers(email=email))
+        cacheKey = 'user-list'
+        try:
+            # Get the cached value
+            data = userCache[cacheKey]
+        except KeyError:
+            # If we hit a key error above, indicating that
+            # we couldn't find the key, we'll simply re-request
+            # the data
+            data = self.users.loadUsers()
+            userCache[cacheKey] = data
+
+        return AssertUser([x for x in data if x.username == email])
 
 
 class GroupObj(object):
@@ -1263,60 +1282,91 @@ def accessible_organisms(user, orgs):
         if org['commonName'] in permissionMap
     ]
 
+
 def galaxy_list_groups(trans, *args, **kwargs):
     email = trans.get_user().email
-    cacheKey = 'groups-' + email
-    try:
-        data = cache[cacheKey]
-    except KeyError:
-        data = _galaxy_list_groups(email, *args, **kwargs)
-        cache[cacheKey] = data
-
-    return data
-
-
-def _galaxy_list_groups(email, *args, **kwargs):
-
     wa = WebApolloInstance(
         os.environ['GALAXY_WEBAPOLLO_URL'],
         os.environ['GALAXY_WEBAPOLLO_USER'],
         os.environ['GALAXY_WEBAPOLLO_PASSWORD']
     )
+    # Assert that the email exists in apollo
+    try:
+        gx_user = wa.requireUser(email)
+    except UnknownUserException:
+        return []
 
-    # Do this to ensure they're permitted access
-    wa.requireUser(email)
+    # Key for cached data
+    cacheKey = 'groups-' + email
+    # We don't want to trust "if key in cache" because between asking and fetch
+    # it might through key error.
+    if cacheKey not in cache:
+        # However if it ISN'T there, we know we're safe to fetch + put in
+        # there.
+        data = _galaxy_list_groups(wa, gx_user, *args, **kwargs)
+        cache[cacheKey] = data
+        return data
+    try:
+        # The cache key may or may not be in the cache at this point, it
+        # /likely/ is. However we take no chances that it wasn't evicted between
+        # when we checked above and now, so we reference the object from the
+        # cache in preparation to return.
+        data = cache[cacheKey]
+        return data
+    except KeyError:
+        # If access fails due to eviction, we will fail over and can ensure that
+        # data is inserted.
+        data = _galaxy_list_groups(wa, gx_user, *args, **kwargs)
+        cache[cacheKey] = data
+        return data
 
+
+def _galaxy_list_groups(wa, gx_user, *args, **kwargs):
     # Fetch the groups.
     group_data = []
     for group in wa.groups.loadGroups():
+        # Reformat
         group_data.append((group.name, group.groupId, False))
     return group_data
 
+
 def galaxy_list_orgs(trans, *args, **kwargs):
     email = trans.get_user().email
-    cacheKey = 'orgs-' + email
-    try:
-        data = cache[cacheKey]
-    except KeyError:
-        data = _galaxy_list_orgs(email, *args, **kwargs)
-        cache[cacheKey] = data
-
-    return data
-def _galaxy_list_orgs(email, *args, **kwargs):
     wa = WebApolloInstance(
         os.environ['GALAXY_WEBAPOLLO_URL'],
         os.environ['GALAXY_WEBAPOLLO_USER'],
         os.environ['GALAXY_WEBAPOLLO_PASSWORD']
     )
+    try:
+        gx_user = wa.requireUser(email)
+    except UnknownUserException:
+        return []
 
-    gx_user = wa.requireUser(email)
+    # Key for cached data
+    cacheKey = 'orgs-' + email
+    if cacheKey not in cache:
+        data = _galaxy_list_orgs(wa, gx_user, *args, **kwargs)
+        cache[cacheKey] = data
+        return data
+    try:
+        data = cache[cacheKey]
+        return data
+    except KeyError:
+        data = _galaxy_list_orgs(wa, gx_user, *args, **kwargs)
+        cache[cacheKey] = data
+        return data
+
+
+def _galaxy_list_orgs(wa, gx_user, *args, **kwargs):
+    # Fetch all organisms
     all_orgs = wa.organisms.findAllOrganisms()
-
+    # Figure out which are accessible to the user
     orgs = accessible_organisms(gx_user, all_orgs)
-
+    # Return org list
     return orgs
 
 ## This is all for implementing the command line interface for testing.
+
 
 class obj(object):
     pass
