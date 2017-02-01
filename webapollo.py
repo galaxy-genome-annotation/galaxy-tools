@@ -476,8 +476,6 @@ class WebApolloInstance(object):
         return '<WebApolloInstance at %s>' % self.apollo_url
 
     def requireUser(self, email):
-        print("TIME[REQUIRE_USER] = %s", time.ctime())
-        email = 'hxr@tamu.edu'
         return AssertUser(self.users.loadUsers(email=email))
 
 
