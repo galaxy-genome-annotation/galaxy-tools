@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="edu.tamu.cpt2.webapollo.create_or_update" name="Create or Update Organism" version="3.0">
+<tool id="edu.tamu.cpt2.webapollo.create_or_update" name="Create or Update Organism" version="3.1">
   <description>will create the organism if it doesn't exist, and update otherwise</description>
   <macros>
     <import>macros.xml</import>
@@ -15,11 +15,8 @@ python $__tool_directory__/create_or_update_organism.py
 
 --genus "$genus"
 --species "$species"
-#if $perms.public == "yes":
-    --public
-#else if $perms.group:
-    --group '${perms.group}'
-#end if
+--group '${perms.group}'
+$public
 
 @ORG_OR_GUESS@
 
@@ -33,16 +30,8 @@ $__user_email__
     <expand macro="org_or_guess" />
     <param name="genus" type="text" label="Genus" optional="False" />
     <param name="species" type="text" label="Species" optional="True" />
-    <conditional name="perms">
-        <param name="public" type="select" label="Is Organism Public">
-            <option value="no" selected="true">No</option>
-            <option value="yes">Yes</option>
-        </param>
-        <when value="yes"/>
-        <when value="no">
-            <param name="group" type="text" label="Grant access to a user group" optional="True" />
-        </when>
-    </conditional>
+    <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
+    <param name="group" type="select" dynamic_options="galaxy_list_groups(__trans__)" label="Grant access to a user group" optional="True" />
   </inputs>
   <outputs>
     <data format="json" name="output"/>
