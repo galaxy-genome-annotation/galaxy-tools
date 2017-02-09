@@ -15,7 +15,7 @@ python $__tool_directory__/create_or_update_organism.py
 
 --genus "$genus"
 --species "$species"
---group '${perms.group}'
+--group '${group}'
 $public
 
 @ORG_OR_GUESS@
