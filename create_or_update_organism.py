@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import json
 import argparse
 import time
@@ -36,8 +37,17 @@ if __name__ == '__main__':
     except Exception:
         org = None
 
-    # TODO: Check ownership
     if org:
+        has_perms = False
+        for user_owned_organism in gx_user.organismPermissions:
+            if 'WRITE' in user_owned_organism['permissions']:
+                has_perms = True
+                break
+
+        if not has_perms:
+            print("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
+            sys.exit(2)
+
         log.info("\tUpdating Organism")
         data = wa.organisms.updateOrganismInfo(
             org['id'],
@@ -48,6 +58,8 @@ if __name__ == '__main__':
             species=args.species,
             public=args.public
         )
+        time.sleep(2)
+        data = [wa.organisms.findOrganismById(org['id'])]
     else:
         # New organism
         log.info("\tAdding Organism")
@@ -77,4 +89,4 @@ if __name__ == '__main__':
                                              export=True)
 
     data = [o for o in data if o['commonName'] == org_cn]
-    print json.dumps(data, indent=2)
+    print(json.dumps(data, indent=2))

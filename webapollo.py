@@ -400,7 +400,6 @@ def WAAuth(parser):
     parser.add_argument('apollo', help='Complete Apollo URL')
     parser.add_argument('username', help='WA Username')
     parser.add_argument('password', help='WA Password')
-    parser.add_argument('--remote_user', default='', help='If set, ignore password, set the header with the name supplied to this argument to the value of email')
 
 
 def OrgOrGuess(parser):
@@ -715,8 +714,9 @@ class AnnotationsClient(Client):
         if not trustme:
             raise NotImplementedError("Waiting on better docs from project. If you know what you are doing, pass trustme=True to this function.")
 
-        data = {}
-        data.update(feature)
+        data = {
+            'features': feature,
+        }
         data = self._update_data(data)
         return self.request('addFeature', data)
 
@@ -1254,9 +1254,9 @@ def _yieldFeatData(features):
 def featuresToFeatureSchema(features):
     compiled = []
     for feature in features:
-        if feature.type != 'gene':
-            log.warn("Not able to handle %s features just yet...", feature.type)
-            continue
+        # if feature.type != 'gene':
+            # log.warn("Not able to handle %s features just yet...", feature.type)
+            # continue
 
         for x in _yieldFeatData([feature]):
             compiled.append(x)
@@ -1366,7 +1366,6 @@ def _galaxy_list_orgs(wa, gx_user, *args, **kwargs):
     return orgs
 
 ## This is all for implementing the command line interface for testing.
-
 
 class obj(object):
     pass

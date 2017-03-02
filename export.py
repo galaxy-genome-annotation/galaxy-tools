@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 import sys
-import StringIO
+try:
+    import StringIO as io
+except ImportError:
+    import io
+
 import json
 import argparse
 from Bio import SeqIO
@@ -11,7 +15,7 @@ from webapollo import WAAuth, WebApolloInstance, CnOrGuess, GuessCn
 def export(org_cn, seqs):
     org_data = wa.organisms.findOrganismByCn(org_cn)
 
-    data = StringIO.StringIO()
+    data = io.StringIO()
 
     kwargs = dict(
         exportType='GFF3',
@@ -40,11 +44,12 @@ def export(org_cn, seqs):
 
     records = list(GFF.parse(data))
     if len(records) == 0:
-        print "Could not find any sequences or annotations for this organism + reference sequence"
+        print("Could not find any sequences or annotations for this organism + reference sequence")
         sys.exit(2)
     else:
         for record in records:
             record.annotations = {}
+            record.features = sorted(record.features, key=lambda x: x.location.start)
             if args.gff:
                 GFF.write([record], args.gff)
             record.description = ""
@@ -52,6 +57,7 @@ def export(org_cn, seqs):
                 SeqIO.write([record], args.fasta, 'fasta')
 
     return org_data
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
