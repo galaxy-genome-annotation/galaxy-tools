@@ -479,6 +479,7 @@ class WebApolloInstance(object):
         self.metrics = MetricsClient(self)
         self.bio = RemoteRecord(self)
         self.status = StatusClient(self)
+        self.canned_comments = CannedCommentsClient(self)
 
     def __str__(self):
         return '<WebApolloInstance at %s>' % self.apollo_url
@@ -995,9 +996,9 @@ class IOClient(Client):
 class StatusClient(Client):
     CLIENT_BASE = '/availableStatus/'
 
-    def addStatus(self, name):
+    def addStatus(self, value):
         data = {
-            'name': name
+            'value': value
         }
 
         return self.request('createStatus', data)
@@ -1005,28 +1006,85 @@ class StatusClient(Client):
     def findAllStatuses(self):
         return self.request('showStatus', {})
 
-    def findStatusByName(self, name):
+    def findStatusByValue(self, value):
         statuses = self.findAllStatuses()
-        statuses = [x for x in statuses if x['value'] == name]
+        statuses = [x for x in statuses if x['value'] == value]
         if len(statuses) == 0:
-            raise Exception("Unknown status name")
+            raise Exception("Unknown status value")
         else:
             return statuses[0]
 
     def findStatusById(self, id_number):
-        statuses = self.findAllOrganisms()
+        statuses = self.findAllStatuses()
         statuses = [x for x in statuses if str(x['id']) == str(id_number)]
         if len(statuses) == 0:
             raise Exception("Unknown ID")
         else:
             return statuses[0]
 
-    def deleteStatus(self, statusID):
+    def updateStatus(self, id_number, new_value):
         data = {
-            'id': statusID
+            'id': id_number,
+            'new_value': new_value
+        }
+
+        return self.request('updateStatus', data)
+
+    def deleteStatus(self, id_number):
+        data = {
+            'id': id_number
         }
 
         return self.request('deleteStatus', data)
+
+
+class CannedCommentsClient(Client):
+    CLIENT_BASE = '/cannedComment/'
+
+    def addComment(self, comment, metadata=""):
+        data = {
+            'comment': comment,
+            'metadata': metadata
+        }
+
+        return self.request('createComment', data)
+
+    def findAllComments(self):
+        return self.request('showComment', {})
+
+    def findCommentByValue(self, value):
+        comments = self.findAllComments()
+        comments = [x for x in comments if x['comment'] == value]
+        if len(comments) == 0:
+            raise Exception("Unknown comment")
+        else:
+            return comments[0]
+
+    def findCommentById(self, id_number):
+        comments = self.findAllComments()
+        comments = [x for x in comments if str(x['id']) == str(id_number)]
+        if len(comments) == 0:
+            raise Exception("Unknown ID")
+        else:
+            return comments[0]
+
+    def updateComment(self, id_number, new_value, metadata=None):
+        data = {
+            'id': id_number,
+            'new_comment': new_value
+        }
+
+        if metadata is not None:
+            data['metadata'] = metadata
+
+        return self.request('updateComment', data)
+
+    def deleteComment(self, id_number):
+        data = {
+            'id': id_number
+        }
+
+        return self.request('deleteComment', data)
 
 
 class OrganismsClient(Client):
