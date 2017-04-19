@@ -478,6 +478,7 @@ class WebApolloInstance(object):
         self.users = UsersClient(self)
         self.metrics = MetricsClient(self)
         self.bio = RemoteRecord(self)
+        self.status = StatusClient(self)
 
     def __str__(self):
         return '<WebApolloInstance at %s>' % self.apollo_url
@@ -989,6 +990,43 @@ class IOClient(Client):
             'uuid': uuid,
         }
         return self.request('write', data)
+
+
+class StatusClient(Client):
+    CLIENT_BASE = '/availableStatus/'
+
+    def addStatus(self, name):
+        data = {
+            'name': name
+        }
+
+        return self.request('createStatus', data)
+
+    def findAllStatuses(self):
+        return self.request('showStatus', {})
+
+    def findStatusByName(self, name):
+        statuses = self.findAllStatuses()
+        statuses = [x for x in statuses if x['value'] == name]
+        if len(statuses) == 0:
+            raise Exception("Unknown status name")
+        else:
+            return statuses[0]
+
+    def findStatusById(self, id_number):
+        statuses = self.findAllOrganisms()
+        statuses = [x for x in statuses if str(x['id']) == str(id_number)]
+        if len(statuses) == 0:
+            raise Exception("Unknown ID")
+        else:
+            return statuses[0]
+
+    def deleteStatus(self, statusID):
+        data = {
+            'id': statusID
+        }
+
+        return self.request('deleteStatus', data)
 
 
 class OrganismsClient(Client):
