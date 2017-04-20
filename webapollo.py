@@ -468,8 +468,6 @@ class WebApolloInstance(object):
         self.apollo_url = url
         self.username = username
         self.password = password
-        # TODO: Remove after apollo 2.0.6.
-        self.clientToken = time.time()
 
         self.annotations = AnnotationsClient(self)
         self.groups = GroupsClient(self)
@@ -569,7 +567,6 @@ class Client(object):
         data.update({
             'username': self._wa.username,
             'password': self._wa.password,
-            'clientToken': self._wa.clientToken,
         })
 
         r = requests.post(url, data=json.dumps(data), headers=headers,
