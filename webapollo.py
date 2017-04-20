@@ -480,6 +480,8 @@ class WebApolloInstance(object):
         self.bio = RemoteRecord(self)
         self.status = StatusClient(self)
         self.canned_comments = CannedCommentsClient(self)
+        self.canned_keys = CannedKeysClient(self)
+        self.canned_values = CannedValuesClient(self)
 
     def __str__(self):
         return '<WebApolloInstance at %s>' % self.apollo_url
@@ -1085,6 +1087,104 @@ class CannedCommentsClient(Client):
         }
 
         return self.request('deleteComment', data)
+
+
+class CannedKeysClient(Client):
+    CLIENT_BASE = '/cannedKey/'
+
+    def addKey(self, key, metadata=""):
+        data = {
+            'key': key,
+            'metadata': metadata
+        }
+
+        return self.request('createKey', data)
+
+    def findAllKeys(self):
+        return self.request('showKey', {})
+
+    def findKeyByValue(self, value):
+        keys = self.findAllKeys()
+        keys = [x for x in keys if x['label'] == value]
+        if len(keys) == 0:
+            raise Exception("Unknown key")
+        else:
+            return keys[0]
+
+    def findKeyById(self, id_number):
+        keys = self.findAllKeys()
+        keys = [x for x in keys if str(x['id']) == str(id_number)]
+        if len(keys) == 0:
+            raise Exception("Unknown ID")
+        else:
+            return keys[0]
+
+    def updateKey(self, id_number, new_key, metadata=None):
+        data = {
+            'id': id_number,
+            'new_key': new_key
+        }
+
+        if metadata is not None:
+            data['metadata'] = metadata
+
+        return self.request('updateKey', data)
+
+    def deleteKey(self, id_number):
+        data = {
+            'id': id_number
+        }
+
+        return self.request('deleteKey', data)
+
+
+class CannedValuesClient(Client):
+    CLIENT_BASE = '/cannedValue/'
+
+    def addValue(self, value, metadata=""):
+        data = {
+            'value': value,
+            'metadata': metadata
+        }
+
+        return self.request('createValue', data)
+
+    def findAllValues(self):
+        return self.request('showValue', {})
+
+    def findValueByValue(self, value):
+        values = self.findAllValues()
+        values = [x for x in values if x['label'] == value]
+        if len(values) == 0:
+            raise Exception("Unknown value")
+        else:
+            return values[0]
+
+    def findValueById(self, id_number):
+        values = self.findAllValues()
+        values = [x for x in values if str(x['id']) == str(id_number)]
+        if len(values) == 0:
+            raise Exception("Unknown ID")
+        else:
+            return values[0]
+
+    def updateValue(self, id_number, new_value, metadata=None):
+        data = {
+            'id': id_number,
+            'new_value': new_value
+        }
+
+        if metadata is not None:
+            data['metadata'] = metadata
+
+        return self.request('updateValue', data)
+
+    def deleteValue(self, id_number):
+        data = {
+            'id': id_number
+        }
+
+        return self.request('deleteValue', data)
 
 
 class OrganismsClient(Client):
