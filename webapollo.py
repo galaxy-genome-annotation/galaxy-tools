@@ -17,7 +17,7 @@ log = logging.getLogger()
 
 
 #############################################
-###### BEGIN IMPORT OF CACHING LIBRARY ######
+#      BEGIN IMPORT OF CACHING LIBRARY      #
 #############################################
 # This code is licensed under the MIT       #
 # License and is a copy of code publicly    #
@@ -25,6 +25,7 @@ log = logging.getLogger()
 # e27332bc82f4e327aedaec17c9b656ae719322ed  #
 # of https://github.com/tkem/cachetools/    #
 #############################################
+
 class DefaultMapping(collections.MutableMapping):
 
     __slots__ = ()
@@ -64,6 +65,7 @@ class DefaultMapping(collections.MutableMapping):
         else:
             self[key] = value = default
         return value
+
 
 DefaultMapping.register(dict)
 
@@ -381,20 +383,23 @@ class TTLCache(Cache):
 
 
 #############################################
-######  END IMPORT OF CACHING LIBRARY  ######
+#       END IMPORT OF CACHING LIBRARY       #
 #############################################
 
+
 cache = TTLCache(
-    100, # Up to 100 items
-    5 * 60 # 5 minute cache life
+    100,  # Up to 100 items
+    5 * 60  # 5 minute cache life
 )
 userCache = TTLCache(
-    2, # Up to 2 items
-    60 # 1 minute cache life
+    2,  # Up to 2 items
+    60  # 1 minute cache life
 )
+
 
 class UnknownUserException(Exception):
     pass
+
 
 def WAAuth(parser):
     parser.add_argument('apollo', help='Complete Apollo URL')
@@ -541,6 +546,12 @@ class UserObj(object):
             data[prop] = getattr(self, prop)
         return data
 
+    def orgPerms(self):
+        for orgPer in self.organismPermissions:
+            if len(orgPer['permissions']) > 2:
+                orgPer['permissions'] = json.loads(orgPer['permissions'])
+                yield orgPer
+
     def __str__(self):
         return '<User %s: %s %s <%s>>' % (self.userId, self.firstName,
                                           self.lastName, self.username)
@@ -678,26 +689,52 @@ class AnnotationsClient(Client):
         data = self._update_data(data)
         return self.request('getComments', data)
 
-    def addComments(self, feature_id, comment):
-        #TODO: This is probably not great and will delete comments, if I had to guess...
+    def addComments(self, feature_id, comments):
+        # TODO: This is probably not great and will delete comments, if I had to guess...
         data = {
             'features': [
                 {
                     'uniquename': feature_id,
-                    'comments': [comment]
+                    'comments': comments
                 }
             ],
         }
         data = self._update_data(data)
-        return self.request('getComments', data)
+        return self.request('addComments', data)
 
-    def addAttribute(self, features):
+    def addAttributes(self, feature_id, attributes):
+        nrps = []
+        for (key, values) in attributes.items():
+            for value in values:
+                nrps.append({
+                    'tag': key,
+                    'value': value
+                })
+
         data = {
-            'features': features,
+            'features': [
+                {
+                    'uniquename': feature_id,
+                    'non_reserved_properties': nrps
+                }
+            ]
         }
         data = self._update_data(data)
         return self.request('addAttribute', data)
 
+    def deleteAttribute(self, feature_id, key, value):
+        data = {
+            'features': [
+                {
+                    'uniquename': feature_id,
+                    'non_reserved_properties': [
+                        {'tag': key, 'value': value}
+                    ]
+                }
+            ]
+        }
+        data = self._update_data(data)
+        return self.request('addAttribute', data)
     def getFeatures(self):
         data = self._update_data({})
         return self.request('getFeatures', data)
@@ -1415,7 +1452,7 @@ class WebApolloSeqFeature(object):
 
 
 def _tnType(feature):
-    if feature.type in ('gene', 'mRNA', 'exon', 'CDS'):
+    if feature.type in ('gene', 'mRNA', 'exon', 'CDS', 'terminator', 'tRNA'):
         return feature.type
     else:
         return 'exon'
@@ -1558,8 +1595,8 @@ def _galaxy_list_orgs(wa, gx_user, *args, **kwargs):
     # Return org list
     return orgs
 
-## This is all for implementing the command line interface for testing.
 
+# This is all for implementing the command line interface for testing.
 class obj(object):
     pass
 
