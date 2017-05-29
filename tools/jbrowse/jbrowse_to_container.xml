@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<tool id="jbrowse_to_container" name="Add organisms to JBrowse container" version="@WRAPPER_VERSION@">
+    <description>will replace any existing organism</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="aggressive"><![CDATA[
+
+        if [ -z "@DATA_DIR@" ]; then
+            echo '@DATA_DIR@ variable must be set to use this tool';
+            exit 1;
+        fi;
+
+        rm -rf "@DATA_DIR@/"*
+
+        &&
+
+        #for $org in $organisms:
+            #if $org.advanced.unique_id:
+                #set dataset_name = $org.advanced.unique_id
+            #else:
+                #set dataset_name = $org.jbrowse.id
+            #end if
+
+            cp -R '${org.jbrowse.extra_files_path}/data/' "@DATA_DIR@/${dataset_name}"
+
+            &&
+
+            echo -e "[general]\ndataset_id  = ${dataset_name}" >> "@DATA_DIR@/${dataset_name}/tracks.conf"
+
+            &&
+        #end for
+
+        cp $trackList "@DATA_DIR@/datasets.conf"
+
+        &&
+
+        python $__tool_directory__/jbrowse_to_container.py @JBROWSE_BASE_URL@ > $output
+      ]]></command>
+    <configfiles>
+        <configfile name="trackList">
+            <![CDATA[
+#for $org in $organisms:
+#if $org.advanced.unique_id:
+#set dataset_name = $org.advanced.unique_id
+#else:
+#set dataset_name = $org.jbrowse.id
+#end if
+[datasets.$dataset_name]
+url  = ?data=data/${dataset_name}
+name = $org.name
+#end for
+            ]]>
+        </configfile>
+    </configfiles>
+    <inputs>
+        <repeat name="organisms" title="Organism">
+            <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
+            <param name="name" type="text" label="Display name" optional="False" />
+            <section name="advanced" title="Advanced" expanded="False">
+                <param name="unique_id" type="text" label="Unique ID" help="will be used in HTTP links (default=auto generated id). WARNING: If set, pay attention to have different ID for each dataset." optional="True">
+                    <validator type="regex" message="Value must be a not empty string composed by alphanumeric characters and underscores">^\w+$</validator>
+                </param>
+            </section>
+        </repeat>
+    </inputs>
+    <outputs>
+        <data format="html" name="output"/>
+    </outputs>
+    <help><![CDATA[
+**What it does**
+Adds an organism to a JBrowse instance. The tool takes the output of a
+JBrowse run as that contains all of the necessary information for which
+tracks are appropriate for a given analysis.
+
+@ATTRIBUTION@
+    ]]></help>
+    <expand macro="citations"/>
+</tool>
