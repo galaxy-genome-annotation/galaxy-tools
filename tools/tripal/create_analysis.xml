@@ -1,5 +1,5 @@
-<tool id="create_analysis" name="Create Analysis" version="@WRAPPER_VERSION@.0">
-    <description></description>
+<tool id="create_analysis" name="Create an analysis" version="@WRAPPER_VERSION@.0">
+    <description>in Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -15,8 +15,6 @@
     ]]></command>
     <inputs>
         <expand macro="analysis" />
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="New Tripal analysis" />
@@ -35,11 +33,7 @@
                 <param name="date" value="2016-12-12" />
             </section>
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

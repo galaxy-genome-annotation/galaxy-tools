@@ -41,8 +41,6 @@
                optional="true"
                label="Feature names to synchronize"
                help="Space-delimited list of names of records to be synced (e.g. 'gene0001 gene0002')" />
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Synchronize features into Tripal" />
@@ -53,11 +51,7 @@
             <param name="types" value="gene mRNA" />
             <param name="types" value="gene0001 gene0002" />
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

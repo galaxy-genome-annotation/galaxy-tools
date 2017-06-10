@@ -26,6 +26,7 @@
         **Useful Links**
 
         `Tripal project website <http://tripal.info/>`_
+
         `Tripal REST API module <http://github.com/abretaud/tripal_rest_api>`_: a Tripal module required to use these galaxy tools
     ]]></token>
 
@@ -48,16 +49,16 @@
         </section>
     </xml>
 
-    <token name="@AUTH@"><![CDATA[
-        '$auth.url' '$auth.user' '$auth.password'
-    ]]></token>
+    <token name="@AUTH@">
+        "\$GALAXY_TRIPAL_URL"
+        "\$GALAXY_TRIPAL_USER"
+        "\$GALAXY_TRIPAL_PASSWORD"
+    </token>
 
-    <xml name="test_auth">
-        <section name="auth">
-            <param name="url" value="http://tripal-example.org" />
-            <param name="user" value="admin" />
-            <param name="password" value="admin" />
-        </section>
+    <xml name="test_result">
+        <assert_stderr>
+            <has_text text="No schema supplied." />
+        </assert_stderr>
     </xml>
 
     <xml name="analysis">

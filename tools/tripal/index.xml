@@ -41,8 +41,6 @@
                        help="Space-separated list of column names to index (leave empty to index all the columns)" />
             </when>
         </conditional>
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Index Tripal data" />
@@ -53,11 +51,7 @@
                 <param name="mode" value="all" />
             </conditional>
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
         <test expect_failure="true" expect_exit_code="1">
             <conditional name="table">
@@ -66,11 +60,7 @@
                 <param name="fields" value="genus species description" />
             </conditional>
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

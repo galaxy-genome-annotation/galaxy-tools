@@ -9,7 +9,7 @@ long_description: |
   https://github.com/abretaud/python-tripal
 homepage_url: https://github.com/abretaud/python-tripal
 owner: iuc
-remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/tools/tripal
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/tripal
 type: unrestricted
 auto_tool_repositories:
   name_template: "{{ tool_id }}"

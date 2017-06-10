@@ -1,5 +1,5 @@
 <tool id="load_go" name="Load Blast2GO results" version="@WRAPPER_VERSION@.0">
-    <description></description>
+    <description>into Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -55,8 +55,6 @@
                help="It must be a valid Sequence Ontology term. e.g. 'gene', 'mRNA', 'contig'" />
 
        <expand macro="analysis" />
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Load Blast2GO results into Tripal" />
@@ -78,11 +76,7 @@
                 <param name="date" value="2016-12-12" />
             </section>
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

@@ -1,5 +1,5 @@
 <tool id="load_fasta" name="Load a Fasta file" version="@WRAPPER_VERSION@.0">
-    <description></description>
+    <description>into Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -139,8 +139,6 @@
                    label="Regular expression to extract the accession from external DB"
                    help="this regex will be applied on the fasta definition line to generate the accession from external DB" />
         </section>
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Load Fasta into Tripal" />
@@ -160,11 +158,7 @@
                 <param name="re_uniquename" value="([a-z]{4}[0-9]+_suffix)" />
             </section>
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

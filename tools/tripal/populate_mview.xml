@@ -1,5 +1,5 @@
-<tool id="populate_mview" name="Populate a materialized view" version="@WRAPPER_VERSION@.0">
-    <description></description>
+<tool id="populate_mview" name="Populate materialized views" version="@WRAPPER_VERSION@.0">
+    <description>in Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -20,29 +20,18 @@
                optional="true"
                label="View name"
                help="The materialized view name to populate (leave empty to populate all views)" />
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Populate a Tripal materialized view" />
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
         <test expect_failure="true" expect_exit_code="1">
             <param name="mview" value="Test" />
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

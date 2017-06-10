@@ -1,5 +1,5 @@
 <tool id="load_gff3" name="Load a GFF3 file" version="@WRAPPER_VERSION@.0">
-    <description></description>
+    <description>into Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -141,8 +141,6 @@
                    label="Create target features"
                    help="If not found, create features referenced in the target attribute." />
         </section>
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Load GFF3 into Tripal" />
@@ -158,11 +156,7 @@
                 <param name="re_protein" value="([a-z]{4}[0-9]+)_prot" />
             </conditional>
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[

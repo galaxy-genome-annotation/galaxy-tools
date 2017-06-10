@@ -19,8 +19,6 @@
                type="text"
                label="Organism name"
                help="abbreviation or common name as created with the 'Create Organism' tool" />
-
-        <expand macro="tripal_auth" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Synchronize Organism into Tripal" />
@@ -29,11 +27,7 @@
         <test expect_failure="true" expect_exit_code="1">
             <param name="organism" value="Testus testus" />
 
-            <expand macro="test_auth" />
-
-            <assert_stderr>
-                <has_text text="Name or service not known" />
-            </assert_stderr>
+            <expand macro="test_result" />
         </test>
     </tests>
     <help><![CDATA[
