@@ -62,7 +62,7 @@
     </xml>
 
     <xml name="analysis">
-        <section name="analysis" title="Analysis">
+        <section name="analysis" title="Analysis" expanded="True">
             <param name="name"
                    argument="--analysis-name"
                    type="text"

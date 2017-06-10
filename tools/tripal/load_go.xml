@@ -24,6 +24,8 @@
             > $output_log
     ]]></command>
     <inputs>
+        <expand macro="analysis" />
+
         <param name="results"
                type="text"
                label="Path to Blast2Go results (GAF file)"
@@ -53,8 +55,6 @@
                falsevalue=""
                label="The feature type of the query"
                help="It must be a valid Sequence Ontology term. e.g. 'gene', 'mRNA', 'contig'" />
-
-       <expand macro="analysis" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Load Blast2GO results into Tripal" />
