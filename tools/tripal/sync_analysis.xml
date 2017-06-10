@@ -3,6 +3,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <code file="tripal.py"/>
     <expand macro="requirements"/>
     <command><![CDATA[
         tripal sync_analysis
@@ -14,11 +15,10 @@
             > $output_log
     ]]></command>
     <inputs>
-        <param name="analysis"
-               argument="--analysis"
-               type="text"
-               label="Analysis name"
-               help="as named in the 'Create Analysis' tool" />
+        <param argument="--analysis"
+               type="select"
+               dynamic_options="list_analyses()"
+               label="Analysis" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Synchronize Analysis into Tripal" />

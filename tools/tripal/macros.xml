@@ -2,12 +2,12 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="1.5">python-tripal</requirement>
+            <requirement type="package" version="1.7">python-tripal</requirement>
             <yield/>
         </requirements>
     </xml>
 
-    <token name="@WRAPPER_VERSION@">1.5</token>
+    <token name="@WRAPPER_VERSION@">1.7</token>
 
     <xml name="citation">
         <citations>

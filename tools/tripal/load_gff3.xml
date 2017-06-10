@@ -3,6 +3,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <code file="tripal.py"/>
     <expand macro="requirements"/>
     <command><![CDATA[
         tripal load_gff3
@@ -50,17 +51,15 @@
                label="Path to GFF3 file"
                help="the path must be accessibe from the Tripal server" />
 
-        <param name="organism"
-               argument="--organism"
-               type="text"
-               label="Organism name"
-               help="abbreviation or common name as created with the 'Create Organism' tool" />
+        <param argument="--organism"
+               type="select"
+               dynamic_options="list_organisms()"
+               label="Organism" />
 
-        <param name="analysis"
-               argument="--analysis"
-               type="text"
-               label="Analysis name"
-               help="as named in the 'Create Analysis' tool" />
+        <param argument="--analysis"
+               type="select"
+               dynamic_options="list_analyses()"
+               label="Analysis" />
 
         <param name="import_mode"
                argument="--import-mode"

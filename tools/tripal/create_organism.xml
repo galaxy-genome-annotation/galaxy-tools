@@ -67,10 +67,14 @@
             <when value="true">
                 <param name="rank"
                        argument="--infraspecific-rank"
-                       type="integer"
-                       label="Infraspecific Rank"
-                       value=""
-                       help="Numeric ID from the Chado database" /> <!-- Will be the textual name in future python-tripal release -->
+                       type="select"
+                       label="Infraspecific Rank">
+                    <option value="subspecies">subspecies</option>
+                    <option value="varietas">varietas</option>
+                    <option value="subvariety">subvariety</option>
+                    <option value="forma">forma</option>
+                    <option value="subforma">subforma</option>
+                </param>
                 <param name="name"
                        argument="--infraspecific-name"
                        type="text"

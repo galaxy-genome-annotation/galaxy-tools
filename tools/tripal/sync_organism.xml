@@ -3,6 +3,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <code file="tripal.py"/>
     <expand macro="requirements"/>
     <command><![CDATA[
         tripal sync_organism
@@ -14,11 +15,10 @@
             > $output_log
     ]]></command>
     <inputs>
-        <param name="organism"
-               argument="--organism"
-               type="text"
-               label="Organism name"
-               help="abbreviation or common name as created with the 'Create Organism' tool" />
+        <param argument="--organism"
+               type="select"
+               dynamic_options="list_organisms()"
+               label="Organism" />
     </inputs>
     <outputs>
         <data format="txt" name="output_log" label="Synchronize Organism into Tripal" />
