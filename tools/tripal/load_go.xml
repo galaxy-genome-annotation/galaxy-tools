@@ -5,6 +5,14 @@
     </macros>
     <expand macro="requirements"/>
     <command><![CDATA[
+        tmp_dir=`mktemp -d -p '@DATA_DIR@'`
+
+        &&
+
+        cp '${results}' "\${tmp_dir}/blast2go.gaf"
+
+        &&
+
         tripal load_go
 
             @ANALYSIS@
@@ -19,7 +27,7 @@
 
             @AUTH@
 
-            '${results}'
+            "\${tmp_dir}/blast2go.gaf"
 
             > $output_log
     ]]></command>
@@ -27,15 +35,9 @@
         <expand macro="analysis" />
 
         <param name="results"
-               type="text"
-               label="Path to Blast2Go results (GAF file)"
-               help="the path (single XML file, or directory containing multiple XML files) must be accessibe from the Tripal server" />
-
-        <param name="extension"
-               type="text"
-               value="gaf"
-               label="Result file extension"
-               help="if using a directory containing multiple result files" />
+               type="data"
+               format="tsv"
+               label="Blast2Go results (GAF file)" />
 
         <param name="query_type"
                type="text"
@@ -61,7 +63,7 @@
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-            <param name="results" value="/some/where/over/the/rainbow/" />
+            <param name="results" value="blast2go.gaf" />
             <param name="query_type" value="polypeptide" />
             <param name="query_uniquename" value="true" />
             <section name="analysis">

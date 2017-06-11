@@ -1,0 +1,12 @@
+<interpro_matches>
+
+   <protein id="orange1.1g022799m_6_ORF4" length="79" crc64="D3F0B609CB0B9D28" >
+	<interpro id="noIPR" name="unintegrated" type="unintegrated">
+	  <match id="seg" name="seg" dbname="SEG">
+	    <location start="11" end="17" score="NA" status="?" evidence="Seg" />
+	    <location start="54" end="78" score="NA" status="?" evidence="Seg" />
+	  </match>
+	</interpro>
+   </protein>
+
+</interpro_matches>

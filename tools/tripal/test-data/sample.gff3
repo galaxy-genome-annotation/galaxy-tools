@@ -1,0 +1,21 @@
+##gff-version 3
+##sequence-region scaffold00001 4058460 4062210
+scaffold00001	phytozome6	supercontig	1	5927163	.	.	.	Name=scaffold00001;ID=scaffold00001
+scaffold00001	phytozome6	gene	4058460	4062210	.	+	.	ID=orange1.1g015632m.g;Name=orange1.1g015632m.g
+scaffold00001	phytozome6	mRNA	4058460	4062210	.	+	.	ID=PAC:18136217;Name=orange1.1g015632m;PACid=18136217;Parent=orange1.1g015632m.g
+scaffold00001	phytozome6	five_prime_UTR	4058460	4058898	.	+	.	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	five_prime_UTR	4059019	4059074	.	+	.	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	five_prime_UTR	4059172	4059234	.	+	.	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4059235	4059330	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4059422	4059514	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4059600	4059659	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4059790	4060062	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4060285	4060359	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4060480	4060536	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4060625	4060765	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4060857	4060907	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4061250	4061345	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4061417	4061500	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4061617	4061719	.	+	0	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	CDS	4061823	4061905	.	+	2	Parent=PAC:18136217;PACid=18136217
+scaffold00001	phytozome6	three_prime_UTR	4061906	4062210	.	+	.	Parent=PAC:18136217;PACid=18136217

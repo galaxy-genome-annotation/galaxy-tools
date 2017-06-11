@@ -1,11 +1,19 @@
-<tool id="load_gff3" name="Load a GFF3 file" version="@WRAPPER_VERSION@.0">
-    <description>into Tripal</description>
+<tool id="load_gff3" name="Load an annotation file" version="@WRAPPER_VERSION@.0">
+    <description>into Tripal (GFF3 format)</description>
     <macros>
         <import>macros.xml</import>
     </macros>
     <code file="tripal.py"/>
     <expand macro="requirements"/>
     <command><![CDATA[
+        tmp_dir=`mktemp -d -p '@DATA_DIR@'`
+
+        &&
+
+        cp '${gff3}' "\${tmp_dir}/annotation.gff3"
+
+        &&
+
         tripal load_gff3
 
             --organism '${organism}'
@@ -41,15 +49,15 @@
 
             @AUTH@
 
-            '${gff3}'
+            "\${tmp_dir}/annotation.gff3"
 
             > $output_log
     ]]></command>
     <inputs>
         <param name="gff3"
-               type="text"
-               label="Path to GFF3 file"
-               help="the path must be accessibe from the Tripal server" />
+               type="data"
+               format="gff3"
+               label="Annotation file" />
 
         <param argument="--organism"
                type="select"
@@ -146,7 +154,7 @@
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-            <param name="gff3" value="/some/path/to/annot.gff" />
+            <param name="gff3" value="sample.gff3" />
             <param name="organism" value="Testus testus" />
             <param name="analysis" value="Annotation xx" />
             <conditional name="naming">

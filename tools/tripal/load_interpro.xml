@@ -5,6 +5,14 @@
     </macros>
     <expand macro="requirements"/>
     <command><![CDATA[
+        tmp_dir=`mktemp -d -p '@DATA_DIR@'`
+
+        &&
+
+        cp '${results}' "\${tmp_dir}/interpro.xml"
+
+        &&
+
         tripal load_interpro
 
             @ANALYSIS@
@@ -23,7 +31,7 @@
 
             @AUTH@
 
-            '${results}'
+            "\${tmp_dir}/interpro.xml"
 
             > $output_log
     ]]></command>
@@ -31,9 +39,9 @@
         <expand macro="analysis" />
 
         <param name="results"
-               type="text"
-               label="Path to InterProScan results"
-               help="the path (single XML file, or directory containing multiple XML files) must be accessibe from the Tripal server" />
+               type="data"
+               format="xml"
+               label="InterProScan results" />
 
         <param name="parse_go"
                type="boolean"
@@ -70,7 +78,7 @@
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-            <param name="results" value="/some/where/over/the/rainbow/" />
+            <param name="results" value="interpro.xml" />
             <param name="parse_go" value="true" />
             <param name="params" value="--some --param" />
             <param name="query_type" value="mRNA" />

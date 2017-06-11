@@ -49,6 +49,8 @@
         </section>
     </xml>
 
+    <token name="@DATA_DIR@">\$GALAXY_TRIPAL_SHARED_DIR</token>
+
     <token name="@AUTH@">
         "\$GALAXY_TRIPAL_URL"
         "\$GALAXY_TRIPAL_USER"

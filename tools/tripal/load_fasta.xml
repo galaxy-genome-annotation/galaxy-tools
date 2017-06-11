@@ -6,6 +6,14 @@
     <code file="tripal.py"/>
     <expand macro="requirements"/>
     <command><![CDATA[
+        tmp_dir=`mktemp -d -p '@DATA_DIR@'`
+
+        &&
+
+        cp '${fasta}' "\${tmp_dir}/content.fasta"
+
+        &&
+
         tripal load_fasta
 
             --organism '${organism}'
@@ -42,15 +50,15 @@
 
             @AUTH@
 
-            '${fasta}'
+            "\${tmp_dir}/content.fasta"
 
             > $output_log
     ]]></command>
     <inputs>
         <param name="fasta"
-               type="text"
-               label="Path to Fasta file"
-               help="the path must be accessibe from the Tripal server" />
+               type="data"
+               format="fasta"
+               label="Fasta file to load" />
 
         <param argument="--organism"
                type="select"
@@ -144,7 +152,7 @@
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-            <param name="fasta" value="/some/path/to/seq.fasta" />
+            <param name="fasta" value="citrus_genome.fasta" />
             <param name="organism" value="Testus testus" />
             <param name="analysis" value="Annotation xx" />
             <param name="sequence_type" value="mRNA" />

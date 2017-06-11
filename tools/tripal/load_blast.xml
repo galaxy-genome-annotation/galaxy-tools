@@ -5,13 +5,19 @@
     </macros>
     <expand macro="requirements"/>
     <command><![CDATA[
+        tmp_dir=`mktemp -d -p '@DATA_DIR@'`
+
+        &&
+
+        cp '${results}' "\${tmp_dir}/blast_input.xml"
+
+        &&
+
         tripal load_blast
 
             @ANALYSIS@
 
-            --blast-ext '${extension}'
-
-            $is_concat
+            --is-concat
 
             --blastdb '${blastdb}'
 
@@ -29,7 +35,7 @@
 
             @AUTH@
 
-            '${results}'
+            "\${tmp_dir}/blast_input.xml"
 
             > $output_log
     ]]></command>
@@ -37,24 +43,11 @@
         <expand macro="analysis" />
 
         <param name="results"
-               type="text"
-               label="Path to Blast results"
-               help="the path (single XML file, or directory containing multiple XML files) must be accessibe from the Tripal server" />
+               type="data"
+               format="xml"
+               label="Blast results" />
 
-        <param name="extension"
-               type="text"
-               value="xml"
-               label="Result file extension"
-               help="if using a directory containing multiple result files" />
-
-        <param name="is_concat"
-               type="boolean"
-               checked="false"
-               truevalue="--is-concat"
-               falsevalue=""
-               label="The feature type of the query"
-               help="It must be a valid Sequence Ontology term. e.g. 'gene', 'mRNA', 'contig'" />
-
+        <!-- TODO make it a select box -->
         <param name="blastdb"
                type="text"
                label="Name of the blast databank used"
@@ -93,8 +86,7 @@
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-            <param name="results" value="/some/where/over/the/rainbow/" />
-            <param name="is_concat" value="true" />
+            <param name="results" value="blast.xml" />
             <param name="blastdb" value="genbank:protein" />
             <param name="params" value="-e 0.001" />
             <param name="query_type" value="mRNA" />
