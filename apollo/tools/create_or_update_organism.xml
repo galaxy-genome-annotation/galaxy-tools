@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<tool id="edu.tamu.cpt2.webapollo.create_or_update" name="Create or Update Organism" version="3.2">
+  <description>will create the organism if it doesn't exist, and update otherwise</description>
+  <macros>
+    <import>macros.xml</import>
+  </macros>
+  <code file="webapollo.py"/>
+  <expand macro="requirements"/>
+  <command detect_errors="aggressive"><![CDATA[
+cp -R ${jbrowse.extra_files_path}/data/ @DATA_DIR@/${jbrowse.id};
+
+python $__tool_directory__/create_or_update_organism.py
+
+@ADMIN_AUTH@
+
+--genus "$genus"
+--species "$species"
+#if str($group) != "None":
+--group '${group}'
+#end if
+$public
+
+@ORG_OR_GUESS@
+
+"@DATA_DIR@/${jbrowse.id}"
+
+$__user_email__
+
+> $output]]></command>
+  <inputs>
+    <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
+    <expand macro="org_or_guess" />
+    <param name="genus" type="text" label="Genus" optional="False" />
+    <param name="species" type="text" label="Species" optional="True" />
+    <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
+    <param name="group" type="select" dynamic_options="galaxy_list_groups(__trans__)" label="Grant access to a user group" optional="True" />
+  </inputs>
+  <outputs>
+    <data format="json" name="output"/>
+  </outputs>
+  <help><![CDATA[
+**What it does**
+
+Adds an organism to the Apollo database. The tool takes the output of a
+JBrowse run as that contains all of the necessary information for which
+tracks are appropriate for a given analysis.
+
+**WARNINGS**
+
+- Do not use names which conflict with other users.
+- If you provide an Apollo JSON file, only the first organism block will
+  be used in Common Name determination, as it is improbable you wish to
+  apply a single JBrowse instance to multiple organisms.
+
+@REFERENCES@
+      ]]></help>
+</tool>
