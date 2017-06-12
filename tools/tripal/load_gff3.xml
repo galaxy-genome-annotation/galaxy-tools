@@ -3,10 +3,10 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <code file="tripal.py"/>
     <expand macro="requirements"/>
+    <code file="tripal.py"/>
     <command><![CDATA[
-        tmp_dir=`mktemp -d -p '@DATA_DIR@'`
+        tmp_dir=`mktemp -d -p "@DATA_DIR@"`
 
         &&
 
