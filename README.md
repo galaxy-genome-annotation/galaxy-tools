@@ -11,6 +11,10 @@ apollo    | Tools for talking to an Apollo server, e.g. adding a new organism, f
 jbrowse   | Galaxy-JBrowse extras, things outside the scope of the normal JBrowse tools.
 tripal    | Tools for administering a Tripal instance.
 
+These tools will only talk to a single Tripal/Apollo currently, pending
+implementation of tool+user preferences in Galaxy. Most of them require
+additional setup in the form of environment variables.
+
 ## LICENSE
 
 MIT
