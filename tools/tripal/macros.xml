@@ -2,7 +2,7 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="1.7">python-tripal</requirement>
+            <requirement type="package" version="1.8">python-tripal</requirement>
             <yield/>
         </requirements>
     </xml>
