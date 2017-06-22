@@ -26,6 +26,5 @@ if __name__ == '__main__':
             </body>
         </html>
     """
-    # HTML_TPL = base64.b64decode(HTML_TPL.replace('\n', ''))
 
     print HTML_TPL.format(base_url=args.external_apollo_url, chrom="", orgId=data[0]['id'])
