@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 import time
@@ -30,9 +31,9 @@ def are_dir_trees_equal(dir1, dir2):
     dirs_cmp = filecmp.dircmp(dir1, dir2)
     if len(dirs_cmp.left_only) > 0 or len(dirs_cmp.right_only) > 0 or \
             len(dirs_cmp.funny_files) > 0:
-        print('LEFT', dirs_cmp.left_only)
-        print('RIGHT', dirs_cmp.right_only)
-        print('FUNNY', dirs_cmp.funny_files)
+        print(('LEFT', dirs_cmp.left_only))
+        print(('RIGHT', dirs_cmp.right_only))
+        print(('FUNNY', dirs_cmp.funny_files))
         return False
     (_, mismatch, errors) = filecmp.cmpfiles(
         dir1, dir2, dirs_cmp.common_files, shallow=False)

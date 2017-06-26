@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from __future__ import print_function
+from builtins import str
+from builtins import range
 import random
 import argparse
 import time
@@ -8,6 +11,7 @@ from webapollo import WAAuth, WebApolloInstance
 def pwgen(length):
     chars = list('qwrtpsdfghjklzxcvbnm')
     return ''.join(random.choice(chars) for _ in range(length))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample script to add an account via web services')
@@ -30,9 +34,9 @@ if __name__ == '__main__':
         # Update name, regen password if the user ran it again
         userObj = user[0]
         returnData = wa.users.updateUser(userObj, args.email, args.first, args.last, password)
-        print 'Updated User\nUsername: %s\nPassword: %s' % (args.email, password)
+        print('Updated User\nUsername: %s\nPassword: %s' % (args.email, password))
     else:
         returnData = wa.users.createUser(args.email, args.first, args.last, password, role='user')
-        print 'Created User\nUsername: %s\nPassword: %s' % (args.email, password)
+        print('Created User\nUsername: %s\nPassword: %s' % (args.email, password))
 
-    print "Return data: " + str(returnData)
+    print("Return data: " + str(returnData))

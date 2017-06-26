@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import json
 import base64
 import argparse
@@ -27,4 +28,4 @@ if __name__ == '__main__':
         </html>
     """
 
-    print HTML_TPL.format(base_url=args.external_apollo_url, chrom="", orgId=data[0]['id'])
+    print(HTML_TPL.format(base_url=args.external_apollo_url, chrom="", orgId=data[0]['id']))

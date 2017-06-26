@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import json
 import base64
 import argparse
@@ -19,4 +20,4 @@ if __name__ == '__main__':
     """
     HTML_TPL = base64.b64decode(HTML_TPL.replace('\n', ''))
 
-print HTML_TPL.format(base_url=args.external_jbrowse_url)
+print(HTML_TPL.format(base_url=args.external_jbrowse_url))
