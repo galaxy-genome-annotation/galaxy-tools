@@ -4,6 +4,7 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <code file="tripal.py"/>
     <command><![CDATA[
         tmp_dir=`mktemp -d -p "@DATA_DIR@"`
 
@@ -47,11 +48,10 @@
                format="xml"
                label="Blast results" />
 
-        <!-- TODO make it a select box -->
-        <param name="blastdb"
-               type="text"
-               label="Name of the blast databank used"
-               help="must be in the Chado db table" />
+        <param argument="--blastdb"
+               type="select"
+               dynamic_options="list_blastdbs()"
+               label="Blast databank used" />
 
         <param name="params"
                type="text"

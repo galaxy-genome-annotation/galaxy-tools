@@ -459,8 +459,45 @@ def list_analyses(*args, **kwargs):
 
 def _list_analyses(ti, *args, **kwargs):
     ans_data = []
-    print "analyses: "+str(ti.analysis.getAnalyses())
     for an in ti.analysis.getAnalyses():
-        print "analysis: "+str(an)
         ans_data.append((an['name'], an['name'], False))
     return ans_data
+
+def list_blastdbs(*args, **kwargs):
+
+    ti = tripal.TripalInstance(
+        os.environ['GALAXY_TRIPAL_URL'],
+        os.environ['GALAXY_TRIPAL_USER'],
+        os.environ['GALAXY_TRIPAL_PASSWORD']
+    )
+
+    # Key for cached data
+    cacheKey = 'blastdbs'
+    # We don't want to trust "if key in cache" because between asking and fetch
+    # it might through key error.
+    if cacheKey not in cache:
+        # However if it ISN'T there, we know we're safe to fetch + put in
+        # there.
+        data = _list_blastdbs(ti, *args, **kwargs)
+        cache[cacheKey] = data
+        return data
+    try:
+        # The cache key may or may not be in the cache at this point, it
+        # /likely/ is. However we take no chances that it wasn't evicted between
+        # when we checked above and now, so we reference the object from the
+        # cache in preparation to return.
+        data = cache[cacheKey]
+        return data
+    except KeyError:
+        # If access fails due to eviction, we will fail over and can ensure that
+        # data is inserted.
+        data = _list_blastdbs(ti,*args, **kwargs)
+        cache[cacheKey] = data
+        return data
+
+
+def _list_blastdbs(ti, *args, **kwargs):
+    dbs_data = []
+    for db in ti.db.getDbs():
+        dbs_data.append((db['name'], db['name'], False))
+    return dbs_data
