@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 from __future__ import print_function
+import argparse
+import json
+import sys
+from Bio import SeqIO
+from BCBio import GFF
+from webapollo import WAAuth, WebApolloInstance, CnOrGuess, GuessCn
 from future import standard_library
 standard_library.install_aliases()
-import sys
 try:
     import StringIO as io
 except ImportError:
     import io
-
-import json
-import argparse
-from Bio import SeqIO
-from BCBio import GFF
-from webapollo import WAAuth, WebApolloInstance, CnOrGuess, GuessCn
 
 
 def export(org_cn, seqs):

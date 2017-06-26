@@ -7,7 +7,7 @@ import time
 
 
 #############################################
-###### BEGIN IMPORT OF CACHING LIBRARY ######
+#      BEGIN IMPORT OF CACHING LIBRARY      #
 #############################################
 # This code is licensed under the MIT       #
 # License and is a copy of code publicly    #
@@ -372,7 +372,7 @@ class TTLCache(Cache):
 
 
 #############################################
-######  END IMPORT OF CACHING LIBRARY  ######
+#       END IMPORT OF CACHING LIBRARY       #
 #############################################
 
 cache = TTLCache(

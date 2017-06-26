@@ -1,23 +1,23 @@
 from __future__ import print_function
+import argparse
+import collections
+import json
+import logging
+import os
+import requests
+import time
 from future import standard_library
-standard_library.install_aliases()
 from builtins import next
 from builtins import str
 from builtins import object
-import requests
-import json
-import os
-import collections
+from abc import abstractmethod
+from BCBio import GFF
+from Bio import SeqIO
+standard_library.install_aliases()
 try:
     import StringIO as io
 except BaseException:
     import io
-import logging
-import time
-import argparse
-from abc import abstractmethod
-from BCBio import GFF
-from Bio import SeqIO
 logging.getLogger("requests").setLevel(logging.CRITICAL)
 log = logging.getLogger()
 

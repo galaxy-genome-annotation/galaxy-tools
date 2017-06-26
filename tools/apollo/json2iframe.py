@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import json
-import base64
 import argparse
+import json
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
