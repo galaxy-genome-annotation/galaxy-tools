@@ -10,7 +10,7 @@ import os
 import collections
 try:
     import StringIO as io
-except:
+except BaseException:
     import io
 import logging
 import time

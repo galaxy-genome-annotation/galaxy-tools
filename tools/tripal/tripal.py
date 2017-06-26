@@ -55,6 +55,7 @@ class DefaultMapping(collections.MutableMapping):
             self[key] = value = default
         return value
 
+
 DefaultMapping.register(dict)
 
 
@@ -375,9 +376,10 @@ class TTLCache(Cache):
 #############################################
 
 cache = TTLCache(
-    100, # Up to 100 items
-    5 * 60 # 5 minute cache life
+    100,  # Up to 100 items
+    5 * 60  # 5 minute cache life
 )
+
 
 def list_organisms(*args, **kwargs):
 
@@ -407,7 +409,7 @@ def list_organisms(*args, **kwargs):
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
-        data = _list_organisms(ti,*args, **kwargs)
+        data = _list_organisms(ti, *args, **kwargs)
         cache[cacheKey] = data
         return data
 
@@ -421,7 +423,6 @@ def _list_organisms(ti, *args, **kwargs):
             clean_name += ' (%s)' % (org['infraspecific_name'])
         orgs_data.append((clean_name, org['abbreviation'], False))
     return orgs_data
-
 
 
 def list_analyses(*args, **kwargs):
@@ -452,7 +453,7 @@ def list_analyses(*args, **kwargs):
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
-        data = _list_analyses(ti,*args, **kwargs)
+        data = _list_analyses(ti, *args, **kwargs)
         cache[cacheKey] = data
         return data
 
@@ -462,6 +463,7 @@ def _list_analyses(ti, *args, **kwargs):
     for an in ti.analysis.getAnalyses():
         ans_data.append((an['name'], an['name'], False))
     return ans_data
+
 
 def list_blastdbs(*args, **kwargs):
 
@@ -491,7 +493,7 @@ def list_blastdbs(*args, **kwargs):
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
-        data = _list_blastdbs(ti,*args, **kwargs)
+        data = _list_blastdbs(ti, *args, **kwargs)
         cache[cacheKey] = data
         return data
 

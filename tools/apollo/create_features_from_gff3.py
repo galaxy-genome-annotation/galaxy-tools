@@ -69,9 +69,9 @@ if __name__ == '__main__':
                     )
                 retry(func0)
 
-
                 if args.source:
                     gene_id = newfeature['features'][0]['parent_id']
+
                     def setSource():
                         wa.annotations.addAttributes(gene_id, {'DatasetSource': [args.source]})
                     retry(setSource)
@@ -98,6 +98,7 @@ if __name__ == '__main__':
 
                 if args.source:
                     gene_id = newfeature['features'][0]['parent_id']
+
                     def setSource():
                         wa.annotations.addAttributes(gene_id, {'DatasetSource': [args.source]})
                     retry(setSource)
@@ -144,6 +145,7 @@ if __name__ == '__main__':
 
                     if args.source:
                         gene_id = newfeature['features'][0]['parent_id']
+
                         def setSource():
                             wa.annotations.addAttributes(gene_id, {'DatasetSource': [args.source]})
                         retry(setSource)

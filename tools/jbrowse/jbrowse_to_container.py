@@ -10,7 +10,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-
     # This is base64 encoded to get past the toolshed's filters.
     HTML_TPL = """
     PGh0bWw+PGhlYWQ+PHRpdGxlPkVtYmVkZGVkIEpCcm93c2UgQWNjZXNzPC90aXRsZT48c3R5bGUg
