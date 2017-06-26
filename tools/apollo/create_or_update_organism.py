@@ -42,8 +42,6 @@ if __name__ == '__main__':
     if org:
         has_perms = False
         old_directory = org.directory
-
-
         for user_owned_organism in gx_user.organismPermissions:
             if 'WRITE' in user_owned_organism['permissions']:
                 has_perms = True
