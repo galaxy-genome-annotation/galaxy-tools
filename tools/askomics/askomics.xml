@@ -1,0 +1,130 @@
+<tool id="askomics" name="AskOmics" version="@WRAPPER_VERSION@">
+    <description>Data integration</description>
+
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+
+    <expand macro='requirements' />
+
+    <stdio>
+        <exit_code range="1:" />
+    </stdio>
+
+    <command><![CDATA[
+        askocli integrate
+
+        #if @URL@
+            -a @URL@
+        #else
+            -a @ENV_URL@
+        #end if
+
+        --file-type '$input_format.format'
+
+        #if $input_format.format == "csv"
+
+            #if $input_format.opt.headers
+                --headers $input_format.opt.headers
+            #end if
+
+            #if $input_format.opt.col_type
+                -c $input_format.opt.col_type
+            #end if
+
+            #if $input_format.opt.key_col
+                --key-columns $input_format.opt.key_col
+            #end if
+
+            #if $input_format.opt.dis_col
+                --disabled-columns $input_format.opt.dis_col
+            #end if
+
+        #end if
+
+        #if $input_format.format == "gff"
+            -e $input_format.ent
+            -t '$input_format.tax'
+        #end if
+
+        #if $input_format.format == "bed"
+            --entity-name $input_format.ent_name
+            -t '$input_format.tax'
+        #end if
+
+        #if $advanced.uri
+            --uri $advanced.uri
+        #end if
+
+        $advanced.public
+
+        -k @APIKEY@
+
+        '$input'
+        > '$output'
+    ]]></command>
+
+    <inputs>
+        <expand macro='askomics_loc' />
+        <expand macro='askomics_auth' />
+
+       <conditional name="input_format">
+           <param type="select" name="format" label="Input format">
+               <option value="csv">CSV/TSV</option>
+               <option value="gff">GFF</option>
+               <option value="ttl">Turtle</option>
+               <option value="bed">BED</option>
+            </param>
+           <when value="csv">
+               <param format="tabular" name="input" type="data" label="Dataset to integrate" />
+               <section name='opt' title='Optional fields' expanded='false'>
+                   <param name="headers" type="text" value="" optional="true" label="Headers (separated with spaces)" argument="--headers" />
+                   <param name="col_type" type="text" value="" optional="true" label="Columns types (separated with spaces)" argument="-c" />
+                   <param name="key_col" type="text" value="" optional="true" label="Key columns (separated with spaces)" argument="--key-columns" />
+                   <param name="dis_col" type="text" value="" optional="true" label="Disabled columns (separated with spaces)" argument="--disabled-columns" />
+                </section>
+            </when>
+            <when value="gff">
+                <param format="gff3" name="input" type="data" label="Dataset to integrate" />
+                <param name="ent" type="text" value="transcript gene" label="Entities (separated with space)" argument="-e" />
+                <param name="tax" type="text" value="" label="Taxon" argument="-t" />
+            </when>
+            <when value="bed">
+                <param format="bed" name="input" type="data" label="Dataset to integrate" />
+                <param name="ent_name" type="text" value="" label="Entity name" argument="--entity-name" />
+                <param name="tax" type="text" value="" label="Taxon" argument="-t" />
+            </when>
+            <when value="ttl">
+                <param format="ttl" name="input" type="data" label="Dataset to integrate" />
+            </when>
+        </conditional>
+
+        <!-- Advanced fonctionalities -->
+        <section name="advanced" title="Advanced features" expanded="false">
+            <param name="uri" type="text" value="" label="Custom URI" argument="--uri" />
+            <param name="public" type="boolean" checked="false" truevalue="--public" falsevalue="" label="Integrate as a public dataset" argument="--public" />
+        </section>
+
+    </inputs>
+
+    <outputs>
+        <data format="txt" name="output" label="Integration of ${input_format.input.name}" />
+    </outputs>
+
+    <tests>
+        <test expect_failure='true' expect_exit_code='1'>
+            <expand macro='test_asko_loc' />
+            <expand macro='test_asko_auth' />
+            <conditional name='input_format'>
+                <param name='format' value='csv' />
+                <param name='input' value='people.tsv' />
+            </conditional>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+        @HELP@
+    ]]></help>
+
+    <expand macro='citation' />
+</tool>

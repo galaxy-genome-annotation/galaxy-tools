@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<macros>
+    <!-- Requirements -->
+    <xml name='requirements'>
+        <requirements>
+            <requirement type='package' version='0.4.2'>askocli</requirement>
+        </requirements>
+    </xml>
+
+    <!-- Version -->
+    <token name='@WRAPPER_VERSION@'>0.1</token>
+
+    <!-- Help -->
+    <token name='@HELP@'><![CDATA[
+        AskOmics provide a visual representation of the user abstraction as a graph. 
+        By starting from a node of interest and iteratively selecting its neighbors, 
+        the user creates a path on an abstraction graph. This path can then be transformed 
+        into a SPARQL query that can be executed on the original dataset.
+    ]]></token>
+
+    <!-- Citation -->
+    <xml name='citation'>
+        <citations>
+            <citation type='bibtex'>
+            @inproceedings{legeai:hal-01391080,
+              TITLE = {{BIPAA/Askomics, a new and easy approach for querying genomics and epigenomics elements in interaction}},
+              AUTHOR = {Legeai, Fabrice and Bettembourg, Charles and Bretaudeau, Anthony and Chaussin, Yvanne and Dameron, Olivier and Tagu, Denis},
+              URL = {https://hal.inria.fr/hal-01391080},
+              BOOKTITLE = {{XXVth International Congress of Entomology 2016}},
+              ADDRESS = {Orlando, Florida, United States},
+              YEAR = {2016},
+              MONTH = Sep,
+              KEYWORDS = {AskOmics ;  Semantic Web ;  RDF ;  SPARQL ;  data integration},
+              HAL_ID = {hal-01391080},
+              HAL_VERSION = {v1},
+            }
+            </citation>
+        </citations>
+    </xml>
+
+    <!-- AskOmics server location -->
+    <xml name='askomics_loc'>
+        <section name='loc' title='AskOmics location' expanded='False'>
+            <param name='url'
+                   type='text'
+                   label='AskOmics URL'
+                   optional='true'
+                   value="http://localhost:6543"
+                   argument='-a' />
+        </section>
+    </xml>
+
+    <token name='@URL@'><![CDATA[$loc.url]]></token>
+
+    <!-- Environment variables -->
+    <token name='@ENV_URL@'><![CDATA[\$ASKOMICS_URL]]></token>
+
+    <!-- Authentication -->
+    <xml name='askomics_auth'>
+        <section name='auth' title='AskOmics authentication' expanded='True'>
+            <param name='apikey'
+                   type='text'
+                   label='API key'
+                   value="xvB2YBK8pz4I96SkDN64"
+                   argument='-k' />
+        </section>
+    </xml>
+
+    <token name='@APIKEY@'><![CDATA['$auth.apikey']]></token>
+
+    <!-- Tests -->
+    <xml name='test_asko_loc'>
+        <section name='loc'>
+            <param name='url' value='http://example.com' />
+        </section>
+    </xml>
+    <xml name='test_asko_auth'>
+        <section name='auth'>
+            <param name='apikey' value='00000000000000000000' />
+        </section>
+    </xml>
+
+</macros>
