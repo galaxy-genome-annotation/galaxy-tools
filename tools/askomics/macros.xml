@@ -4,7 +4,7 @@
     <!-- Requirements -->
     <xml name='requirements'>
         <requirements>
-            <requirement type='package' version='0.4.2'>askocli</requirement>
+            <requirement type='package' version='0.4.3'>askocli</requirement>
         </requirements>
     </xml>
 
