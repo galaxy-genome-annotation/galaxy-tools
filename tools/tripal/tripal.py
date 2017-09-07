@@ -1,9 +1,10 @@
-import tripal
-
-from abc import abstractmethod
 import collections
 import os
 import time
+
+from abc import abstractmethod
+
+import tripal
 
 
 #############################################
@@ -387,6 +388,7 @@ def _get_instance():
         os.environ['GALAXY_TRIPAL_USER'],
         os.environ['GALAXY_TRIPAL_PASSWORD']
     )
+
 
 def list_organisms(*args, **kwargs):
 
