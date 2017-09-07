@@ -1,0 +1,77 @@
+<tool id="tripaille.analysis.get_analyses" profile="16.04" name="Get analyses" version="@WRAPPER_VERSION@.0">
+    <description>from Tripal</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements">
+        <requirement type="package" version="1.5">jq</requirement>
+    </expand>
+    <expand macro="stdio"/>
+    <command><![CDATA[
+
+        @AUTH@
+
+        tripaille analysis get_analyses
+
+            #if $analysis_id:
+              --analysis_id "$analysis_id"
+            #end if
+            #if $name:
+              --name "$name"
+            #end if
+            #if $program:
+              --program "$program"
+            #end if
+            #if $programversion:
+              --programversion "$programversion"
+            #end if
+            #if $algorithm:
+              --algorithm "$algorithm"
+            #end if
+            #if $sourcename:
+              --sourcename "$sourcename"
+            #end if
+            #if $sourceversion:
+              --sourceversion "$sourceversion"
+            #end if
+            #if $sourceuri:
+              --sourceuri "$sourceuri"
+            #end if
+            #if $date_executed:
+              --date_executed "$date_executed"
+            #end if
+
+            | jq -S . > $results
+    ]]></command>
+    <inputs>
+    	<param name="analysis_id" label="Analysis Id" argument="analysis_id" type="integer" optional="true" help="An analysis ID" />
+    	<param name="name" label="Name" argument="name" type="text" optional="true" help="analysis name" />
+    	<param name="program" label="Program" argument="program" type="text" optional="true" help="analysis program" />
+    	<param name="programversion" label="Programversion" argument="programversion" type="text" optional="true" help="analysis programversion" />
+    	<param name="algorithm" label="Algorithm" argument="algorithm" type="text" optional="true" help="analysis algorithm" />
+    	<param name="sourcename" label="Sourcename" argument="sourcename" type="text" optional="true" help="analysis sourcename" />
+    	<param name="sourceversion" label="Sourceversion" argument="sourceversion" type="text" optional="true" help="analysis sourceversion" />
+    	<param name="sourceuri" label="Sourceuri" argument="sourceuri" type="text" optional="true" help="analysis sourceuri" />
+    	<param name="date_executed" label="Date Executed" argument="date_executed" type="text" optional="true" help="analysis date_executed (yyyy-mm-dd)" />
+    </inputs>
+    <outputs>
+        <data format="json" name="results" label="Tripal analyses" />
+    </outputs>
+    <tests>
+        <test expect_failure="true">
+            <param name="analysis_id" value="3" />
+
+            <expand macro="test_result" />
+        </test>
+    </tests>
+    <help><![CDATA[
+        @HELP_OVERVIEW@
+
+        **Get Analyses**
+
+        With this tool, you can list analyses from the Tripal/Chado database.
+
+        @HELP@
+    ]]></help>
+    <expand macro="citation"/>
+</tool>

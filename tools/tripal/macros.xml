@@ -2,12 +2,20 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="1.8">python-tripal</requirement>
+            <requirement type="package" version="2.0.4">python-tripal</requirement>
             <yield/>
         </requirements>
     </xml>
 
-    <token name="@WRAPPER_VERSION@">1.7</token>
+    <xml name="stdio">
+        <stdio>
+            <regex level="fatal" match="Exception:" source="stderr" />
+            <regex level="fatal" match="error" source="stderr" />
+            <exit_code range="1:" />
+        </stdio>
+    </xml>
+
+    <token name="@WRAPPER_VERSION@">2.0.4</token>
 
     <xml name="citation">
         <citations>
@@ -30,87 +38,79 @@
         `Tripal REST API module <http://github.com/abretaud/tripal_rest_api>`_: a Tripal module required to use these galaxy tools
     ]]></token>
 
-    <token name="@HELP_JOB@"><![CDATA[
-        This tool will schedule a Tripal job that should be executed with a Cron task on the remote server.
-    ]]></token>
-
-    <xml name="tripal_auth">
-        <section name="auth" title="Tripal authentication">
-            <param name="url"
-                   type="text"
-                   label="Server URL"
-                   help="The root URL of the Tripal instance" />
-            <param name="user"
-                   type="text"
-                   label="Username" />
-            <param name="password"
-                   type="text"
-                   label="Password" />
-        </section>
-    </xml>
-
     <token name="@DATA_DIR@">\$GALAXY_TRIPAL_SHARED_DIR</token>
 
-    <token name="@AUTH@">
-        "\$GALAXY_TRIPAL_URL"
-        "\$GALAXY_TRIPAL_USER"
-        "\$GALAXY_TRIPAL_PASSWORD"
-    </token>
+    <token name="@AUTH@"><![CDATA[
+        echo "__default: local" > '.auth.yml' &&
+        echo "local:" >> '.auth.yml' &&
+        echo "    tripal_url: \"\$GALAXY_TRIPAL_URL\"" >> '.auth.yml' &&
+        echo "    username: \"\$GALAXY_TRIPAL_USER\"" >> '.auth.yml' &&
+        echo "    password: \"\$GALAXY_TRIPAL_PASSWORD\"" >> '.auth.yml' &&
+
+        TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
+    ]]></token>
 
     <xml name="test_result">
         <assert_stderr>
-            <has_text text="No schema supplied." />
+            <has_text text="MissingSchema" />
         </assert_stderr>
     </xml>
 
     <xml name="analysis">
         <section name="analysis" title="Analysis" expanded="True">
             <param name="name"
-                   argument="--analysis-name"
                    type="text"
-                   label="The analysis name" />
+                   label="The analysis name [mandatory]">
+                <expand macro="sanitized"/>
+            </param>
+
             <param name="program"
-                   argument="--analysis-program"
                    type="text"
-                   label="Program name"
-                   help="Name of the program that was used to perform this analysis (program + program version + source must be unique)" />
+                   label="Program name [mandatory]"
+                   help="Name of the program that was used to perform this analysis">
+                <expand macro="sanitized"/>
+            </param>
             <param name="program_version"
-                   argument="--analysis-program-version"
                    type="text"
-                   label="Program version"
-                   help="Version of the program that was used to perform this analysis (program + program version + source must be unique)" />
-            <param name="algorithm"
-                   argument="--analysis-algorithm"
-                   type="text"
-                   label="Algorithm"
-                   optional="True"
-                   help="Algorithm of the program that was used to perform this analysis (program + program version + source must be unique)" />
+                   label="Program version [mandatory]"
+                   help="Version of the program that was used to perform this analysis"/>
             <param name="source"
-                   argument="--analysis-source-name"
                    type="text"
-                   label="Source name" />
+                   label="Source name [mandatory]"
+                   help="Where this analysis comes from">
+                <expand macro="sanitized"/>
+            </param>
+
             <param name="source_version"
-                   argument="--analysis-source-version"
+                   argument="--sourceversion"
                    type="text"
                    optional="True"
                    label="Source version" />
             <param name="source_uri"
-                   argument="--analysis-source-uri"
+                   argument="--sourceuri"
                    type="text"
                    optional="True"
                    label="Source URI"
                    help="URI where source data was retrieved" />
+            <param name="algorithm"
+                   argument="--algorithm"
+                   type="text"
+                   label="Algorithm"
+                   optional="True"
+                   help="Algorithm of the program that was used to perform this analysis" />
             <param name="description"
-                   argument="--analysis-description"
+                   argument="--description"
                    type="text"
                    optional="True"
-                   label="Analysis description" />
+                   label="Analysis description">
+                <expand macro="sanitized"/>
+            </param>
             <param name="date"
-                   argument="--analysis-date-executed"
+                   argument="--date_executed"
                    type="text"
                    optional="True"
                    label="Execution date"
-                   help="default: Today">
+                   help="Format: yyyy-mm-dd  Default: Today">
                 <validator type="regex" message="Date in YYYY-MM-DD format">^[0-9]{4}-[0-9]{2}-[0-9]{2}$</validator>
             </param>
         </section>
@@ -121,7 +121,9 @@
                argument="--rel-subject-re"
                type="text"
                label="Regular expression to extract the unique name of the parent feature"
-               help="this regex will be applied on the fasta definition line to generate the unique name of the parent feature" />
+               help="this regex will be applied on the fasta definition line to generate the unique name of the parent feature">
+            <expand macro="sanitized"/>
+        </param>
 
         <param name="rel_subject_type"
                argument="--rel-subject-type"
@@ -135,30 +137,79 @@
                argument="--match-type"
                type="select"
                label="Match type for already loaded features">
-            <option value="Unique name" selected="true">Unique name</option>
-            <option value="Name">Name</option>
+            <option value="uniquename" selected="true">Unique name</option>
+            <option value="name">Name</option>
         </param>
     </xml>
 
-    <token name="@ANALYSIS@"><![CDATA[
-        --analysis-name '$analysis.name'
-        --analysis-program '$analysis.program'
-        --analysis-program-version '$analysis.program_version'
-        #if $analysis.algorithm:
-            --analysis-algorithm '$analysis.algorithm'
+    <xml name="matching">
+        <section name="matching" title="Feature matching" expanded="True">
+            <param name="query_type"
+                   type="text"
+                   label="The feature type of the blast query"
+                   help="It must be a valid Sequence Ontology term. e.g. 'contig', 'gene', 'mRNA', 'polypeptide'" />
+
+            <param name="query_uniquename"
+                   type="boolean"
+                   checked="false"
+                   truevalue="--query_uniquename"
+                   falsevalue=""
+                   label="Find blast query features using their Unique name"
+                   help="Feature name will be used otherwise" />
+
+            <param name="query_re"
+                   type="text"
+                   optional="true"
+                   label="Regular expression to extract the feature name from the blast query name"
+                   help="leave empty if the first word in query name is sufficient">
+                <expand macro="sanitized"/>
+            </param>
+        </section>
+    </xml>
+
+    <xml name="sanitized">
+        <sanitizer>
+            <valid initial="string.printable">
+                <remove value="&apos;"/>
+            </valid>
+            <mapping initial="none">
+                <add source="&apos;" target="&apos;&quot;&apos;&quot;&apos;"/>
+                <add source="(" target="\("/>
+                <add source=")" target="\)"/>
+            </mapping>
+        </sanitizer>
+    </xml>
+
+    <token name="@MATCHING@"><![CDATA[
+        #if str($matching.query_re):
+            --query_re '${matching.query_re}'
         #end if
-        --analysis-source-name '$analysis.source'
+
+        $matching.query_uniquename
+
+        --query_type '$matching.query_type'
+    ]]></token>
+
+    <token name="@ANALYSIS@"><![CDATA[
+        #if $analysis.algorithm:
+            --algorithm '$analysis.algorithm'
+        #end if
         #if $analysis.source_version:
-            --analysis-source-version '$analysis.source_version'
+            --sourceversion '$analysis.source_version'
         #end if
         #if $analysis.source_uri:
-            --analysis-source-uri '$analysis.source_uri'
+            --sourceuri '$analysis.source_uri'
         #end if
         #if $analysis.description:
-            --analysis-description '$analysis.description'
+            --description '$analysis.description'
         #end if
         #if $analysis.date:
-            --analysis-date '$analysis.date'
+            --date_executed '$analysis.date'
         #end if
+
+        '$analysis.name'
+        '$analysis.program'
+        '$analysis.program_version'
+        '$analysis.source'
     ]]></token>
 </macros>
