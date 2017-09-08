@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import os
-import sys
-import time
+
 import argparse
 import filecmp
-import os.path
 import logging
+import os
 import subprocess
-from webapollo import WAAuth, WebApolloInstance, GuessOrg, OrgOrGuess
+import sys
+import time
+
+from webapollo import GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 

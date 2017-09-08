@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-from builtins import str
+import argparse
+import logging
 import sys
 import time
-import argparse
-from webapollo import WebApolloInstance, featuresToFeatureSchema
-from webapollo import WAAuth, OrgOrGuess, GuessOrg, AssertUser, retry
+
+from builtins import str
+
 from BCBio import GFF
-import logging
+
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 

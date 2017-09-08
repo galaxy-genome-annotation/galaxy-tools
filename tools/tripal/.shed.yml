@@ -6,9 +6,9 @@ long_description: |
   Tripal is a toolkit for construction of online biological (genetics, genomics, breeding, etc), community database,
   and is a member of the GMOD family of tools. Tripal provides by default integration with the GMOD Chado database schema and Drupal, a popular Content Management Systems (CMS).
 
-  https://github.com/abretaud/python-tripal
-homepage_url: https://github.com/abretaud/python-tripal
-owner: iuc
+  https://github.com/galaxy-genome-annotation/python-tripal
+homepage_url: https://github.com/galaxy-genome-annotation/python-tripal
+owner: gga
 remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/tripal
 type: unrestricted
 auto_tool_repositories:

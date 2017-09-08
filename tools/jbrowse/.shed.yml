@@ -1,0 +1,15 @@
+categories:
+- Web Services
+description: A tool allowing to export a JBrowse dataset into a JBrowse docker container
+long_description: |
+  JBrowse is a fast, extensible JS+HTML5 genome browser.
+
+  This tool is only useful if you are running both a Galaxy and a JBrowse container,
+  as described on https://github.com/galaxy-genome-annotation/dockerized-gmod-deployment
+
+  https://jbrowse.org
+name: jbrowse_to_container
+homepage_url: https://jbrowse.org
+owner: gga
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/jbrowse
+type: unrestricted

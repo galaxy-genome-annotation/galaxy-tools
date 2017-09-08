@@ -1,18 +1,26 @@
 from __future__ import print_function
+
 import argparse
 import collections
 import json
 import logging
 import os
-import requests
 import time
-from future import standard_library
-from builtins import next
-from builtins import str
-from builtins import object
+
 from abc import abstractmethod
+from builtins import next
+from builtins import object
+from builtins import str
+
 from BCBio import GFF
+
 from Bio import SeqIO
+
+from future import standard_library
+
+import requests
+
+
 standard_library.install_aliases()
 try:
     import StringIO as io
