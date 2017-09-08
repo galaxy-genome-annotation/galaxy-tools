@@ -10,27 +10,27 @@ Environ
 
 The following environment variables must be set:
 
-+----------------+-----------------------------------------------------------+
-| ENV            | Use                                                       |
-+================+===========================================================+
-| ``$GALAXY_WEBA | The URL at which Apollo is accessible, internal to Galaxy |
-| POLLO_URL``    | and where the tools run. Must be absolute, with FQDN and  |
-|                | protocol.                                                 |
-+----------------+-----------------------------------------------------------+
-| ``$GALAXY_WEBA | The admin user which Galaxy should use to talk to Apollo. |
-| POLLO_USER``   |                                                           |
-+----------------+-----------------------------------------------------------+
-| ``$GALAXY_WEBA | The password for the admin user.                          |
-| POLLO_PASSWORD |                                                           |
-| ``             |                                                           |
-+----------------+-----------------------------------------------------------+
-| ``$GALAXY_WEBA | The external URL at which Apollo is accessible to end     |
-| POLLO_EXT_URL` | users. May be relative or absolute.                       |
-| `              |                                                           |
-+----------------+-----------------------------------------------------------+
-| ``$GALAXY_SHAR | Directory shared between Galaxy and Apollo, used to       |
-| ED_DIR``       | exchange JBrowse instances.                               |
-+----------------+-----------------------------------------------------------+
++--------------------------------+-----------------------------------------------------------+
+| ENV                            | Use                                                       |
++================================+===========================================================+
+| ``$GALAXY_WEBAPOLLO_URL``      | The URL at which Apollo is accessible, internal to Galaxy |
+|                                | and where the tools run. Must be absolute, with FQDN and  |
+|                                | protocol.                                                 |
++--------------------------------+-----------------------------------------------------------+
+| ``$GALAXY_WEBAPOLLO_USER``     | The admin user which Galaxy should use to talk to Apollo. |
+|                                |                                                           |
++--------------------------------+-----------------------------------------------------------+
+| ``$GALAXY_WEBAPOLLO_PASSWORD`` | The password for the admin user.                          |
+|                                |                                                           |
+|                                |                                                           |
++--------------------------------+-----------------------------------------------------------+
+| ``$GALAXY_WEBAPOLLO_EXT_URL``  | users. May be relative or absolute.                       |
+|                                | The external URL at which Apollo is accessible to end     |
+|                                |                                                           |
++--------------------------------+-----------------------------------------------------------+
+| ``$GALAXY_SHARED_DIR``         | Directory shared between Galaxy and Apollo, used to       |
+|                                | exchange JBrowse instances.                               |
++--------------------------------+-----------------------------------------------------------+
 
 License
 -------
