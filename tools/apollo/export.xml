@@ -26,6 +26,18 @@ python $__tool_directory__/export.py
     <data format="fasta" name="fasta_out" label="Sequence(s) from Apollo"/>
     <data format="json" name="json_out" label="Metadata from Apollo"/>
   </outputs>
+  <tests>
+      <test expect_failure="true">
+          <conditional name="org_source">
+              <param name="source_select" value="direct"/>
+              <param name="org_raw" value="Test org" />
+          </conditional>
+          <conditional name="cn_source">
+              <param name="source_select" value="all"/>
+          </conditional>
+          <expand macro="test_result" />
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 

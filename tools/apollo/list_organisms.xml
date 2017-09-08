@@ -15,6 +15,11 @@ $__user_email__
   <outputs>
     <data format="json" name="output"/>
   </outputs>
+  <tests>
+      <test expect_failure="true">
+          <expand macro="test_result" />
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 

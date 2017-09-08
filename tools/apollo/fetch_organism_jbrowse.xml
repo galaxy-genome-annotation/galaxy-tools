@@ -7,7 +7,9 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-mkdir -p $jbrowse.files_path/;
+mkdir -p $jbrowse.files_path/
+
+&&
 
 python $__tool_directory__/fetch_organism_jbrowse.py
 @ADMIN_AUTH@
@@ -17,7 +19,7 @@ $jbrowse.files_path/ &&
 
 cp $dummyIndex $jbrowse &&
 find $jbrowse.files_path -type f -printf '<li><a href="%P">%P</a></li>\n' | sort >> $jbrowse &&
-echo '</ul></body></html>' >> $jbrowse;
+echo '</ul></body></html>' >> $jbrowse
 
 ]]></command>
   <configfiles>
@@ -56,6 +58,15 @@ echo '</ul></body></html>' >> $jbrowse;
   <outputs>
     <data format="html" name="jbrowse"/>
   </outputs>
+  <tests>
+      <test expect_failure="true">
+          <conditional name="org_source">
+              <param name="source_select" value="direct"/>
+              <param name="org_raw" value="Test org" />
+          </conditional>
+          <expand macro="test_result" />
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 

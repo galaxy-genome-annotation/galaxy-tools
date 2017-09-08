@@ -8,7 +8,7 @@
   <command detect_errors="aggressive"><![CDATA[
 python $__tool_directory__/json2iframe.py
 @URL@
-$json_file
+'$json_file'
 @EXT_URL@
 > $output]]></command>
   <inputs>
@@ -17,6 +17,16 @@ $json_file
   <outputs>
     <data format="html" name="output"/>
   </outputs>
+  <tests>
+      <test>
+          <param name="json_file" value="fake.json"/>
+          <output name="html">
+              <assert_contents>
+                  <has_text text="Embedded Apollo Access" />
+              </assert_contents>
+          </output>
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 

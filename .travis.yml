@@ -62,6 +62,7 @@ before_install:
 
 install:
   - pip install planemo
+  - pip install future tripal biopython bcbio-gff # dependencies for dynamic options
   - planemo conda_init
   - export PATH="$PLANEMO_CONDA_PREFIX/bin:$PATH"
   - planemo --version

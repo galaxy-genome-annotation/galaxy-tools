@@ -7,14 +7,16 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-cp -R ${jbrowse.extra_files_path}/data/ @DATA_DIR@/${jbrowse.id};
+cp -R '${jbrowse.extra_files_path}/data/' '@DATA_DIR@/${jbrowse.id}'
+
+&&
 
 python $__tool_directory__/create_or_update_organism.py
 
 @ADMIN_AUTH@
 
---genus "$genus"
---species "$species"
+--genus '$genus'
+--species '$species'
 #if str($group) != "None":
 --group '${group}'
 #end if
@@ -23,7 +25,7 @@ $public
 
 @ORG_OR_GUESS@
 
-"@DATA_DIR@/${jbrowse.id}"
+'@DATA_DIR@/${jbrowse.id}'
 
 $__user_email__
 
@@ -40,6 +42,19 @@ $__user_email__
   <outputs>
     <data format="json" name="output"/>
   </outputs>
+  <tests>
+      <test expect_failure="true">
+          <param name="jbrowse" value="good-model.gff3"/>
+          <conditional name="org_source">
+              <param name="source_select" value="direct"/>
+              <param name="org_raw" value="Test org" />
+          </conditional>
+          <param name="genus" value="genus"/>
+          <assert_stderr>
+              <has_text text="cannot stat" />
+          </assert_stderr>
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 
