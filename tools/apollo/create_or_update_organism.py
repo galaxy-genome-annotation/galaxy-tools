@@ -4,6 +4,7 @@ from __future__ import print_function
 import argparse
 import json
 import logging
+import shutil
 import sys
 import time
 
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--species', help='Organism Species')
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
+    parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
 
     args = parser.parse_args()
     wa = WebApolloInstance(args.apollo, args.username, args.password)
@@ -42,6 +44,7 @@ if __name__ == '__main__':
 
     if org:
         has_perms = False
+        old_directory = org.directory
         for user_owned_organism in gx_user.organismPermissions:
             if 'WRITE' in user_owned_organism['permissions']:
                 has_perms = True
@@ -62,7 +65,11 @@ if __name__ == '__main__':
             public=args.public
         )
         time.sleep(2)
+        if(args.remove_old_directory):
+            shutil.rmtree(old_directory)
+
         data = [wa.organisms.findOrganismById(org['id'])]
+
     else:
         # New organism
         log.info("\tAdding Organism")

@@ -18,6 +18,7 @@ python $__tool_directory__/create_or_update_organism.py
 #if str($group) != "None":
 --group '${group}'
 #end if
+${remove_old_directory}
 $public
 
 @ORG_OR_GUESS@
@@ -34,6 +35,7 @@ $__user_email__
     <param name="species" type="text" label="Species" optional="True" />
     <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
     <param name="group" type="select" dynamic_options="galaxy_list_groups(__trans__)" label="Grant access to a user group" optional="True" />
+    <param name="remove_old_directory" type="boolean" truevalue="--remove_old_directory" falsevalue="" label="Remove old data directory" />
   </inputs>
   <outputs>
     <data format="json" name="output"/>
