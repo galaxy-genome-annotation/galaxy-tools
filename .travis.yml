@@ -62,7 +62,12 @@ before_install:
 
 install:
   - pip install planemo
-  - pip install future tripal biopython bcbio-gff # dependencies for dynamic options
+  # add dependencies to galaxy venv for dynamic options
+  - |
+    planemo virtualenv /home/travis/.planemo/gx_venv
+    . /home/travis/.planemo/gx_venv/bin/activate
+    pip install future tripal biopython bcbio-gff
+    deactivate
   - planemo conda_init
   - export PATH="$PLANEMO_CONDA_PREFIX/bin:$PATH"
   - planemo --version
