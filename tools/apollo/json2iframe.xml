@@ -25,4 +25,5 @@ generates a nice little IFrame that you can use to access Apollo
 
 @REFERENCES@
       ]]></help>
+  <expand macro="citations"/>
 </tool>

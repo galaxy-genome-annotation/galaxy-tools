@@ -56,4 +56,5 @@ tracks are appropriate for a given analysis.
 
 @REFERENCES@
       ]]></help>
+  <expand macro="citations"/>
 </tool>

@@ -39,4 +39,5 @@ not be possible to separate those out.
 
 @REFERENCES@
       ]]></help>
+  <expand macro="citations"/>
 </tool>

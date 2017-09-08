@@ -36,4 +36,5 @@ DO NOT:
 
 @REFERENCES@
 ]]></help>
+  <expand macro="citations"/>
 </tool>

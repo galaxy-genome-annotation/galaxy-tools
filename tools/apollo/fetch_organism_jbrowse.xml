@@ -69,4 +69,5 @@ JBrowse instance to multiple organisms.
 
 @REFERENCES@
 ]]></help>
+  <expand macro="citations"/>
 </tool>

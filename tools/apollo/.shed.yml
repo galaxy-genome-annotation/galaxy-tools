@@ -3,6 +3,7 @@ categories:
 description: Access an Apollo instance from Galaxy
 long_description: |
     Talk to a (local) apollo server from Galaxy
+homepage_url: https://github.com/galaxy-genome-annotation/python-apollo
 owner: gga
 remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/apollo
 type: unrestricted

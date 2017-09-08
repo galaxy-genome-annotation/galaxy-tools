@@ -60,4 +60,5 @@ one. Needing to transfer annotations from one build of an organism to another
 
 @REFERENCES@
 ]]></help>
+  <expand macro="citations"/>
 </tool>

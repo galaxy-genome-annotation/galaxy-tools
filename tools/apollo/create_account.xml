@@ -30,4 +30,5 @@ the output file for your password.
 
 @REFERENCES@
       ]]></help>
+      <expand macro="citations"/>
 </tool>
