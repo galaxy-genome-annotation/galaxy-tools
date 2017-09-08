@@ -1,0 +1,18 @@
+categories:
+- Web Services
+long_description: |
+  Galaxy tools allowing to interact with a remote AskOmics server.
+
+  AskOmics is a visual SPARQL query builder for RDF database.
+
+  https://github.com/askomics/
+homepage_url: https://github.com/askomics/
+owner: gga
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/askomics
+type: unrestricted
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "{{ tool_name }} (from the AskOmics tool suite)"
+suite:
+  name: "suite_askomics"
+  description: Galaxy tools allowing to interact with a remote AskOmics server.

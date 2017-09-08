@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<tool id="tripaille.db.index" profile="16.04" name="Index Tripal data" version="@WRAPPER_VERSION@.0">
+    <description>using Elasticsearch</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <expand macro="stdio"/>
+    <command><![CDATA[
+
+        @AUTH@
+
+        tripaille db index
+
+            --mode '${table.mode}'
+
+            #if $table.mode == "table":
+              --index_name "${table.index_name}"
+            #end if
+
+            #if $queues:
+              --queues "$queues"
+            #end if
+
+            #if $tokenizer:
+              --tokenizer "$tokenizer"
+            #end if
+
+            #if $table.mode == "table":
+                --table '${table.table}'
+
+                #for $rep in $table.repeat_fields:
+                  --fields "${rep.field_name}|${rep.field_type}"
+                #end for
+
+                #for $rep in $table.repeat_links:
+                  --links "${rep.column}|${rep.url}"
+                #end for
+            #end if
+
+        &&
+
+        echo "Data loaded" > $results
+    ]]></command>
+    <inputs>
+        <conditional name="table">
+            <param name="mode"
+                   type="select"
+                   label="Data to index">
+                <option value="website" selected="true">Index all the Tripal content</option>
+                <option value="table">Index a specific table</option>
+            </param>
+            <when value="website"/>
+            <when value="table">
+                <param name="table"
+                       argument="--table"
+                       type="text"
+                       label="Table to index"
+                       help="The name of a Chado (or custom) table to index" />
+                <param name="index_name" label="Index Name" argument="--index_name" type="text" help="Index name" />
+                <repeat name="repeat_fields" title="Fields">
+            		<param name="field_name"
+                           label="Field name"
+                           argument="--fields"
+                           type="text"
+                           help="Field to index" />
+                    <param name="field_type"
+                           label="Field
+                           type" type="select"
+                           help="Field type">
+                        <option value="string" selected="true">string</option>
+                        <option value="keyword">keyword</option>
+                        <option value="date">date</option>
+                        <option value="long">long</option>
+                        <option value="double">double</option>
+                        <option value="boolean">boolean</option>
+                        <option value="ip">ip</option>
+                        <option value="object">object</option>
+                        <option value="nested">nested</option>
+                        <option value="geo_point">geo_point</option>
+                        <option value="geo_shape">geo_shape</option>
+                        <option value="completion">completion</option>
+                    </param>
+            	</repeat>
+            	<repeat name="repeat_links" title="Links">
+            		<param name="column"
+                           label="Table column where to display links"
+                           type="text"
+                           help="Should be in the list of indexed column" />
+                    <param name="url"
+                           label="Links url"
+                           type="text"
+                           help="e.g.: /your/url/[any-column-name]"/>
+            	</repeat>
+            </when>
+        </conditional>
+        <param name="tokenizer"
+               type="select"
+               label="Tokenizer to use">
+            <option value="standard" selected="true">standard</option>
+            <option value="letter">letter</option>
+            <option value="lowercase">lowercase</option>
+            <option value="whitespace">whitespace</option>
+            <option value="uax_url_email">uax_url_email</option>
+            <option value="classic">classic</option>
+            <option value="ngram">ngram</option>
+            <option value="edge_ngram">edge_ngram</option>
+            <option value="keyword">keyword</option>
+            <option value="pattern">pattern</option>
+            <option value="path_hierarchy">path_hierarchy</option>
+        </param>
+        <param name="queues" label="Queues" argument="queues" type="integer" value="10" help="Number of indexing task queues" />
+    </inputs>
+    <outputs>
+        <data format="txt" name="results" label="Index Tripal data" />
+    </outputs>
+    <tests>
+        <test expect_failure="true" expect_exit_code="1">
+            <conditional name="table">
+                <param name="mode" value="all" />
+            </conditional>
+
+            <expand macro="test_result" />
+        </test>
+        <test expect_failure="true" expect_exit_code="1">
+            <conditional name="table">
+                <param name="mode" value="singles" />
+                <param name="table" value="organism" />
+                <param name="fields" value="genus species description" />
+            </conditional>
+
+            <expand macro="test_result" />
+        </test>
+    </tests>
+    <help><![CDATA[
+        @HELP_OVERVIEW@
+
+        **Index using Elasticsearch**
+
+        With this tool, you can trigger indexing of a Tripal instance content using Elasticsearch.
+
+        The `tripal_elasticsearch <http://github.com/tripal/tripal_elasticsearch>`_ module must be installed and configured on the Tripal instance.
+
+        @HELP@
+    ]]></help>
+    <expand macro="citation"/>
+</tool>

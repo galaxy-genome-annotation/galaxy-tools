@@ -1,26 +1,30 @@
-<tool id="create_analysis" name="Create an analysis" version="@WRAPPER_VERSION@.0">
+<tool id="tripaille.analysis.add_analysis" profile="16.04" name="Create an analysis" version="@WRAPPER_VERSION@.0">
     <description>in Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements"/>
+    <expand macro="requirements">
+        <requirement type="package" version="1.5">jq</requirement>
+    </expand>
+    <expand macro="stdio"/>
     <command><![CDATA[
-        tripal create_analysis
+
+        @AUTH@
+
+        tripaille analysis add_analysis
 
             @ANALYSIS@
 
-            @AUTH@
-
-            > $output_log
+            | jq -S . > $results
     ]]></command>
     <inputs>
         <expand macro="analysis" />
     </inputs>
     <outputs>
-        <data format="txt" name="output_log" label="New Tripal analysis" />
+        <data format="json" name="results" label="New Tripal analysis" />
     </outputs>
     <tests>
-        <test expect_failure="true" expect_exit_code="1">
+        <test expect_failure="true">
             <section name="analysis">
                 <param name="name" value="Some analysis" />
                 <param name="program" value="blastp" />

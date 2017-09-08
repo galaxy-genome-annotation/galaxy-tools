@@ -12,15 +12,15 @@
   </xml>
   <token name="@DATA_DIR@">\$GALAXY_SHARED_DIR</token>
   <token name="@EXT_URL@">
-\$GALAXY_WEBAPOLLO_EXT_URL
+"\$GALAXY_WEBAPOLLO_EXT_URL"
   </token>
   <token name="@URL@">
-\$GALAXY_WEBAPOLLO_URL
+"\$GALAXY_WEBAPOLLO_URL"
   </token>
   <token name="@ADMIN_AUTH@">
-\$GALAXY_WEBAPOLLO_URL
-\$GALAXY_WEBAPOLLO_USER
-\$GALAXY_WEBAPOLLO_PASSWORD
+"\$GALAXY_WEBAPOLLO_URL"
+"\$GALAXY_WEBAPOLLO_USER"
+"\$GALAXY_WEBAPOLLO_PASSWORD"
   </token>
 
   <token name="@ORG_OR_GUESS@">
@@ -89,6 +89,12 @@
             </repeat>
         </when>
     </conditional>
+  </xml>
+
+  <xml name="test_result">
+      <assert_stderr>
+          <has_text text="MissingSchema" />
+      </assert_stderr>
   </xml>
 
   <xml name="citations">

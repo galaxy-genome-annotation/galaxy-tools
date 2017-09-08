@@ -22,6 +22,14 @@ $__user_email__
   <outputs>
     <data format="txt" name="output" label="Apollo Credentials"/>
   </outputs>
+  <tests>
+      <test expect_failure="true">
+          <param name="first" value="first" />
+          <param name="last" value="last" />
+
+          <expand macro="test_result" />
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 
@@ -30,4 +38,5 @@ the output file for your password.
 
 @REFERENCES@
       ]]></help>
+      <expand macro="citations"/>
 </tool>

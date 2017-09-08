@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 from __future__ import print_function
+
 import argparse
-import random
-from webapollo import WebApolloInstance
-from webapollo import WAAuth, OrgOrGuess, GuessOrg, AssertUser, retry
 import logging
+import random
+
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, retry
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 

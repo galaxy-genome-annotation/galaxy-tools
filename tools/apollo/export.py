@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 from __future__ import print_function
+
 import argparse
 import json
 import sys
-from Bio import SeqIO
+
 from BCBio import GFF
-from webapollo import WAAuth, WebApolloInstance, CnOrGuess, GuessCn
+
+from Bio import SeqIO
+
 from future import standard_library
+
+from webapollo import CnOrGuess, GuessCn, WAAuth, WebApolloInstance
+
 standard_library.install_aliases()
 try:
     import StringIO as io

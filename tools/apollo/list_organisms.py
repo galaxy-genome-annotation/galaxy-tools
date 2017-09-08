@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import json
+
 import argparse
-from webapollo import WAAuth, WebApolloInstance, AssertUser, accessible_organisms
+import json
+
+from webapollo import AssertUser, WAAuth, WebApolloInstance, accessible_organisms
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='List all organisms available in an Apollo instance')

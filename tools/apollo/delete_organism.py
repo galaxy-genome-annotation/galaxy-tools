@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 from __future__ import print_function
+
 import argparse
-from webapollo import WebApolloInstance
-from webapollo import WAAuth, OrgOrGuess, GuessOrg, AssertUser
 import logging
+
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 

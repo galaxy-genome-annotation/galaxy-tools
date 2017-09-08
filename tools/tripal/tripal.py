@@ -1,9 +1,10 @@
-import tripal
-
-from abc import abstractmethod
 import collections
 import os
 import time
+
+from abc import abstractmethod
+
+import tripal
 
 
 #############################################
@@ -377,17 +378,21 @@ class TTLCache(Cache):
 
 cache = TTLCache(
     100,  # Up to 100 items
-    5 * 60  # 5 minute cache life
+    1 * 60  # 5 minute cache life
 )
 
 
-def list_organisms(*args, **kwargs):
-
-    ti = tripal.TripalInstance(
+def _get_instance():
+    return tripal.TripalInstance(
         os.environ['GALAXY_TRIPAL_URL'],
         os.environ['GALAXY_TRIPAL_USER'],
         os.environ['GALAXY_TRIPAL_PASSWORD']
     )
+
+
+def list_organisms(*args, **kwargs):
+
+    ti = _get_instance()
 
     # Key for cached data
     cacheKey = 'orgs'
@@ -417,21 +422,17 @@ def list_organisms(*args, **kwargs):
 def _list_organisms(ti, *args, **kwargs):
     # Fetch the orgs.
     orgs_data = []
-    for org in ti.organism.getOrganisms():
+    for org in ti.organism.get_organisms():
         clean_name = '%s %s' % (org['genus'], org['species'])
         if org['infraspecific_name']:
             clean_name += ' (%s)' % (org['infraspecific_name'])
-        orgs_data.append((clean_name, org['abbreviation'], False))
+        orgs_data.append((clean_name, org['organism_id'], False))
     return orgs_data
 
 
 def list_analyses(*args, **kwargs):
 
-    ti = tripal.TripalInstance(
-        os.environ['GALAXY_TRIPAL_URL'],
-        os.environ['GALAXY_TRIPAL_USER'],
-        os.environ['GALAXY_TRIPAL_PASSWORD']
-    )
+    ti = _get_instance()
 
     # Key for cached data
     cacheKey = 'analyses'
@@ -439,7 +440,8 @@ def list_analyses(*args, **kwargs):
     # it might through key error.
     if cacheKey not in cache:
         # However if it ISN'T there, we know we're safe to fetch + put in
-        # there.
+        # there.<?xml version="1.0"?>
+
         data = _list_analyses(ti, *args, **kwargs)
         cache[cacheKey] = data
         return data
@@ -460,18 +462,14 @@ def list_analyses(*args, **kwargs):
 
 def _list_analyses(ti, *args, **kwargs):
     ans_data = []
-    for an in ti.analysis.getAnalyses():
-        ans_data.append((an['name'], an['name'], False))
+    for an in ti.analysis.get_analyses():
+        ans_data.append((an['name'], an['analysis_id'], False))
     return ans_data
 
 
 def list_blastdbs(*args, **kwargs):
 
-    ti = tripal.TripalInstance(
-        os.environ['GALAXY_TRIPAL_URL'],
-        os.environ['GALAXY_TRIPAL_USER'],
-        os.environ['GALAXY_TRIPAL_PASSWORD']
-    )
+    ti = _get_instance()
 
     # Key for cached data
     cacheKey = 'blastdbs'
@@ -500,6 +498,6 @@ def list_blastdbs(*args, **kwargs):
 
 def _list_blastdbs(ti, *args, **kwargs):
     dbs_data = []
-    for db in ti.db.getDbs():
-        dbs_data.append((db['name'], db['name'], False))
+    for db in ti.db.get_dbs():
+        dbs_data.append((db['name'], db['db_id'], False))
     return dbs_data

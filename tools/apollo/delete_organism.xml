@@ -4,8 +4,8 @@
   <macros>
     <import>macros.xml</import>
   </macros>
-  <code file="webapollo.py"/>
   <expand macro="requirements"/>
+  <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
 #if str($ask_one) == "yes":
     #if str($ask_two) == "yes":
@@ -15,7 +15,9 @@
         @ORG_OR_GUESS@
         --gff "$gff_out"
         --fasta "$fasta_out"
-        --json "$json_out";
+        --json "$json_out"
+
+        &&
 
         ## Now we delete
         python $__tool_directory__/delete_organism.py
@@ -42,6 +44,18 @@
     <data format="fasta" name="fasta_out" label="Sequence(s) from Apollo" hidden="true"/>
     <data format="json" name="json_out" label="Metadata from Apollo" hidden="true"/>
   </outputs>
+  <tests>
+      <test expect_failure="true">
+          <conditional name="org_source">
+              <param name="source_select" value="direct"/>
+              <param name="org_raw" value="Test org" />
+          </conditional>
+          <param name="filter" value="all"/>
+          <param name="ask_one" value="yes"/>
+          <param name="ask_two" value="yes"/>
+          <expand macro="test_result" />
+      </test>
+  </tests>
   <help><![CDATA[
 **What it does**
 
@@ -56,4 +70,5 @@ one. Needing to transfer annotations from one build of an organism to another
 
 @REFERENCES@
 ]]></help>
+  <expand macro="citations"/>
 </tool>

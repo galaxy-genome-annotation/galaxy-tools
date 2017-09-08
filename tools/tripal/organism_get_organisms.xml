@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<tool id="tripaille.organism.get_organisms" profile="16.04" name="Get organisms" version="@WRAPPER_VERSION@.0">
+    <description>from Tripal</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements">
+        <requirement type="package" version="1.5">jq</requirement>
+    </expand>
+    <expand macro="stdio"/>
+    <command><![CDATA[
+
+        @AUTH@
+
+        tripaille organism get_organisms
+
+            #if $organism_id:
+              --organism_id "$organism_id"
+            #end if
+            #if $genus:
+              --genus "$genus"
+            #end if
+            #if $species:
+              --species "$species"
+            #end if
+            #if $common:
+              --common "$common"
+            #end if
+            #if $abbr:
+              --abbr "$abbr"
+            #end if
+            #if $comment:
+              --comment "$comment"
+            #end if
+
+            | jq -S . > $results
+    ]]></command>
+    <inputs>
+    	<param name="organism_id" label="Organism Id" argument="organism_id" type="text" optional="true" help="An organism ID" />
+    	<param name="genus" label="Genus" argument="genus" type="text" optional="true" help="The genus of the organism" />
+    	<param name="species" label="Species" argument="species" type="text" optional="true" help="The species of the organism" />
+    	<param name="common" label="Common" argument="common" type="text" optional="true" help="The common name of the organism" />
+    	<param name="abbr" label="Abbr" argument="abbr" type="text" optional="true" help="The abbreviation of the organism" />
+    	<param name="comment" label="Comment" argument="comment" type="text" optional="true" help="A comment / description" />
+    </inputs>
+    <outputs>
+        <data format="json" name="results" label="Tripal organisms" />
+    </outputs>
+    <tests>
+        <test expect_failure="true">
+            <expand macro="test_result" />
+        </test>
+    </tests>
+    <help><![CDATA[
+        @HELP_OVERVIEW@
+
+        **Get Organisms**
+
+        With this tool, you can list organisms from the Tripal/Chado database
+
+        @HELP@
+    ]]></help>
+    <expand macro="citation"/>
+</tool>

@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import sys
-import json
+
 import argparse
-import time
-import shutil
-from webapollo import WAAuth, WebApolloInstance, OrgOrGuess, GuessOrg, AssertUser
+import json
 import logging
+import shutil
+import sys
+import time
+
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -22,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--species', help='Organism Species')
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
-    parser.add_argument('--remove_old_directory',action='store_true', help='Remove old directory')
+    parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
 
     args = parser.parse_args()
     wa = WebApolloInstance(args.apollo, args.username, args.password)

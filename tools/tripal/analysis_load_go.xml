@@ -1,69 +1,49 @@
-<tool id="load_go" name="Load Blast2GO results" version="@WRAPPER_VERSION@.0">
+<?xml version="1.0"?>
+<tool id="tripaille.analysis.load_go" profile="16.04" name="Load Blast2GO results" version="@WRAPPER_VERSION@.0">
     <description>into Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <expand macro="stdio"/>
     <command><![CDATA[
-        tmp_dir=`mktemp -d -p "@DATA_DIR@"`
+        tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
 
         &&
 
-        cp '${results}' "\${tmp_dir}/blast2go.gaf"
+        cp '${input}' "\${tmp_dir}/blast2go.gaf"
 
         &&
 
-        tripal load_go
+        @AUTH@
+
+        tripaille analysis load_go
 
             @ANALYSIS@
 
-            #if str($query_re):
-                --re-name '${query_re}'
-            #end if
-
-            $query_uniquename
-
-            --query-type '$query_type'
-
-            @AUTH@
+            @MATCHING@
 
             "\${tmp_dir}/blast2go.gaf"
 
-            > $output_log
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
-        <expand macro="analysis" />
-
-        <param name="results"
+        <param name="input"
                type="data"
-               format="tsv"
+               format="txt"
                label="Blast2Go results (GAF file)" />
 
-        <param name="query_type"
-               type="text"
-               label="The feature type of the query"
-               help="It must be a valid Sequence Ontology term. e.g. 'gene', 'mRNA', 'contig'" />
-
-        <param name="query_re"
-               type="text"
-               optional="true"
-               label="Regular expression to extract the feature unique name from the query name"
-               help="leave empty if the first word in query name is sufficient" />
-
-        <param name="query_uniquename"
-               type="boolean"
-               checked="false"
-               truevalue="--query-uniquename"
-               falsevalue=""
-               label="The feature type of the query"
-               help="It must be a valid Sequence Ontology term. e.g. 'gene', 'mRNA', 'contig'" />
+        <expand macro="matching"/>
+        <expand macro="analysis" />
     </inputs>
     <outputs>
-        <data format="txt" name="output_log" label="Load Blast2GO results into Tripal" />
+        <data format="txt" name="results" label="Load Blast2GO results into Tripal" />
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
-            <param name="results" value="blast2go.gaf" />
+            <param name="input" value="blast2go.gaf" />
             <param name="query_type" value="polypeptide" />
             <param name="query_uniquename" value="true" />
             <section name="analysis">
@@ -91,8 +71,6 @@
         A corresponding analysis will be created, keep in mind that you cannot add multiple analysis with the same program, program version and source.
 
         The `tripal_analysis_go <http://github.com/tripal/tripal_analysis_go>`_ module must be installed and configured on the Tripal instance.
-
-        @HELP_JOB@
 
         @HELP@
     ]]></help>

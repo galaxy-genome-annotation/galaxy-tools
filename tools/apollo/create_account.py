@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from builtins import str
-from builtins import range
-import random
+
 import argparse
+import random
 import time
+
+from builtins import range, str
+
 from webapollo import WAAuth, WebApolloInstance
 
 

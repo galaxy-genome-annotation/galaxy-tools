@@ -3,7 +3,13 @@ categories:
 description: Access an Apollo instance from Galaxy
 long_description: |
     Talk to a (local) apollo server from Galaxy
-name: apollo
-owner: eric-rasche
-remote_repository_url: https://github.com/TAMU-CPT/galaxy-webapollo
+homepage_url: https://github.com/galaxy-genome-annotation/python-apollo
+owner: gga
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/apollo
 type: unrestricted
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "{{ tool_name }} (from the Apollo tool suite)"
+suite:
+  name: "suite_apollo"
+  description: Galaxy tools allowing to access a (local) Apollo server.

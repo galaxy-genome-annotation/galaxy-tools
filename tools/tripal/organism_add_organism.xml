@@ -1,37 +1,40 @@
-<tool id="create_organism" name="Create an organism" version="@WRAPPER_VERSION@.0">
+<?xml version="1.0"?>
+<tool id="tripaille.organism.add_organism" profile="16.04" name="Create an organism" version="@WRAPPER_VERSION@.0">
     <description>in Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements"/>
+    <expand macro="requirements">
+        <requirement type="package" version="1.5">jq</requirement>
+    </expand>
+    <expand macro="stdio"/>
     <command><![CDATA[
-        tripal create_organism
-            --genus '$genus'
+
+        @AUTH@
+
+        tripaille organism add_organism
 
             #if str($species):
                 --species '$species'
             #end if
 
-            --abbr '$abbr'
-
-            --common '$common'
-
             #if str($description):
-                --description '$description'
+                --comment '$description'
             #end if
 
             #if $infra.use_infra:
-                --infraspecific-rank $infra.rank
-                --infraspecific-name $infra.name
+                --infraspecific_rank '$infra.rank'
+                --infraspecific_name '$infra.name'
             #end if
 
-            @AUTH@
+            '$genus'
+            '$common'
+            '$abbr'
 
-            > $output_log
+            | jq -S . > $results
     ]]></command>
     <inputs>
         <param name="genus"
-               argument="--genus"
                type="text"
                label="Genus"
                help="e.g.: Homo" />
@@ -44,29 +47,29 @@
                help="e.g.: sapiens" />
 
         <param name="abbr"
-               argument="--abbr"
                type="text"
                label="Abbreviation"
                help="e.g.: H. sapiens" />
 
         <param name="common"
-               argument="--common"
                type="text"
                label="Common name"
                help="e.g.: Human" />
 
         <param name="description"
-               argument="--description"
+               argument="--comment"
                type="text"
                label="Description"
-               optional="True" />
+               optional="True">
+            <expand macro="sanitized"/>
+        </param>
 
         <conditional name="infra">
             <param name="use_infra" type="boolean" checked="false" label="Specify an infraspecific rank" />
             <when value="false"></when>
             <when value="true">
                 <param name="rank"
-                       argument="--infraspecific-rank"
+                       argument="--infraspecific_rank"
                        type="select"
                        label="Infraspecific Rank">
                     <option value="subspecies">subspecies</option>
@@ -76,7 +79,7 @@
                     <option value="subforma">subforma</option>
                 </param>
                 <param name="name"
-                       argument="--infraspecific-name"
+                       argument="--infraspecific_name"
                        type="text"
                        label="Infraspecific Name"
                        help="The infraspecific name of the new organism (e.g. a strain name)" />
@@ -84,10 +87,10 @@
         </conditional>
     </inputs>
     <outputs>
-        <data format="txt" name="output_log" label="New Tripal organism" />
+        <data format="json" name="results" label="New Tripal organism" />
     </outputs>
     <tests>
-        <test expect_failure="true" expect_exit_code="1">
+        <test expect_failure="true">
             <param name="genus" value="Testus" />
             <param name="species" value="testum" />
             <param name="abbr" value="test" />
@@ -96,7 +99,7 @@
 
             <expand macro="test_result" />
         </test>
-        <test expect_failure="true" expect_exit_code="1">
+        <test expect_failure="true">
             <param name="genus" value="Testus" />
             <param name="species" value="testum" />
             <param name="abbr" value="test" />
@@ -104,7 +107,7 @@
             <param name="common" value="My cool new test organism" />
             <conditional name="infra">
                 <param name="use_infra" value="True" />
-                <param name="rank" value="2" />
+                <param name="rank" value="subspecies" />
                 <param name="name" value="strain3" />
             </conditional>
 

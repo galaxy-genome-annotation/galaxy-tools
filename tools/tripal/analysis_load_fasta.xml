@@ -1,12 +1,14 @@
-<tool id="load_fasta" name="Load a Fasta file" version="@WRAPPER_VERSION@.0">
+<?xml version="1.0"?>
+<tool id="tripaille.analysis.load_fasta" profile="16.04" name="Load a Fasta file" version="@WRAPPER_VERSION@.0">
     <description>into Tripal</description>
     <macros>
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
     <code file="tripal.py"/>
+    <expand macro="stdio"/>
     <command><![CDATA[
-        tmp_dir=`mktemp -d -p "@DATA_DIR@"`
+        tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
 
         &&
 
@@ -14,45 +16,47 @@
 
         &&
 
-        tripal load_fasta
+        @AUTH@
 
-            --organism '${organism}'
+        tripaille analysis load_fasta
 
-            --analysis '${analysis}'
+            --organism_id '${organism}'
 
-            --sequence-type '${sequence_type}'
+            --analysis_id '${analysis}'
+
+            --sequence_type '${sequence_type}'
 
             --method '${loading.method}'
 
-            --match-type '${loading.match_type}'
+            --match_type '${loading.match_type}'
 
             #if str($naming.re_name):
-                --re-name '${naming.re_name}'
+                --re_name '${naming.re_name}'
             #end if
 
             #if str($naming.re_uniquename):
-                --re-uniquename '${naming.re_uniquename}'
+                --re_uniquename '${naming.re_uniquename}'
             #end if
 
             #if str($relationships.rel_type) != "none":
-                --rel-type '${relationships.rel_type}'
-                --rel-subject-re '${relationships.rel_subject_re}'
-                --rel-subject-type '${relationships.rel_subject_type}'
+                --rel_type '${relationships.rel_type}'
+                --rel_subject_re '${relationships.rel_subject_re}'
+                --rel_subject_type '${relationships.rel_subject_type}'
             #end if
 
             #if str($ext_db.db_ext_id):
-                --db-ext-id '${ext_db.db_ext_id}'
+                --db_ext_id '${ext_db.db_ext_id}'
             #end if
 
             #if str($ext_db.re_accession):
-                --re-accession '${ext_db.re_accession}'
+                --re_accession '${ext_db.re_accession}'
             #end if
-
-            @AUTH@
 
             "\${tmp_dir}/content.fasta"
 
-            > $output_log
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param name="fasta"
@@ -71,7 +75,7 @@
                label="Analysis" />
 
         <param name="sequence_type"
-               argument="--sequence-type"
+               argument="--sequence_type"
                type="text"
                label="Sequence type"
                value="contig"
@@ -83,38 +87,42 @@
                    type="select"
                    label="Loading method"
                    help="select wether you expect feature to be already existing or not">
-                <option value="Insert and update" selected="true">Insert and update</option>
-                <option value="Insert only">Insert only</option>
-                <option value="Update only">Update only</option>
+                <option value="insup" selected="true">Insert and update</option>
+                <option value="insert">Insert only</option>
+                <option value="update">Update only</option>
             </param>
-            <when value="Insert and update">
+            <when value="insup">
                 <expand macro="match_type" />
             </when>
-            <when value="Insert only"/>
-            <when value="Update only">
+            <when value="insert"/>
+            <when value="update">
                 <expand macro="match_type" />
             </when>
         </conditional>
 
         <section name="naming" title="Feature naming">
             <param name="re_name"
-                   argument="--re-name"
+                   argument="--re_name"
                    type="text"
                    optional="true"
                    label="Regular expression to extract feature name"
-                   help="this regex will be applied on the fasta definition line to generate the feature name" />
+                   help="this regex will be applied on the fasta definition line to generate the feature name">
+                <expand macro="sanitized"/>
+            </param>
 
             <param name="re_uniquename"
-                   argument="--re-uniquename"
+                   argument="--re_uniquename"
                    type="text"
                    optional="true"
                    label="Regular expression to extract feature uniquename"
-                   help="this regex will be applied on the fasta definition line to generate the feature uniquename" />
+                   help="this regex will be applied on the fasta definition line to generate the feature uniquename">
+                <expand macro="sanitized"/>
+            </param>
         </section>
 
         <conditional name="relationships">
             <param name="rel_type"
-                   argument="--rel-type"
+                   argument="--rel_type"
                    type="select"
                    label="Relationship type"
                    help="Use this when inserting features that should be associated to other already existing features">
@@ -133,14 +141,14 @@
 
         <section name="ext_db" title="Cross references to external database">
             <param name="db_ext_id"
-                   argument="--db-ext-id"
+                   argument="--db_ext_id"
                    type="integer"
                    optional="true"
                    label="External Database ID"
                    help="Numeric ID from the Chado database" />
 
             <param name="re_accession"
-                   argument="--re-accession"
+                   argument="--re_accession"
                    type="text"
                    optional="true"
                    label="Regular expression to extract the accession from external DB"
@@ -148,7 +156,7 @@
         </section>
     </inputs>
     <outputs>
-        <data format="txt" name="output_log" label="Load Fasta into Tripal" />
+        <data format="txt" name="results" label="Load Fasta into Tripal" />
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">
@@ -157,8 +165,8 @@
             <param name="analysis" value="Annotation xx" />
             <param name="sequence_type" value="mRNA" />
             <conditional name="loading">
-                <param name="method" value="Insert and update" />
-                <param name="match_type" value="Unique name" />
+                <param name="method" value="insup" />
+                <param name="match_type" value="uniquename" />
             </conditional>
             <section name="naming">
                 <param name="re_name" value="([a-z]{4}[0-9]+)_suffix" />
@@ -176,8 +184,6 @@
         With this tool, you can load sequences from a Fasta file into the Tripal/Chado database.
 
         Corresponding features can be created if needed.
-
-        @HELP_JOB@
 
         @HELP@
     ]]></help>
