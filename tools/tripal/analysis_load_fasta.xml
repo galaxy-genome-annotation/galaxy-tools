@@ -53,6 +53,10 @@
             #end if
 
             "\${tmp_dir}/content.fasta"
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param name="fasta"
@@ -152,7 +156,7 @@
         </section>
     </inputs>
     <outputs>
-        <data format="txt" name="output_log" label="Load Fasta into Tripal" />
+        <data format="txt" name="results" label="Load Fasta into Tripal" />
     </outputs>
     <tests>
         <test expect_failure="true" expect_exit_code="1">

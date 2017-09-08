@@ -52,6 +52,10 @@
             ${target.target_create}
 
             "\${tmp_dir}/annotation.gff3"
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param name="gff3"

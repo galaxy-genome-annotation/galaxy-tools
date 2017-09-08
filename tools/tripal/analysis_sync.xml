@@ -14,6 +14,10 @@
         tripaille analysis sync
 
             --analysis_id '${analysis_id}'
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param argument="--analysis_id"

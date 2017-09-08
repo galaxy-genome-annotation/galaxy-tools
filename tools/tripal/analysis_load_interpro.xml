@@ -28,6 +28,10 @@
             @MATCHING@
 
             "\${tmp_dir}/interpro.xml"
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param name="input"

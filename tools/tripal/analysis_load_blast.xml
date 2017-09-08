@@ -31,6 +31,10 @@
             @ANALYSIS@
 
             "\${tmp_dir}/blast_input.xml"
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param name="blast_output"

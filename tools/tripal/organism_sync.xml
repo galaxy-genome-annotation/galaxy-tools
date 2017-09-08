@@ -14,6 +14,10 @@
         tripaille organism sync
 
             --organism_id '${organism_id}'
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param argument="--organism_id"

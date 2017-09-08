@@ -37,6 +37,10 @@
                   --links "${rep.column}|${rep.url}"
                 #end for
             #end if
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <conditional name="table">

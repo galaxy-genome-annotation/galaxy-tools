@@ -24,6 +24,10 @@
             @MATCHING@
 
             "\${tmp_dir}/blast2go.gaf"
+
+        &&
+
+        echo "Data loaded" > $results
     ]]></command>
     <inputs>
         <param name="input"
