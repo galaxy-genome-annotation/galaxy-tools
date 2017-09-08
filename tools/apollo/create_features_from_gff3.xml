@@ -4,8 +4,8 @@
   <macros>
     <import>macros.xml</import>
   </macros>
-  <code file="webapollo.py"/>
   <expand macro="requirements"/>
+  <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
 python $__tool_directory__/create_features_from_gff3.py
 @ADMIN_AUTH@

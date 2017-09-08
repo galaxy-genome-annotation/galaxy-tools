@@ -4,8 +4,8 @@
   <macros>
     <import>macros.xml</import>
   </macros>
-  <code file="webapollo.py"/>
   <expand macro="requirements"/>
+  <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
 #if str($ask_one) == "yes":
 	## Nope, still don't trust them to not be dumb (or malicious), so we backup first.
