@@ -12,7 +12,7 @@ owner: gga
 remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/tripal
 type: unrestricted
 auto_tool_repositories:
-  name_template: "{{ tool_id }}"
+  name_template: "tripal_{{ tool_id }}"
   description_template: "{{ tool_name }} (from the Tripal tool suite)"
 suite:
   name: "suite_tripal"

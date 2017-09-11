@@ -8,7 +8,7 @@ owner: gga
 remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/apollo
 type: unrestricted
 auto_tool_repositories:
-  name_template: "{{ tool_id }}"
+  name_template: "apollo_{{ tool_id }}"
   description_template: "{{ tool_name }} (from the Apollo tool suite)"
 suite:
   name: "suite_apollo"
