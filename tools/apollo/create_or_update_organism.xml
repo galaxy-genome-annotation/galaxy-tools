@@ -7,7 +7,7 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-cp -R '${jbrowse.extra_files_path}/data/' '@DATA_DIR@/${jbrowse.id}'
+cp -R '${jbrowse.extra_files_path}/data/' "@DATA_DIR@/${jbrowse.id}"
 
 &&
 
@@ -25,7 +25,7 @@ $public
 
 @ORG_OR_GUESS@
 
-'@DATA_DIR@/${jbrowse.id}'
+"@DATA_DIR@/${jbrowse.id}"
 
 $__user_email__
 

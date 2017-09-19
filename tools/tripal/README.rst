@@ -1,10 +1,7 @@
-Galaxy-apollo
+Galaxy-tripal
 =============
 
-Galaxy tools to interface with Apollo The webapollo.py file is also
-`separately
-available <https://github.com/galaxy-genome-annotation/python-apollo>`__
-as a pip-installable package.
+Galaxy tools to interface with Tripal using pyhon-tripal
 
 Dependencies
 ------------
@@ -15,7 +12,7 @@ tools to be fully functional:
 .. code:: bash
 
     . /path/to/galaxy/.venv/bin/activate
-    pip install future biopython bcbio-gff
+    pip install future tripal
     deactivate
 
 Environment
@@ -26,24 +23,21 @@ The following environment variables must be set:
 +--------------------------------+-----------------------------------------------------------+
 | ENV                            | Use                                                       |
 +================================+===========================================================+
-| ``$GALAXY_WEBAPOLLO_URL``      | The URL at which Apollo is accessible, internal to Galaxy |
+| ``$GALAXY_TRIPAL_URL``         | The URL at which Tripal is accessible, internal to Galaxy |
 |                                | and where the tools run. Must be absolute, with FQDN and  |
 |                                | protocol.                                                 |
 +--------------------------------+-----------------------------------------------------------+
-| ``$GALAXY_WEBAPOLLO_USER``     | The admin user which Galaxy should use to talk to Apollo. |
+| ``$GALAXY_TRIPAL_USER``        | The admin user which Galaxy should use to talk to Tripal. |
 |                                |                                                           |
 +--------------------------------+-----------------------------------------------------------+
-| ``$GALAXY_WEBAPOLLO_PASSWORD`` | The password for the admin user.                          |
+| ``$GALAXY_TRIPAL_PASSWORD``    | The password for the admin user.                          |
 |                                |                                                           |
 |                                |                                                           |
 +--------------------------------+-----------------------------------------------------------+
-| ``$GALAXY_WEBAPOLLO_EXT_URL``  | May be relative or absolute.                              |
-|                                | The external URL at which Apollo is accessible to end     |
-|                                | users.                                                    |
+| ``$GALAXY_TRIPAL_SHARED_DIR``  | Directory shared between Galaxy and Tripal, used to       |
+|                                | exchange data files.                                      |
 +--------------------------------+-----------------------------------------------------------+
-| ``$GALAXY_SHARED_DIR``         | Directory shared between Galaxy and Apollo, used to       |
-|                                | exchange JBrowse instances.                               |
-+--------------------------------+-----------------------------------------------------------+
+
 
 License
 -------
