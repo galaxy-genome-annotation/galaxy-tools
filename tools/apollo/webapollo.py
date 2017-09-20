@@ -1571,7 +1571,7 @@ def _galaxy_list_groups(wa, gx_user, *args, **kwargs):
     group_data = []
     for group in wa.groups.loadGroups():
         # Reformat
-        group_data.append((group.name, group.groupId, False))
+        group_data.append((group.name, group.name, False))
     return group_data
 
 
