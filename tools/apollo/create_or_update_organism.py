@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     if org:
         has_perms = False
-        old_directory = org.directory
+        old_directory = org['directory']
         for user_owned_organism in gx_user.organismPermissions:
             if 'WRITE' in user_owned_organism['permissions']:
                 has_perms = True
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             public=args.public
         )
         time.sleep(2)
-        if(args.remove_old_directory):
+        if args.remove_old_directory and args.jbrowse != old_directory:
             shutil.rmtree(old_directory)
 
         data = [wa.organisms.findOrganismById(org['id'])]
