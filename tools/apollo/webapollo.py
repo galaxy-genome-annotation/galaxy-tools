@@ -6,7 +6,6 @@ import json
 import logging
 import os
 import time
-
 from abc import abstractmethod
 from builtins import next
 from builtins import object

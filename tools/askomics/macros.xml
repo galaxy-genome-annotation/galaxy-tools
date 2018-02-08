@@ -46,7 +46,6 @@
                    type='text'
                    label='AskOmics URL'
                    optional='true'
-                   value="http://localhost:6543"
                    argument='-a' />
         </section>
     </xml>
@@ -62,7 +61,6 @@
             <param name='apikey'
                    type='text'
                    label='API key'
-                   value="xvB2YBK8pz4I96SkDN64"
                    argument='-k' />
         </section>
     </xml>
