@@ -35,6 +35,8 @@ if __name__ == '__main__':
 
     # User must have an account
     gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    if gx_user.role != 'INSTRUCTOR' and gx_user.role != 'ADMIN':
+        sys.exit(gx_user.role + " is not authorized to create or update organisms")
 
     log.info("Determining if add or update required")
     try:
@@ -46,13 +48,11 @@ if __name__ == '__main__':
         has_perms = False
         old_directory = org['directory']
         for user_owned_organism in gx_user.organismPermissions:
-            if 'WRITE' in user_owned_organism['permissions']:
+            if user_owned_organism['organism'] == org['commonName'] and 'ADMINISTRATE' in user_owned_organism['permissions']:
                 has_perms = True
                 break
-
         if not has_perms:
-            print("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
-            sys.exit(2)
+            sys.exit("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
 
         log.info("\tUpdating Organism")
         data = wa.organisms.updateOrganismInfo(
@@ -86,6 +86,7 @@ if __name__ == '__main__':
         log.info("Updating permissions for %s on %s", gx_user, org_cn)
         wa.users.updateOrganismPermission(
             gx_user, org_cn,
+            administrate=True,
             write=True,
             export=True,
             read=True,
