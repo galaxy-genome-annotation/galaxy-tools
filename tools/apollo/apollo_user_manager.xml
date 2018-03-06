@@ -14,7 +14,7 @@ python $__tool_directory__/apollo_user_manager.py
 @ADMIN_AUTH@
 
 --data_json parameters.json
-> $output
+-o $output
 
 ]]></command>
     <configfiles>
@@ -186,7 +186,7 @@ with open(file_path, 'w') as f:
         </repeat>
     </inputs>
     <outputs>
-        <data format="txt" name="output" label="Apollo Credentials"/>
+        <data format="csv" name="output" label="Apollo Credentials"/>
     </outputs>
     <tests>
         <test expect_failure="true">
