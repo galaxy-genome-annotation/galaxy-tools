@@ -35,7 +35,7 @@ def createApolloUser(user, out):
     else:
         returnData = wa.users.createUser(user['useremail'], user['firstname'], user['lastname'], password, role='user')
         out.writerow({'Operation':'Create User', 'First Name': user['firstname'], 'Last Name': user['lastname'],
-                      'Email': user['useremail'], 'Password': password})
+                      'Email': user['useremail'], 'New Password': password})
     print("Return data: " + str(returnData) + "\n")
 
 
@@ -52,8 +52,6 @@ def createApolloUsers(users_list, out):
                     logger.error("Cannot find firstname in the text file, make sure you use the correct header, see README file for examples.")
                 if not 'lastname' in u:
                     logger.error("Cannot find lastname in the text file, make sure you use the correct header, see README file for examples.")
-                if not 'password' in u:
-                    logger.error("Cannot find password in the text file, make sure you use the correct header, see README file for examples.")
                 createApolloUser(u, out)
 
 
@@ -135,13 +133,13 @@ def removeApolloUsersFromGroups(users_list, out):
                 removeApolloUserFromGroup(u, out)
 
 
-def parseUserInfoFile(self, file_format, filename):
+def parseUserInfoFile(file_format, filename):
     if file_format == "tab":
         delimiter = '\t'
     elif file_format == "csv":
         delimiter = ','
     else:
-        self.logger.error("The %s format is not supported!", file_format)
+        logger.error("The %s format is not supported!", file_format)
     with open(filename, 'r') as f:
         lines = f.readlines()
     headers = lines[0].split(delimiter)
