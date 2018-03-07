@@ -56,19 +56,20 @@ def createApolloUsers(users_list, out):
 
 
 def deleteApolloUser(user, out):
-    u = wa.users.loadUsers(email=user['useremail'])
-    if len(u) == 1:
-        returnData = wa.users.delete_user(u)
+    apollo_user = wa.users.loadUsers(email=user['useremail'])
+    if len(apollo_user) == 1:
+        userObj = apollo_user[0]
+        returnData = wa.users.deleteUser(userObj)
+        out.writerow({'Operation':'Delete User', 'First Name': userObj.firstName, 'Last Name': userObj.lastName,
+                      'Email': user['useremail']})
+        print("Return data: " + str(returnData) + "\n")
     else:
         logger.error("The user %s doesn't exist", user['useremail'])
-    out.writerow({'Operation':'Delete User', 'First Name': u.firstName, 'Last Name': u.lastName,
-                  'Email': user['useremail']})
     #print("Delete user\nUsername: %s\n", user['useremail'])
-    print("Return data: " + str(returnData) + "\n")
+
 
 
 def deleteApolloUsers(users_list, out):
-    out.writerow(['Operation', 'Username'])
     for user in users_list:
         if user['batch'] == "false":
             deleteApolloUser(user, out)
