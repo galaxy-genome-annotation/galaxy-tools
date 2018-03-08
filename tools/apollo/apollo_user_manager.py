@@ -32,10 +32,12 @@ def createApolloUser(user, out):
         returnData = wa.users.updateUser(userObj, user['useremail'], user['firstname'], user['lastname'], password)
         out.writerow({'Operation':'Update User', 'First Name': user['firstname'], 'Last Name': user['lastname'],
                        'Email': user['useremail'], 'New Password': password})
+        print("Update user %s" % user['useremail'])
     else:
         returnData = wa.users.createUser(user['useremail'], user['firstname'], user['lastname'], password, role='user')
         out.writerow({'Operation':'Create User', 'First Name': user['firstname'], 'Last Name': user['lastname'],
                       'Email': user['useremail'], 'New Password': password})
+        print("Create user %s" % user['useremail'])
     print("Return data: " + str(returnData) + "\n")
 
 
@@ -61,12 +63,11 @@ def deleteApolloUser(user, out):
         userObj = apollo_user[0]
         returnData = wa.users.deleteUser(userObj)
         out.writerow({'Operation':'Delete User', 'First Name': userObj.firstName, 'Last Name': userObj.lastName,
-                      'Email': user['useremail']})
+                      'Email': userObj.username})
+        print("Delete user %s" % userObj.username)
         print("Return data: " + str(returnData) + "\n")
     else:
         logger.error("The user %s doesn't exist", user['useremail'])
-    #print("Delete user\nUsername: %s\n", user['useremail'])
-
 
 
 def deleteApolloUsers(users_list, out):
@@ -78,19 +79,29 @@ def deleteApolloUsers(users_list, out):
             for u in users:
                 if not 'useremail' in u:
                     logger.error("Cannot find useremail in the text file, make sure you use the correct header, see README file for examples.")
+                    exit(1)
                 deleteApolloUser(u, out)
 
+
 def addApolloUserToGroup(user, out):
-    u = wa.users.loadUsers(email=user['useremail'])
-    group = wa.groups.loadGroupByName(users_list['group'])
-    if not u:
+    apollo_user = wa.users.loadUsers(email=user['useremail'])
+    groups = wa.groups.loadGroups()
+    group = [g for g in groups if g.name == user['group']]
+    if not apollo_user:
         logger.error("the user %s doesn't exist", user['useremail'])
+        exit(1)
     if not group:
         logger.error("the group %s doesn't exist", user['group'])
-    returnData = wa.users.addUserToGroup(group, u)
-    #print("Add user to the group\nUsername: %s, Group: %s\n", user['useremail'], user['group'])
-    out.writerow({'Operation':'Add User to Group', 'First Name': u.firstName, 'Last Name': u.lastName,
-                  'Email': user['useremail'], 'Add to Group': group.name})
+        exit(1)
+    if len(group) > 1:
+        logger.warn("There are more than one groups with the name %s", user['group'])
+        exit(1)
+    userObj = apollo_user[0]
+    groupObj = group[0]
+    returnData = wa.users.addUserToGroup(groupObj, userObj)
+    out.writerow({'Operation':'Add User to Group', 'First Name': userObj.firstName, 'Last Name': userObj.lastName,
+                  'Email': userObj.username, 'Add to Group': groupObj.name})
+    print("Add user %s to group %s" % (userObj.username, groupObj.name))
     print("Return data: " + str(returnData) + "\n")
 
 def addApolloUsersToGroups(users_list, out):
@@ -102,23 +113,33 @@ def addApolloUsersToGroups(users_list, out):
             for u in users:
                 if not 'useremail' in u:
                     logger.error("Cannot find useremail in the text file, make sure you use the correct header, see README file for examples.")
+                    exit(1)
                 if not 'group' in u:
                     logger.error("Cannot find group in the text file, make sure you use the correct header, see README file for examples.")
+                    exit(1)
                 addApolloUserToGroup(u, out)
 
 
 def removeApolloUserFromGroup(user, out):
-    u = wa.users.loadUsers(email=user['useremail'])
-    group = wa.groups.loadGroupByName(users_list['group'])
-    if not u:
+    apollo_user = wa.users.loadUsers(email=user['useremail'])
+    groups = wa.groups.loadGroups()
+    group = [g for g in groups if g.name == user['group']]
+    if not apollo_user:
         logger.error("the user %s doesn't exist", user['useremail'])
+        exit(1)
     if not group:
         logger.error("the group %s doesn't exist", user['group'])
-    returnData = wa.users.removeUserFromGroup(group, user)
-    out.writerow({'Operation':'Remove User from Group', 'First Name': u.firstName, 'Last Name': u.lastName,
-                  'Email': user['useremail'], 'Remove from Group': group.name})
-    print("Remove user from group\nUsername: %s, Group: %s\n", user['useremail'], user['group'])
-    #print("Return data: " + str(returnData) + "\n")
+        exit(1)
+    if len(group) > 1:
+        logger.warn("There are more than one groups with the name %s", user['group'])
+        exit(1)
+    userObj = apollo_user[0]
+    groupObj = group[0]
+    returnData = wa.users.removeUserFromGroup(groupObj, userObj)
+    out.writerow({'Operation':'Remove User from Group', 'First Name': userObj.firstName, 'Last Name': userObj.lastName,
+                  'Email': userObj.username, 'Remove from Group': groupObj.name})
+    print("Remove user %s from group: %s" % (userObj.username, groupObj.name))
+    print("Return data: " + str(returnData) + "\n")
 
 def removeApolloUsersFromGroups(users_list, out):
     for user in users_list:
@@ -129,8 +150,10 @@ def removeApolloUsersFromGroups(users_list, out):
             for u in users:
                 if not 'useremail' in u:
                     logger.error("Cannot find useremail in the text file, make sure you use the correct header, see README file for examples.")
+                    exit(1)
                 if not 'group' in u:
                     logger.error("Cannot find group in the text file, make sure you use the correct header, see README file for examples.")
+                    exit(1)
                 removeApolloUserFromGroup(u, out)
 
 
