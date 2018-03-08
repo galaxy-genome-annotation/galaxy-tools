@@ -9,11 +9,8 @@ from BCBio import GFF
 
 from Bio import SeqIO
 
-from future import standard_library
-
 from webapollo import CnOrGuess, GuessCn, WAAuth, WebApolloInstance
 
-standard_library.install_aliases()
 try:
     import StringIO as io
 except ImportError:

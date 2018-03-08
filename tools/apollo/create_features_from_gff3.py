@@ -3,9 +3,10 @@ import argparse
 import logging
 import sys
 import time
-from six.moves.builtins import str
 
 from BCBio import GFF
+
+from six.moves.builtins import str
 
 from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry
 logging.basicConfig(level=logging.INFO)
