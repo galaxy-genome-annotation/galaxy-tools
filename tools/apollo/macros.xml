@@ -126,4 +126,12 @@ If you use this tool in Galaxy, please cite:
 Eric Rasche (2016), `Galaxy Apollo Tools <https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/apollo>`_
 ]]>
     </token>
+    <xml name="upload_text_file">
+        <param name="format" type="select" label="File format">
+            <option value="csv" selected="true">CSV</option>
+            <option value="tab">Tabular</option>
+        </param>
+        <param name="user_info_file" type="data" format="tabular,csv" label="A text file stored a list of users' information" help="tab delimited file or csv file." />
+
+    </xml>
 </macros>

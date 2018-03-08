@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<tool id="apollo_user_manager" name="Apollo user management tool" version="3.0">
+    <description>for managing Apollo users</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="aggressive"><![CDATA[
+
+## Dump the tool parameters into a JSON file
+python $json_file parameters.json;
+python $__tool_directory__/apollo_user_manager.py
+
+@ADMIN_AUTH@
+
+--data_json parameters.json
+-o $output
+
+]]></command>
+    <configfiles>
+        <configfile name="json_file">
+import json
+import sys
+
+file_path = sys.argv[1]
+
+#set global data_parameter_dict = {"operations": dict()}
+## Function to retrieve the data of the inputs
+#def prepare_json($operation_type, $data_dict, $batch)
+    #silent $data_dict.update({"batch": str($batch)})
+    #if $operation_type in $data_parameter_dict["operations"]
+        #silent $data_parameter_dict["operations"][$operation_type].append($data_dict)
+    #else
+        #set array_inputs = []
+        #silent $array_inputs.append($data_dict)
+        #silent $data_parameter_dict["operations"].update({$operation_type: $array_inputs})
+    #end if
+#end def
+
+#for $i, $f in enumerate($operation)
+    #if $f.operation_type_selector.operation_type == "create"
+        #set batch = $f.operation_type_selector.batch_selector.batch
+        #if $batch == "false"
+            #set data_dict = {"useremail": str($f.operation_type_selector.batch_selector.user_email),
+            "firstname": str($f.operation_type_selector.batch_selector.firstname),
+            "lastname": str($f.operation_type_selector.batch_selector.lastname)}
+
+        #else
+            #set data_dict = {"format": str($f.operation_type_selector.batch_selector.format),
+            "false_path": str($f.operation_type_selector.batch_selector.user_info_file)}
+        #end if
+        #silent $prepare_json("create", $data_dict, $batch)
+
+    #elif $f.operation_type_selector.operation_type == "delete"
+        #set batch = $f.operation_type_selector.batch_selector.batch
+        #if $batch == "false"
+            #set data_dict = {"useremail": str($f.operation_type_selector.batch_selector.user_email)}
+        #else
+            #set data_dict = {"format": str($f.operation_type_selector.batch_selector.format),
+            "false_path": str($f.operation_type_selector.batch_selector.user_info_file)}
+        #end if
+        #silent $prepare_json("delete", $data_dict, $batch)
+    
+    #elif $f.operation_type_selector.operation_type == "add"
+        #set batch = $f.operation_type_selector.batch_selector.batch
+        #if $batch == "false"
+            #set data_dict = {"useremail": str($f.operation_type_selector.batch_selector.user_email),
+            "group": str($f.operation_type_selector.batch_selector.group_name)}
+        #else
+            #set data_dict = {"format": str($f.operation_type_selector.batch_selector.format),
+            "false_path": str($f.operation_type_selector.batch_selector.user_info_file)}
+        #end if
+        #silent $prepare_json("add", $data_dict, $batch)
+    
+    #elif $f.operation_type_selector.operation_type == "remove"
+        #set batch = $f.operation_type_selector.batch_selector.batch
+        #if $batch == "false"
+            #set data_dict = {"useremail": str($f.operation_type_selector.batch_selector.user_email),
+            "group": str($f.operation_type_selector.batch_selector.group_name)}
+        #else
+            #set data_dict = {"format": str($f.operation_type_selector.batch_selector.format),
+            "false_path": str($f.operation_type_selector.batch_selector.user_info_file)}
+        #end if
+        #silent $prepare_json("remove", $data_dict, $batch)
+    #end if
+#end for
+
+with open(file_path, 'w') as f:
+    json.dump($data_parameter_dict, f)   
+        </configfile>
+    </configfiles>
+    <inputs>
+        <repeat name="operation" title="New operation">
+            <conditional name="operation_type_selector" >
+                <param name="operation_type" type="select" label="Create a user, delete a user, add a user to a group or remove a user from a group">
+                    <option value="create">Create a user</option>
+                    <option value="delete">Delete a users</option>
+                    <option value="add">Add a user to a group</option>
+                    <option value="remove">Remove a user from a group</option>
+                </param>
+                <when value="create">
+                    <conditional name="batch_selector">
+                        <param name="batch" type="select" label="Manipulate a single user or multiple users">
+                            <option value="false" selected="true">Single user</option>
+                            <option value="true">Multiple users</option>
+                        </param>
+                        <when value="false">
+                            <param name="user_email" type="text" label="User email" help="Specify the user email">
+                                <sanitizer invalid_char="">
+                                    <valid initial="string.letters,string.digits">
+                                        <add value="@-=_.()/+*^,:?!"/>
+                                    </valid>
+                                </sanitizer>
+                            </param>
+                            <param name="firstname" type="text" label="First name" />
+                            <param name="lastname" type="text" label="Last name" />
+                        </when>
+                        <when value="true">
+                            <expand macro="upload_text_file" />
+                        </when>
+                    </conditional>
+                </when>
+                <when value="delete">
+                    <conditional name="batch_selector">
+                        <param name="batch" type="select" label="Manipulate a single user or multiple users">
+                            <option value="false" selected="true">Single user</option>
+                            <option value="true">Multiple users</option>
+                        </param>
+                        <when value="false">
+                            <param name="user_email" type="text" label="User email" help="Specify the user email">
+                                <sanitizer invalid_char="">
+                                    <valid initial="string.letters,string.digits">
+                                        <add value="@-=_.()/+*^,:?!"/>
+                                    </valid>
+                                </sanitizer>
+                            </param>
+                        </when>
+                        <when value="true">
+                            <expand macro="upload_text_file" />
+                        </when>
+                    </conditional>
+                </when>
+                <when value="add">
+                    <conditional name="batch_selector">
+                        <param name="batch" type="select" label="Manipulate a single user or multiple users">
+                            <option value="false" selected="true">Single user</option>
+                            <option value="true">Multiple users</option>
+                        </param>
+                        <when value="false">
+                            <param name="user_email" type="text" label="User email" help="Specify the user email">
+                                <sanitizer invalid_char="">
+                                    <valid initial="string.letters,string.digits">
+                                        <add value="@-=_.()/+*^,:?!"/>
+                                    </valid>
+                                </sanitizer>
+                            </param>
+                            <param type="text" name="group_name" size="30" value="unknown" label="Group name" />
+                        </when>
+                        <when value="true">
+                            <expand macro="upload_text_file" />
+                        </when>
+                    </conditional>
+                </when>
+                <when value="remove">
+                    <conditional name="batch_selector">
+                        <param name="batch" type="select" label="Manipulate a single user or multiple users">
+                            <option value="false" selected="true">Single user</option>
+                            <option value="true">Multiple users</option>
+                        </param>
+                        <when value="false">
+                            <param name="user_email" type="text" label="User email" help="Specify the user email">
+                                <sanitizer invalid_char="">
+                                    <valid initial="string.letters,string.digits">
+                                        <add value="@-=_.()/+*^,:?!"/>
+                                    </valid>
+                                </sanitizer>
+                            </param>
+                            <param type="text" name="group_name" size="30" value="unknown" label="Group name" />
+                        </when>
+                        <when value="true">
+                            <expand macro="upload_text_file" />
+                        </when>
+                    </conditional>
+                </when>
+            </conditional>
+        </repeat>
+    </inputs>
+    <outputs>
+        <data format="csv" name="output" label="Apollo User Management"/>
+    </outputs>
+    <tests>
+        <test expect_failure="true">
+            <param name="first" value="first" />
+            <param name="last" value="last" />
+
+            <expand macro="test_result" />
+        </test>
+    </tests>
+    <help><![CDATA[
+**What it does**
+
+This Galaxy tool is used to manage Apollo users.The currently supported operation including:
+
+  - Create a new user
+  - Delete a user
+  - Add a user to a group (If the group doesn't exist, create the group)
+  - Remove a user to a group
+
+The tool can do these operations on one student at a time. It can also do the operations on multiple students at a time by uploading a text file, which including students information.
+
+The text file can be either CSV (comma-delimited) or Tabular (tab-delimited). It should have a header line, including names for each column. Example text files:
+
+Text file for creating multiple users:
+
+.. csv-table::
+   :header: "useremail", "firstname", "lastname"
+   :widths: 20, 10, 10
+
+   "test1@demo.com", "test1", "demo"
+   "test2@demo.com", "test2", "demo"
+   "test3@demo.com", "test3", "demo"
+
+
+Text file for deleting multiple users:
+
+.. csv-table::
+    :header: "useremail"
+    :widths: 20
+
+    "test1@demo.com"
+    "test2@demo.com"
+    "test3@demo.com"
+
+
+Text file for adding / removing multiple users from a group:
+
+.. csv-table::
+   :header: "useremail", "group"
+   :widths: 20, 20
+
+   "test1@demo.com", "annotation_group1"
+   "test2@demo.com", "annotation_group1"
+   "test3@demo.com", "annotation_group1"
+
+@REFERENCES@
+      ]]></help>
+    <expand macro="citations"/>
+</tool>
