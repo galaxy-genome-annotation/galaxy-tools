@@ -3,7 +3,7 @@ import argparse
 import logging
 import sys
 import time
-from builtins import str
+from six.moves.builtins import str
 
 from BCBio import GFF
 

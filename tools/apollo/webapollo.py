@@ -7,9 +7,9 @@ import logging
 import os
 import time
 from abc import abstractmethod
-from builtins import next
-from builtins import object
-from builtins import str
+from six.moves.builtins import next
+from six.moves.builtins import object
+from six.moves.builtins import str
 
 from BCBio import GFF
 
