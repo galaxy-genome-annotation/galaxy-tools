@@ -106,7 +106,7 @@ with open(file_path, 'w') as f:
                         </param>
                         <when value="false">
                             <param name="user_email" type="text" label="User email" help="Specify the user email">
-                                <sanitizer>
+                                <sanitizer invalid_char="">
                                     <valid initial="string.letters,string.digits">
                                         <add value="@-=_.()/+*^,:?!"/>
                                     </valid>
@@ -128,7 +128,7 @@ with open(file_path, 'w') as f:
                         </param>
                         <when value="false">
                             <param name="user_email" type="text" label="User email" help="Specify the user email">
-                                <sanitizer>
+                                <sanitizer invalid_char="">
                                     <valid initial="string.letters,string.digits">
                                         <add value="@-=_.()/+*^,:?!"/>
                                     </valid>
@@ -148,7 +148,7 @@ with open(file_path, 'w') as f:
                         </param>
                         <when value="false">
                             <param name="user_email" type="text" label="User email" help="Specify the user email">
-                                <sanitizer>
+                                <sanitizer invalid_char="">
                                     <valid initial="string.letters,string.digits">
                                         <add value="@-=_.()/+*^,:?!"/>
                                     </valid>
@@ -169,7 +169,7 @@ with open(file_path, 'w') as f:
                         </param>
                         <when value="false">
                             <param name="user_email" type="text" label="User email" help="Specify the user email">
-                                <sanitizer>
+                                <sanitizer invalid_char="">
                                     <valid initial="string.letters,string.digits">
                                         <add value="@-=_.()/+*^,:?!"/>
                                     </valid>
@@ -186,7 +186,7 @@ with open(file_path, 'w') as f:
         </repeat>
     </inputs>
     <outputs>
-        <data format="csv" name="output" label="Apollo Credentials"/>
+        <data format="csv" name="output" label="Apollo User Management"/>
     </outputs>
     <tests>
         <test expect_failure="true">
@@ -213,12 +213,12 @@ The text file can be either CSV (comma-delimited) or Tabular (tab-delimited). It
 Text file for creating multiple users:
 
 .. csv-table::
-   :header: "useremail", "firstname", "lastname", "password"
-   :widths: 20, 10, 10, 10
+   :header: "useremail", "firstname", "lastname"
+   :widths: 20, 10, 10
 
-   "test1@demo.com", "test1", "demo", "1234"
-   "test2@demo.com", "test2", "demo", "1234"
-   "test3@demo.com", "test3", "demo", "1234"
+   "test1@demo.com", "test1", "demo"
+   "test2@demo.com", "test2", "demo"
+   "test3@demo.com", "test3", "demo"
 
 
 Text file for deleting multiple users:

@@ -19,7 +19,12 @@ def pwgen(length):
     chars = list('qwrtpsdfghjklzxcvbnm')
     return ''.join(random.choice(chars) for _ in range(length))
 
+def cleanInput(dict):
+    cleanedDict = {k:v.strip() for k,v in dict.items()}
+    return cleanedDict
+
 def createApolloUser(user, out):
+    user = cleanInput(user)
     password = pwgen(12)
     time.sleep(1)
     users = wa.users.loadUsers()
@@ -58,6 +63,7 @@ def createApolloUsers(users_list, out):
 
 
 def deleteApolloUser(user, out):
+    user = cleanInput(user)
     apollo_user = wa.users.loadUsers(email=user['useremail'])
     if len(apollo_user) == 1:
         userObj = apollo_user[0]
@@ -84,6 +90,7 @@ def deleteApolloUsers(users_list, out):
 
 
 def addApolloUserToGroup(user, out):
+    user = cleanInput(user)
     apollo_user = wa.users.loadUsers(email=user['useremail'])
     groups = wa.groups.loadGroups()
     group = [g for g in groups if g.name == user['group']]
@@ -121,6 +128,7 @@ def addApolloUsersToGroups(users_list, out):
 
 
 def removeApolloUserFromGroup(user, out):
+    user = cleanInput(user)
     apollo_user = wa.users.loadUsers(email=user['useremail'])
     groups = wa.groups.loadGroups()
     group = [g for g in groups if g.name == user['group']]
@@ -174,8 +182,8 @@ def parseUserInfoFile(file_format, filename):
         info = dict()
         fields = len(l)
         for i in range(fields):
-            title = headers[i].rstrip()
-            info[title] = l[i].rstrip()
+            title = headers[i].strip()
+            info[title] = l[i].strip()
         users.append(info)
     return users
 
