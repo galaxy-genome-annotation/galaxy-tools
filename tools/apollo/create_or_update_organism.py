@@ -99,5 +99,8 @@ if __name__ == '__main__':
                                                      administrate=False, write=True, read=True,
                                                      export=True)
 
-    data = [o for o in data if o['commonName'] == org_cn]
-    print(json.dumps(data, indent=2))
+    try:
+        data = [o for o in data if o['commonName'] == org_cn]
+        print(json.dumps(data, indent=2))
+    except Exception:
+        print(data['error'])
