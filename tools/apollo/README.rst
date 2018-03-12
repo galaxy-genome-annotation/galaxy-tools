@@ -15,7 +15,7 @@ tools to be fully functional:
 .. code:: bash
 
     . /path/to/galaxy/.venv/bin/activate
-    pip install future biopython bcbio-gff
+    pip install six biopython bcbio-gff
     deactivate
 
 Environment

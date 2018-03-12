@@ -7,20 +7,18 @@ import logging
 import os
 import time
 from abc import abstractmethod
-from builtins import next
-from builtins import object
-from builtins import str
 
 from BCBio import GFF
 
 from Bio import SeqIO
 
-from future import standard_library
-
 import requests
 
+from six.moves.builtins import next
+from six.moves.builtins import object
+from six.moves.builtins import str
 
-standard_library.install_aliases()
+
 try:
     import StringIO as io
 except BaseException:

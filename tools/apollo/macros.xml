@@ -6,7 +6,7 @@
       <requirement type="package" version="1.65">biopython</requirement>
       <requirement type="package" version="0.6.2">bcbiogff</requirement>
       <requirement type="package" version="2.12.4">requests</requirement>
-      <requirement type="package" version="0.16.0">future</requirement>
+      <requirement type="package" version="1.11.0">six</requirement>
       <yield/>
     </requirements>
   </xml>
