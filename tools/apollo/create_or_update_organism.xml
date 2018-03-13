@@ -7,10 +7,27 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-cp -R '${jbrowse.extra_files_path}/data/' "@DATA_DIR@/${jbrowse.id}"
+#import os
 
+#def getJBrowseHub($dir)
+    #for $root, $dirs, $files in $os.walk($dir)
+        #for $name in $files
+            #if $name == "trackList.json"
+                #return $root
+            #end if
+        #end for
+    #end for
+#end def
+#set jbrowse_hub_dir = $getJBrowseHub(str($jbrowse.extra_files_path))
+
+#if not $jbrowse_hub_dir
+echo "Track file doesn't exist in ${jbrowse.extra_files_path}, please specify the correct JBrowse HTML Output" >&2
 &&
+exit 1
 
+#else
+cp -R $jbrowse_hub_dir "@DATA_DIR@/${jbrowse.id}"
+&&
 python $__tool_directory__/create_or_update_organism.py
 
 @ADMIN_AUTH@
@@ -29,7 +46,10 @@ $public
 
 $__user_email__
 
-> $output]]></command>
+> $output
+#end if
+]]></command>
+
   <inputs>
     <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
     <expand macro="org_or_guess" />
