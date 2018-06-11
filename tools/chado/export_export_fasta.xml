@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<tool id="export_export_fasta" name="Chado export fasta" version="@WRAPPER_VERSION@.0">
+ <description></description>
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+	<expand macro="requirements"/>
+    <code file="chado.py"/>
+	<command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin export export_fasta
+'$organism'
+
+ > $results
+    ]]></command>
+	<inputs>
+    <!-- arguments -->
+    <param argument="--organism"
+           type="select"
+           dynamic_options="list_organisms()"
+           label="Organism" />
+
+	</inputs>
+	<outputs>
+		<data format="fasta" name="results"/>
+	</outputs>
+	<help>
+Export reference sequences as fasta.
+
+@HELP@
+	</help>
+</tool>

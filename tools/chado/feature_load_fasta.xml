@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<tool id="feature_load_fasta" name="Chado load fasta" version="@WRAPPER_VERSION@.0">
+ <description></description>
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+	<expand macro="requirements"/>
+    <code file="chado.py"/>
+	<command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin feature load_fasta
+'$fasta'
+'$organism_id'
+
+#if $sequence_type:
+  --sequence_type '$sequence_type'
+#end if
+#if $analysis_id:
+  --analysis_id '$analysis_id'
+#end if
+#if $re_name:
+  --re_name '$re_name'
+#end if
+#if $re_uniquename:
+  --re_uniquename '$re_uniquename'
+#end if
+#if $match_on_name:
+  $match_on_name
+#end if
+#if $update:
+  $update
+#end if
+#if $ext_db.db:
+  --db '${ext_db.db}'
+#end if
+#if $ext_db.re_db_accession:
+  --re_db_accession '${ext_db.re_db_accession}'
+#end if
+
+#if str($relationships.rel_type) != "none":
+    --rel_type '${relationships.rel_type}'
+    --re_parent '${relationships.rel_subject_re}'
+    --parent_type '${relationships.rel_subject_type}'
+#end if
+
+| jq -S . > $results
+    ]]></command>
+	<inputs>
+    <!-- arguments -->
+	<param name="fasta" label="Fasta" argument="fasta" type="data" format="fasta" help="Path to the Fasta file to load" />
+    <param argument="--organism"
+           type="select"
+           dynamic_options="list_organisms()"
+           label="Organism" />
+
+    <!-- options -->
+	<param argument="--analysis_id"
+		type="select"
+		dynamic_options="list_analyses()"
+		label="Analysis" />
+	<param name="sequence_type" label="Sequence Type" type="text" value="contig" help="this should be a Sequence Ontology term"/>
+
+	<param name="re_name" label="Name regular expression" argument="re_name" type="text" help="Regular expression to extract the feature name from the fasta sequence id (first capturing group will be used)." optional="true" />
+	<param name="re_uniquename" label="Uniquename regular expression" argument="re_uniquename" type="text" help="Regular expression to extract the feature name from the fasta sequence id (first capturing group will be used)." optional="true" />
+	<param name="match_on_name" label="Match on name" argument="match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match existing features using their name instead of their uniquename" />
+	<param name="update" label="Update" argument="update" type="boolean" truevalue="--update" falsevalue="" help="Update existing feature with new sequence instead of throwing an error" />
+    <conditional name="relationships">
+		<param name="rel_type"
+			   argument="--rel_type"
+			   type="select"
+			   label="Relationship type"
+			   help="Use this when inserting features that should be associated to other already existing features">
+			<option value="none" selected="true">No relationship</option>
+			<option value="part_of">Part of (for CDS sequences)</option>
+			<option value="derives_from">Derives from (for peptide sequences)</option>
+		</param>
+		<when value="none"/>
+		<when value="part_of">
+			<expand macro="feature_rel" />
+		</when>
+		<when value="derives_from">
+			<expand macro="feature_rel" />
+		</when>
+	</conditional>
+    <section name="ext_db" title="Cross references to external database">
+		<param name="db" label="Db" argument="db" type="integer" help="External database to cross reference to." optional="true" /><!-- FIXME get this from db -->
+		<param name="re_db_accession" label="Regex external db accession" argument="re_db_accession" type="text" help="Regular expression to extract an external database accession from the fasta sequence id (first capturing group will be used)." optional="true" />
+    </section>
+
+	</inputs>
+	<outputs>
+		<data format="json" name="results"/>
+	</outputs>
+	<help>
+Load features from a fasta file
+
+@HELP@
+	</help>
+</tool>

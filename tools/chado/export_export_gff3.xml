@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<tool id="export_export_gff3" name="Chado export gff3" version="@WRAPPER_VERSION@.0">
+ <description></description>
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+	<expand macro="requirements"/>
+    <code file="chado.py"/>
+	<command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin export export_gff3
+'$organism'
+
+
+ > $results
+    ]]></command>
+	<inputs>
+    <!-- arguments -->
+    <param argument="--organism"
+           type="select"
+           dynamic_options="list_organisms()"
+           label="Organism" />
+
+    <!-- options -->
+
+	</inputs>
+	<outputs>
+		<data format="gff3" name="results"/>
+	</outputs>
+	<help>
+Export organism features as GFF3
+
+@HELP@
+	</help>
+</tool>

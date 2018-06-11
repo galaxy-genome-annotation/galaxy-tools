@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<macros>
+    <xml name="requirements">
+        <requirements>
+            <requirement type="package" version="2.1.1">python-chado</requirement>
+            <yield/>
+        </requirements>
+    </xml>
+
+    <xml name="stdio">
+        <stdio>
+            <regex level="fatal" match="Exception:" source="stderr" />
+            <regex level="fatal" match="error" source="stderr" />
+            <exit_code range="1:" />
+        </stdio>
+    </xml>
+
+    <token name="@WRAPPER_VERSION@">2.1.1</token>
+
+    <xml name="citation">
+        <citations>
+        </citations>
+    </xml>
+
+    <token name="@HELP_OVERVIEW@"><![CDATA[
+        **Python-chado Overview**
+
+        Python-cado provides several tools allowing to load data into a remote Chado database.
+    ]]></token>
+
+    <token name="@HELP@"><![CDATA[
+    ]]></token>
+
+    <token name="@AUTH@"><![CDATA[
+        echo "__default: local" > '.auth.yml' &&
+        echo "local:" >> '.auth.yml' &&
+        echo "    dbhost: \"\$GALAXY_CHADO_DBHOST\"" >> '.auth.yml' &&
+        echo "    dbname: \"\$GALAXY_CHADO_DBNAME\"" >> '.auth.yml' &&
+        echo "    dbpass: \"\$GALAXY_CHADO_DBPASS\"" >> '.auth.yml' &&
+        echo "    dbuser: \"\$GALAXY_CHADO_DBUSER\"" >> '.auth.yml' &&
+        echo "    dbschema: \"\$GALAXY_CHADO_DBSCHEMA\"" >> '.auth.yml' &&
+        echo "    dbport: \"\$GALAXY_CHADO_DBPORT\"" >> '.auth.yml' &&
+
+        CHAKIN_GLOBAL_CONFIG_PATH='.auth.yml'
+    ]]></token>
+
+    <xml name="sanitized">
+        <sanitizer>
+            <valid initial="string.printable">
+                <remove value="&apos;"/>
+            </valid>
+            <mapping initial="none">
+                <add source="&apos;" target="&apos;&quot;&apos;&quot;&apos;"/>
+                <add source="(" target="\("/>
+                <add source=")" target="\)"/>
+            </mapping>
+        </sanitizer>
+    </xml>
+
+    <xml name="feature_rel">
+        <param name="rel_subject_re"
+               argument="--rel-subject-re"
+               type="text"
+               label="Regular expression to extract the unique name of the parent feature"
+               help="this regex will be applied on the fasta definition line to generate the unique name of the parent feature">
+            <expand macro="sanitized"/>
+        </param>
+
+        <param name="rel_subject_type"
+               argument="--rel-subject-type"
+               type="text"
+               label="Sequence type of the parent"
+               help="this should be a Sequence Ontology term" />
+    </xml>
+</macros>

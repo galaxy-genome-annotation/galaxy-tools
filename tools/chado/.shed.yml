@@ -1,0 +1,18 @@
+categories:
+- Web Services
+long_description: |
+  Galaxy tools allowing to load data into a remote Chado database.
+
+  Chado is a member of the GMOD family of tools.
+
+  https://github.com/galaxy-genome-annotation/python-chado
+homepage_url: https://github.com/galaxy-genome-annotation/python-chado
+owner: gga
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/chado
+type: unrestricted
+auto_tool_repositories:
+  name_template: "chado_{{ tool_id }}"
+  description_template: "{{ tool_name }} (from the Chado tool suite)"
+suite:
+  name: "suite_chado"
+  description: Galaxy tools allowing to load data into a remote Chado database.
