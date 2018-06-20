@@ -24,6 +24,7 @@
                type="select"
                dynamic_options="list_analyses()"
                label="Analysis" />
+       <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="json" name="results" label="Synchronize Analysis into Tripal" />

@@ -110,6 +110,7 @@
             <option value="path_hierarchy">path_hierarchy</option>
         </param>
         <param name="queues" label="Queues" argument="queues" type="integer" value="10" help="Number of indexing task queues" />
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Index Tripal data" />

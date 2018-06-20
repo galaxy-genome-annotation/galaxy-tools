@@ -27,6 +27,7 @@
                optional="true"
                label="View name"
                help="The materialized view name to populate (leave empty to populate all views)" />
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Populate Tripal materialized view(s)" />

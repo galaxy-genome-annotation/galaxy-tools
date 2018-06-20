@@ -54,6 +54,7 @@
         <expand macro="matching"/>
 
         <expand macro="analysis" />
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Load Blast results into Tripal" />

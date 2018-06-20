@@ -24,6 +24,7 @@
                type="select"
                dynamic_options="list_organisms()"
                label="Organism" />
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Synchronize Organism into Tripal" />

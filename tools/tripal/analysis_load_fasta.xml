@@ -156,6 +156,7 @@
                    label="Regular expression to extract the accession from external DB"
                    help="this regex will be applied on the fasta definition line to generate the accession from external DB" />
         </section>
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Load Fasta into Tripal" />

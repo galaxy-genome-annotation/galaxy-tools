@@ -156,6 +156,7 @@
                    label="Create target features"
                    help="If not found, create features referenced in the target attribute." />
         </section>
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Load GFF3 into Tripal" />

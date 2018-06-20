@@ -50,6 +50,15 @@
         TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
     ]]></token>
 
+    <xml name="wait_for">
+        <param name="wait_for"
+               type="data"
+               format="data"
+               optional="true"
+               label="Run this only after the following dataset is ready"
+               help="Use this if you want to delay the job execution until some data is already loaded. The selected dataset will not be used for anything else."/>
+    </xml>
+
     <xml name="test_result">
         <assert_stderr>
             <has_text text="MissingSchema" />

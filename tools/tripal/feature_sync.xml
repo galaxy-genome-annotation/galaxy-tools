@@ -50,6 +50,7 @@
                    label="Feature to synchronize"
                    help="Name of a feature to be synced (e.g. 'gene0001')" />
         </repeat>
+        <expand macro="wait_for"/>
     </inputs>
     <outputs>
         <data format="txt" name="results" label="Synchronize features into Tripal" />
