@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <tool id="feature_load_gff" name="Chado load gff" version="@WRAPPER_VERSION@.0">
- <description></description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
+    <description></description>
+    <macros>
+    	 <import>macros.xml</import>
+    </macros>
     <code file="chado.py"/>
-	<expand macro="requirements"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <expand macro="requirements"/>
+    <command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
 chakin feature load_gff
 '$gff'
 '$analysis_id'
-'$organism_id'
+'$organism'
 
 #if $landmark_type:
   --landmark_type '$landmark_type'
@@ -29,9 +29,6 @@ chakin feature load_gff
 #if $no_seq_compute:
   $no_seq_compute
 #end if
-#if $quiet:
-  $quiet
-#end if
 #if $add_only:
   $add_only
 #end if
@@ -40,33 +37,34 @@ chakin feature load_gff
 
  > $results
     ]]></command>
-	<inputs>
-    <!-- arguments -->
-	<param name="gff" label="Gff" argument="gff" type="text" help="Path to the Fasta file to load" />
-	<param argument="--analysis_id"
-		type="select"
-		dynamic_options="list_analyses()"
-		label="Analysis" />
-    <param argument="--organism"
-           type="select"
-           dynamic_options="list_organisms()"
-           label="Organism" />
+  	<inputs>
+          <!-- arguments -->
+      	<param name="gff" label="Gff" argument="gff" type="data" format="gff" help="Path to the Fasta file to load" />
+      	<param argument="--analysis_id"
+      		type="select"
+      		dynamic_options="list_analyses()"
+      		label="Analysis" />
+          <param argument="--organism"
+                 type="select"
+                 dynamic_options="list_organisms()"
+                 label="Organism" />
 
-    <!-- options -->
-	<param name="landmark_type" label="Landmark Type" argument="landmark_type" type="text" help="Type of the landmarks (will speed up loading if provided, e.g. contig, should be a term of the Sequence ontology)" />
-	<param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in protein name to use in 'Regex protein' (e.g. '^(.*?)-R([A-Z]+)$', default='^(.*?)$' )" />
-	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture'" />
-	<param name="fasta" label="Fasta" argument="fasta" type="text" help="Path to a Fasta containing sequences for some features. When creating a feature, if its sequence is in this fasta file it will be loaded. Otherwise for mRNA and polypeptides it will be computed from the genome sequence (if available), otherwise it will be left empty." />
-	<param name="no_seq_compute" label="Allow computing missing sequences" argument="no_seq_compute" type="boolean" truevalue="" falsevalue="--no_seq_compute" help="Enable the computation of mRNA and polypeptides sequences based on genome sequence and positions." />
-	<param name="add_only" label="Add only" argument="add_only" type="boolean" truevalue="--add_only" falsevalue="" help="Use this flag if you're not updating existing features, but just adding new features to the selected analysis and organism. It will speedup loading, and reduce memory usage, but might produce errors in case of already existing feature." />
+          <!-- options -->
+      	<param name="landmark_type" label="Landmark Type" argument="landmark_type" type="text" help="Type of the landmarks (will speed up loading if provided, e.g. contig, should be a term of the Sequence ontology)" />
+      	<param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in mRNA name to use in 'Regex protein' (e.g. '^(.*?)-R([A-Z]+)$', default='^(.*?)$' )" />
+      	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture'" />
+      	<param name="fasta" label="Fasta" argument="fasta" type="data" format="fasta" help="A Fasta containing sequences for some features. When creating a feature, if its sequence is in this fasta file it will be loaded. Otherwise for mRNA and polypeptides it will be computed from the genome sequence (if available), otherwise it will be left empty." optional="true" />
+      	<param name="no_seq_compute" label="Allow computing missing sequences" argument="no_seq_compute" type="boolean" truevalue="" falsevalue="--no_seq_compute" help="Enable the computation of mRNA and polypeptides sequences based on genome sequence and positions." />
+      	<param name="add_only" label="Add only" argument="add_only" type="boolean" truevalue="--add_only" falsevalue="" help="Use this flag if you're not updating existing features, but just adding new features to the selected analysis and organism. It will speedup loading, and reduce memory usage, but might produce errors in case of already existing feature." />
 
-	</inputs>
-	<outputs>
-		<data format="txt" name="results"/>
-	</outputs>
-	<help>
+        <expand macro="wait_for"/>
+  	</inputs>
+  	<outputs>
+  		  <data format="txt" name="results"/>
+  	</outputs>
+  	<help>
 Load features from a gff file
 
 @HELP@
-	</help>
+  	</help>
 </tool>

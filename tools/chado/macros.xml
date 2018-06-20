@@ -2,7 +2,7 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="2.1.1">python-chado</requirement>
+            <requirement type="package" version="2.1.2">python-chado</requirement>
             <yield/>
         </requirements>
     </xml>
@@ -55,6 +55,16 @@
                 <add source=")" target="\)"/>
             </mapping>
         </sanitizer>
+    </xml>
+
+    <!-- I'm not proud of it, but it is needed for workflows -->
+    <xml name="wait_for">
+        <param name="wait_for"
+               type="data"
+               format="data"
+               optional="true"
+               label="Run this only after the following dataset is ready"
+               help="Use this if you want to delay the job execution until some data is already loaded. The selected dataset will not be used for anything else."/>
     </xml>
 
     <xml name="feature_rel">

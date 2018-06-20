@@ -11,8 +11,8 @@
 
 chakin feature get_features
 
-#if $organism_id:
-  --organism_id '$organism_id'
+#if $organism:
+  --organism_id '$organism'
 #end if
 #if $analysis_id:
   --analysis_id '$analysis_id'

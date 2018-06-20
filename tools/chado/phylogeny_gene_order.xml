@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tool id="phylogeny_gene_order" name="Chado gene ordering" version="@WRAPPER_VERSION@.0">
- <description>for phylogeny module</description>
+ 	<description>for phylogeny module</description>
 	<macros>
 		<import>macros.xml</import>
 	</macros>
@@ -17,10 +17,9 @@ chakin phylogeny gene_order
  > $results
     ]]></command>
 	<inputs>
-    <!-- arguments -->
-
     <!-- options -->
-	<param name="nuke" label="Nuke" argument="nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene ordering data" />
+		<param name="nuke" label="Nuke" argument="nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene ordering data" />
+	    <expand macro="wait_for"/>
 
 	</inputs>
 	<outputs>

@@ -11,7 +11,7 @@
 
 chakin organism delete_organisms
 
---organism_id $organism_id
+--organism_id $organism
 
  > $results
     ]]></command>

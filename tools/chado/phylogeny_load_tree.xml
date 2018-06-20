@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tool id="phylogeny_load_tree" name="Chado load trees" version="@WRAPPER_VERSION@.0">
- <description>for phylogeny module</description>
+    <description>for phylogeny module</description>
 	<macros>
 		<import>macros.xml</import>
 	</macros>
@@ -32,19 +32,20 @@ chakin phylogeny load_tree
 | jq -S . > $results
     ]]></command>
 	<inputs>
-    <!-- arguments -->
-	<param name="newick" label="Newick" argument="newick" type="text" help="Newick file to load (or directory containing multiple newick files to load)" />
-	<param argument="--analysis_id"
-		type="select"
-		dynamic_options="list_analyses()"
-		label="Analysis" />
+	    <!-- arguments -->
+		<param name="newick" label="Newick" argument="newick" type="data" format="txt" help="Newick file to load (or directory containing multiple newick files to load)" />
+		<param argument="--analysis_id"
+			type="select"
+			dynamic_options="list_analyses()"
+			label="Analysis" />
 
-    <!-- options -->
-	<param name="name" label="Name" argument="name" type="text" help="The name given to the phylotree entry in the database" />
-	<param name="xref_db" label="Xref db" argument="xref_db" value="null" type="text" help="The name of the db to link dbxrefs for the trees" />
-	<param name="xref_accession" label="Xref Accession" argument="xref_accession" type="text" help="The accession to use for dbxrefs for the trees (assumed same as name unless otherwise specified)" />
-	<param name="match_on_name" label="Match On Name" argument="match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match polypeptide features using their name instead of their uniquename" />
-	<param name="prefix" label="Prefix" argument="prefix" type="text" help="Comma-separated list of prefix to be removed from identifiers (e.g species prefixes when using loading OrthoFinder output)" />
+	    <!-- options -->
+		<param name="name" label="Name" argument="name" type="text" help="The name given to the phylotree entry in the database" />
+		<param name="xref_db" label="Xref db" argument="xref_db" value="null" type="text" help="The name of the db to link dbxrefs for the trees" />
+		<param name="xref_accession" label="Xref Accession" argument="xref_accession" type="text" help="The accession to use for dbxrefs for the trees (assumed same as name unless otherwise specified)" />
+		<param name="match_on_name" label="Match On Name" argument="match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match polypeptide features using their name instead of their uniquename" />
+		<param name="prefix" label="Prefix" argument="prefix" type="text" help="Comma-separated list of prefix to be removed from identifiers (e.g species prefixes when loading OrthoFinder output)" />
+		<expand macro="wait_for"/>
 
 	</inputs>
 	<outputs>
