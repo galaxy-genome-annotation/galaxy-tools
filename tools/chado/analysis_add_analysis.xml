@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<tool id="analysis_add_analysis" name="Chado analysis add" version="@WRAPPER_VERSION@.0">
+ <description></description>
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+	<expand macro="requirements"/>
+	<command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin analysis add_analysis
+'$name'
+'$program'
+'$programversion'
+'$sourcename'
+
+#if $algorithm:
+  --algorithm '$algorithm'
+#end if
+#if $sourceversion:
+  --sourceversion '$sourceversion'
+#end if
+#if $sourceuri:
+  --sourceuri '$sourceuri'
+#end if
+#if $description:
+  --description '$description'
+#end if
+#if $date_executed:
+  --date_executed '$date_executed'
+#end if
+
+| jq -S . > $results
+    ]]></command>
+	<inputs>
+    <!-- arguments -->
+	<param name="name" label="Name" argument="name" type="text" help="analysis name" />
+	<param name="program" label="Program" argument="program" type="text" help="analysis program" />
+	<param name="programversion" label="Programversion" argument="programversion" type="text" help="analysis programversion" />
+	<param name="sourcename" label="Sourcename" argument="sourcename" type="text" help="analysis sourcename" />
+
+    <!-- options -->
+	<param name="algorithm" label="Algorithm" argument="algorithm" type="text" help="analysis algorithm" optional="True" />
+	<param name="sourceversion" label="Sourceversion" argument="sourceversion" type="text" help="analysis sourceversion" optional="True" />
+	<param name="sourceuri" label="Sourceuri" argument="sourceuri" type="text" help="analysis sourceuri" optional="True" />
+	<param name="description" label="Description" argument="description" type="text" help="analysis description" optional="True" />
+	<param name="date_executed" label="Date Executed" argument="date_executed" type="text" optional="True" help="analysis date_executed (yyyy-mm-dd)">
+		<validator type="regex" message="Date in YYYY-MM-DD format">^[0-9]{4}-[0-9]{2}-[0-9]{2}$</validator>
+	</param>
+
+	</inputs>
+	<outputs>
+		<data format="json" name="results"/>
+	</outputs>
+	<help>
+Create an analysis
+
+@HELP@
+	</help>
+</tool>

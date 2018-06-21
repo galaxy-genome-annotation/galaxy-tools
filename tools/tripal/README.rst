@@ -1,7 +1,7 @@
 Galaxy-tripal
 =============
 
-Galaxy tools to interface with Tripal using pyhon-tripal
+Galaxy tools to interface with Tripal using python-tripal
 
 Dependencies
 ------------
@@ -42,5 +42,4 @@ The following environment variables must be set:
 License
 -------
 
-All python scripts, wrappers, and the webapollo.py are licensed under
-MIT license.
+All python scripts and wrappers are licensed under MIT license.
