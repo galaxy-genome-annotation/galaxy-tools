@@ -3,6 +3,7 @@
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="2.1.2">python-chado</requirement>
+            <requirement type="package" version="1.5">jq</requirement>
             <yield/>
         </requirements>
     </xml>
