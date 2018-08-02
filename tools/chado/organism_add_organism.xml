@@ -10,12 +10,10 @@
 
 chakin organism add_organism
 '$genus'
+'$species'
 '$common'
 '$abbr'
 
-#if $species:
-  --species '$species'
-#end if
 #if $comment:
   --comment '$comment'
 #end if
