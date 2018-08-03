@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<tool id="phylogeny_sync" profile="16.04" name="Synchronize phylogeny data" version="@WRAPPER_VERSION@.1">
+    <description>from Chado to Tripal</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <code file="tripal.py"/>
+    <expand macro="stdio"/>
+    <command><![CDATA[
+
+        @AUTH@
+
+        tripaille phylogeny sync
+
+        &&
+
+        echo "Data loaded" > $results
+    ]]></command>
+    <inputs>
+       <expand macro="wait_for"/>
+    </inputs>
+    <outputs>
+        <data format="json" name="results" label="Synchronize Phylogeny into Tripal" />
+    </outputs>
+    <tests>
+        <test expect_failure="true">
+            <expand macro="test_result" />
+        </test>
+    </tests>
+    <help><![CDATA[
+        @HELP_OVERVIEW@
+
+        **Synchronize Phylogeny**
+
+        With this tool, you can synchronize phylogeny data from the Chado database into the Tripal instance.
+        Corresponding Drupal nodes will be created.
+
+        @HELP@
+    ]]></help>
+    <expand macro="citation"/>
+</tool>

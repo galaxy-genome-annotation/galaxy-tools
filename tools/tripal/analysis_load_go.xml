@@ -5,6 +5,7 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <code file="tripal.py"/>
     <expand macro="stdio"/>
     <command><![CDATA[
         tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
@@ -19,9 +20,21 @@
 
         tripaille analysis load_go
 
+            --organism_id '${organism}'
+
             @ANALYSIS@
 
-            @MATCHING@
+            #if str($matching.query_re):
+                --re_name '${matching.query_re}'
+            #end if
+
+            #if $matching.query_uniquename:
+                --query_matching 'uniquename'
+            #else
+                --query_matching 'uniquename'
+            #end if
+
+            --query_type '$matching.query_type'
 
             "\${tmp_dir}/blast2go.gaf"
 
@@ -34,6 +47,11 @@
                type="data"
                format="txt"
                label="Blast2Go results (GAF file)" />
+
+        <param argument="--organism"
+               type="select"
+               dynamic_options="list_organisms()"
+               label="Organism" />
 
         <expand macro="matching"/>
         <expand macro="analysis" />
