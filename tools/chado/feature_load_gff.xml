@@ -54,7 +54,7 @@ chakin feature load_gff
       	<param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in mRNA name to use in 'Regex protein' (e.g. '^(.*?)-R([A-Z]+)$', default='^(.*?)$' )">
             <expand macro="sanitized"/>
         </param>
-      	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture'">
+      	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture' (e.g. '\1-P\2')">
             <expand macro="sanitized"/>
         </param>
       	<param name="fasta" label="Fasta" argument="fasta" type="data" format="fasta" help="A Fasta containing sequences for some features. When creating a feature, if its sequence is in this fasta file it will be loaded. Otherwise for mRNA and polypeptides it will be computed from the genome sequence (if available), otherwise it will be left empty." optional="true" />
