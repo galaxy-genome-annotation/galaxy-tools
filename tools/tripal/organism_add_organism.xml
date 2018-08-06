@@ -14,10 +14,6 @@
 
         tripaille organism add_organism
 
-            #if str($species):
-                --species '$species'
-            #end if
-
             #if str($description):
                 --comment '$description'
             #end if
@@ -28,6 +24,7 @@
             #end if
 
             '$genus'
+            '$species'
             '$common'
             '$abbr'
 
@@ -43,7 +40,6 @@
                argument="--species"
                type="text"
                label="Species"
-               optional="True"
                help="e.g.: sapiens" />
 
         <param name="abbr"

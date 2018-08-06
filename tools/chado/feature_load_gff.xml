@@ -51,8 +51,12 @@ chakin feature load_gff
 
           <!-- options -->
       	<param name="landmark_type" label="Landmark Type" argument="landmark_type" type="text" help="Type of the landmarks (will speed up loading if provided, e.g. contig, should be a term of the Sequence ontology)" />
-      	<param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in mRNA name to use in 'Regex protein' (e.g. '^(.*?)-R([A-Z]+)$', default='^(.*?)$' )" />
-      	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture'" />
+      	<param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in mRNA name to use in 'Regex protein' (e.g. '^(.*?)-R([A-Z]+)$', default='^(.*?)$' )">
+            <expand macro="sanitized"/>
+        </param>
+      	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture' (e.g. '\1-P\2')">
+            <expand macro="sanitized"/>
+        </param>
       	<param name="fasta" label="Fasta" argument="fasta" type="data" format="fasta" help="A Fasta containing sequences for some features. When creating a feature, if its sequence is in this fasta file it will be loaded. Otherwise for mRNA and polypeptides it will be computed from the genome sequence (if available), otherwise it will be left empty." optional="true" />
       	<param name="no_seq_compute" label="Allow computing missing sequences" argument="no_seq_compute" type="boolean" truevalue="" falsevalue="--no_seq_compute" help="Enable the computation of mRNA and polypeptides sequences based on genome sequence and positions." />
       	<param name="add_only" label="Add only" argument="add_only" type="boolean" truevalue="--add_only" falsevalue="" help="Use this flag if you're not updating existing features, but just adding new features to the selected analysis and organism. It will speedup loading, and reduce memory usage, but might produce errors in case of already existing feature." />

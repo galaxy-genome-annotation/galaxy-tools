@@ -85,7 +85,9 @@ chakin feature load_fasta
 		</conditional>
 	    <section name="ext_db" title="Cross references to external database">
 			<param name="db" label="Db" argument="db" type="integer" help="External database to cross reference to." optional="true" /><!-- FIXME get this from db -->
-			<param name="re_db_accession" label="Regex external db accession" argument="re_db_accession" type="text" help="Regular expression to extract an external database accession from the fasta sequence id (first capturing group will be used)." optional="true" />
+			<param name="re_db_accession" label="Regex external db accession" argument="re_db_accession" type="text" help="Regular expression to extract an external database accession from the fasta sequence id (first capturing group will be used)." optional="true">
+                <expand macro="sanitized"/>
+            </param>
 	    </section>
 	    <expand macro="wait_for"/>
 	</inputs>
