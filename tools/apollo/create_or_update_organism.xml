@@ -31,7 +31,7 @@ $__user_email__
 
 > $output]]></command>
   <inputs>
-    <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" help="Please the important warnings in the help section below" />
+    <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" help="Please read the important warnings in the help section below" />
     <expand macro="org_or_guess" />
     <param name="genus" type="text" label="Genus" optional="False" />
     <param name="species" type="text" label="Species" optional="True" />
