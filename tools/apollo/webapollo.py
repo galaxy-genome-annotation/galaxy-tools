@@ -1532,11 +1532,6 @@ def galaxy_list_groups(trans, *args, **kwargs):
         os.environ['GALAXY_WEBAPOLLO_USER'],
         os.environ['GALAXY_WEBAPOLLO_PASSWORD']
     )
-    # Assert that the email exists in apollo
-    try:
-        gx_user = wa.requireUser(email)
-    except UnknownUserException:
-        return []
 
     # Key for cached data
     cacheKey = 'groups-' + email
@@ -1545,7 +1540,7 @@ def galaxy_list_groups(trans, *args, **kwargs):
     if cacheKey not in cache:
         # However if it ISN'T there, we know we're safe to fetch + put in
         # there.
-        data = _galaxy_list_groups(wa, gx_user, *args, **kwargs)
+        data = _galaxy_list_groups(wa, *args, **kwargs)
         cache[cacheKey] = data
         return data
     try:
@@ -1558,12 +1553,12 @@ def galaxy_list_groups(trans, *args, **kwargs):
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
-        data = _galaxy_list_groups(wa, gx_user, *args, **kwargs)
+        data = _galaxy_list_groups(wa, *args, **kwargs)
         cache[cacheKey] = data
         return data
 
 
-def _galaxy_list_groups(wa, gx_user, *args, **kwargs):
+def _galaxy_list_groups(wa, *args, **kwargs):
     # Fetch the groups.
     group_data = []
     for group in wa.groups.loadGroups():
