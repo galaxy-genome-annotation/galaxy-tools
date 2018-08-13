@@ -7,10 +7,21 @@ import logging
 import shutil
 import sys
 import time
+import random
 
 from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
+def pwgen(length):
+    chars = list('qwrtpsdfghjklzxcvbnm')
+    return ''.join(random.choice(chars) for _ in range(length))
+
+def str2bool(string):
+    if string.lower() in ('true', 't', '1'):
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
@@ -25,6 +36,7 @@ if __name__ == '__main__':
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
     parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
+    parser.add_argument('--use_remote_user', type=str2bool, default=False, help='Authentification with remote_user')
 
     args = parser.parse_args()
     wa = WebApolloInstance(args.apollo, args.username, args.password)
@@ -33,8 +45,19 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # User must have an account
-    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    # User must have an account, if not, create it
+    try:
+        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    except Exception:
+        firstName = args.email
+        lastName = args.email
+        password = pwgen(12)
+        returnData = wa.users.createUser(args.email, firstName, lastName, password, role='user')
+        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+        if(not args.use_remote_user):
+            f = open("Apollo_credentials.txt", "w")
+            f.write( 'Username: %s\tPassword: %s' % (args.email, password))
+
 
     log.info("Determining if add or update required")
     try:

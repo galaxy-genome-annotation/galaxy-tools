@@ -22,6 +22,7 @@ python $__tool_directory__/create_or_update_organism.py
 #end if
 ${remove_old_directory}
 $public
+--use_remote_user '${__app__.config.use_remote_user}'
 
 @ORG_OR_GUESS@
 
@@ -40,7 +41,9 @@ $__user_email__
     <param name="remove_old_directory" type="boolean" truevalue="--remove_old_directory" falsevalue="" label="Remove old data directory" />
   </inputs>
   <outputs>
-    <data format="json" name="output"/>
+    <data format="json" name="output">
+        <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
+    </data>
   </outputs>
   <tests>
       <test expect_failure="true">
