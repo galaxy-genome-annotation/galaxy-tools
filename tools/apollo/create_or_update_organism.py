@@ -56,9 +56,9 @@ if __name__ == '__main__':
         password = pwgen(12)
         returnData = wa.users.createUser(args.email, firstName, lastName, password, role='user')
         gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-        if ( not args.use_remote_user ):
+        if (not args.use_remote_user):
             f = open("Apollo_credentials.txt", "w")
-            f.write( 'Username: %s\tPassword: %s' % (args.email, password))
+            f.write('Username: %s\tPassword: %s' % (args.email, password))
 
     log.info("Determining if add or update required")
     try:
