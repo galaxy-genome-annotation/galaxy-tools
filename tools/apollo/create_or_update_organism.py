@@ -4,18 +4,20 @@ from __future__ import print_function
 import argparse
 import json
 import logging
+import random
 import shutil
 import sys
 import time
-import random
 
 from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+
 def pwgen(length):
     chars = list('qwrtpsdfghjklzxcvbnm')
     return ''.join(random.choice(chars) for _ in range(length))
+
 
 def str2bool(string):
     if string.lower() in ('true', 't', '1'):
@@ -54,10 +56,9 @@ if __name__ == '__main__':
         password = pwgen(12)
         returnData = wa.users.createUser(args.email, firstName, lastName, password, role='user')
         gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-        if(not args.use_remote_user):
+        if ( not args.use_remote_user ):
             f = open("Apollo_credentials.txt", "w")
             f.write( 'Username: %s\tPassword: %s' % (args.email, password))
-
 
     log.info("Determining if add or update required")
     try:
