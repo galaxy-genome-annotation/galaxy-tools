@@ -4,6 +4,7 @@ from __future__ import print_function
 import argparse
 import json
 import logging
+import os
 import random
 import shutil
 import sys
@@ -38,7 +39,6 @@ if __name__ == '__main__':
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
     parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
-    parser.add_argument('--use_remote_user', type=str2bool, default=False, help='Authentification with remote_user')
 
     args = parser.parse_args()
     wa = WebApolloInstance(args.apollo, args.username, args.password)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         password = pwgen(12)
         returnData = wa.users.createUser(args.email, firstName, lastName, password, role='user')
         gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-        if (not args.use_remote_user):
+        if not str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']):
             f = open("Apollo_credentials.txt", "w")
             f.write('Username: %s\tPassword: %s' % (args.email, password))
 

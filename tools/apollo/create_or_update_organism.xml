@@ -22,7 +22,6 @@ python $__tool_directory__/create_or_update_organism.py
 #end if
 ${remove_old_directory}
 $public
---use_remote_user '${__app__.config.use_remote_user}'
 
 @ORG_OR_GUESS@
 

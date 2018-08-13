@@ -22,7 +22,6 @@
 "\$GALAXY_WEBAPOLLO_USER"
 "\$GALAXY_WEBAPOLLO_PASSWORD"
   </token>
-
   <token name="@ORG_OR_GUESS@">
 <![CDATA[
 #if $org_source.source_select == "auto_json":
