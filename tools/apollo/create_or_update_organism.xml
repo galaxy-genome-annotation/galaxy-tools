@@ -32,7 +32,7 @@ $__user_email__
 
 > $output]]></command>
   <inputs>
-    <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" help="Please read the important warnings in the help section below" />
+    <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" help="Please read the warnings in the help section below" />
     <expand macro="org_or_guess" />
     <param name="genus" type="text" label="Genus" optional="False" />
     <param name="species" type="text" label="Species" optional="True" />
@@ -67,9 +67,6 @@ tracks are appropriate for a given analysis.
 
 **WARNINGS**
 
-- You must login at least once on the Apollo server with your current user
-  account before using this tool (in order for Apollo to properly assign you as
-  the owner of the organism).
 - Do not use names which conflict with other users.
 - If you provide an Apollo JSON file, only the first organism block will
   be used in Common Name determination, as it is improbable you wish to
