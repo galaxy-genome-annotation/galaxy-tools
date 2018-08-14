@@ -478,12 +478,12 @@ def AssertAdmin(user):
     else:
         raise Exception("User is not an administrator. Permission denied")
 
-def pwgen(length):
+def PasswordGenerator(length):
     chars = list('qwrtpsdfghjklzxcvbnm')
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-def str2bool(string):
+def Str2bool(string):
     if string.lower() in ('true', 't', '1'):
         return True
     else:
@@ -1375,7 +1375,7 @@ class UsersClient(Client):
             # 'organismPermissions': [],
         }
         returnData = self.request('createUser', data)
-        if addToHistory and not str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']):
+        if addToHistory and not Str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']):
             f = open("Apollo_credentials.txt", "w")
             f.write('Username: %s\tPassword: %s' % (email, newPassword))
         return returnData

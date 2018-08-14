@@ -13,7 +13,9 @@ $__user_email__
   <inputs>
   </inputs>
   <outputs>
-    <data format="json" name="output"/>
+    <data format="json" name="output">
+        <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
+    </data>
   </outputs>
   <tests>
       <test expect_failure="true">

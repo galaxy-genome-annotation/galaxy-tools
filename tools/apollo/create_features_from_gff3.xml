@@ -21,7 +21,9 @@ python $__tool_directory__/create_features_from_gff3.py
     <expand macro="gff3_input" />
   </inputs>
   <outputs>
-	<data format="tabular" name="output" label="Process and Error Log"/>
+	<data format="tabular" name="output" label="Process and Error Log">
+        <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
+    </data>
   </outputs>
   <tests>
       <test expect_failure="true">

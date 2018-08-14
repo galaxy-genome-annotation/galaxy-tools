@@ -4,7 +4,7 @@ from __future__ import print_function
 import argparse
 import logging
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, PasswordGenerator
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -19,7 +19,12 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
     # User must have an account
-    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    try:
+        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    except Exception:
+        returnData = wa.users.createUser(args.email, args.email, args.email, PasswordGenerator(12), role='user', addToHistory=True)
+        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+
 
     # Get organism
     org_cn = GuessOrg(args, wa)
