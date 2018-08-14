@@ -10,22 +10,9 @@ import shutil
 import sys
 import time
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, pwgen
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-
-
-def pwgen(length):
-    chars = list('qwrtpsdfghjklzxcvbnm')
-    return ''.join(random.choice(chars) for _ in range(length))
-
-
-def str2bool(string):
-    if string.lower() in ('true', 't', '1'):
-        return True
-    else:
-        return False
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
@@ -54,11 +41,11 @@ if __name__ == '__main__':
         firstName = args.email
         lastName = args.email
         password = pwgen(12)
-        returnData = wa.users.createUser(args.email, firstName, lastName, password, role='user')
+        returnData = wa.users.createUser(args.email, firstName, lastName, password, role='user', addToHistory=True)
         gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-        if not str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']):
-            f = open("Apollo_credentials.txt", "w")
-            f.write('Username: %s\tPassword: %s' % (args.email, password))
+#        if not str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']):
+#            f = open("Apollo_credentials.txt", "w")
+#            f.write('Username: %s\tPassword: %s' % (args.email, password))
 
     log.info("Determining if add or update required")
     try:
