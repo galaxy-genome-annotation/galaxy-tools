@@ -22,6 +22,9 @@ if __name__ == '__main__':
 
     all_orgs = wa.organisms.findAllOrganisms()
 
-    orgs = accessible_organisms(gx_user, all_orgs)
+    try:
+        orgs = accessible_organisms(gx_user, all_orgs)
+    except Exception:
+        orgs = []
 
     print(json.dumps(orgs, indent=2))
