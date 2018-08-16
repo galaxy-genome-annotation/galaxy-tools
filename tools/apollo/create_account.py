@@ -2,7 +2,6 @@
 from __future__ import print_function
 
 import argparse
-import random
 import time
 
 from six.moves.builtins import str
