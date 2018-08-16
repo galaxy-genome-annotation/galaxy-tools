@@ -4,7 +4,7 @@ from __future__ import print_function
 import argparse
 import json
 
-from webapollo import AssertUser, WAAuth, WebApolloInstance, accessible_organisms, PasswordGenerator
+from webapollo import AssertUser, PasswordGenerator, WAAuth, WebApolloInstance, accessible_organisms
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='List all organisms available in an Apollo instance')

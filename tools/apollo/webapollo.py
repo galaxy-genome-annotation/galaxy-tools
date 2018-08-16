@@ -478,6 +478,7 @@ def AssertAdmin(user):
     else:
         raise Exception("User is not an administrator. Permission denied")
 
+
 def PasswordGenerator(length):
     chars = list('qwrtpsdfghjklzxcvbnm')
     return ''.join(random.choice(chars) for _ in range(length))
@@ -488,6 +489,7 @@ def Str2bool(string):
         return True
     else:
         return False
+
 
 class WebApolloInstance(object):
 

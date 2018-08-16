@@ -8,7 +8,7 @@ from BCBio import GFF
 
 from six.moves.builtins import str
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry, PasswordGenerator
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 

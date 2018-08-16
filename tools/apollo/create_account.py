@@ -7,12 +7,7 @@ import time
 
 from six.moves.builtins import str
 
-from webapollo import WAAuth, WebApolloInstance
-
-
-def pwgen(length):
-    chars = list('qwrtpsdfghjklzxcvbnm')
-    return ''.join(random.choice(chars) for _ in range(length))
+from webapollo import PasswordGenerator, WAAuth, WebApolloInstance
 
 
 if __name__ == '__main__':
@@ -26,7 +21,7 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
-    password = pwgen(12)
+    password = PasswordGenerator(12)
     time.sleep(1)
     users = wa.users.loadUsers()
     user = [u for u in users
