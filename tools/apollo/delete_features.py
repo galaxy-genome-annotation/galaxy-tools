@@ -32,7 +32,7 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    if not PermissionCheck(gx_user, org_cn, "WRITE")
+    if not PermissionCheck(gx_user, org_cn, "WRITE"):
         raise Exception("Action not permitted")
     org = wa.organisms.findOrganismByCn(org_cn)
 
