@@ -8,7 +8,7 @@ from BCBio import GFF
 
 from six.moves.builtins import str
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance, accessible_organisms, featuresToFeatureSchema, retry
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     if not any(org_cn == organism[0] for organism in user_orgs):
         raise Exception("Action not permitted")
     org = wa.organisms.findOrganismByCn(org_cn)
-    
+
     bad_quals = ['date_creation', 'source', 'owner', 'date_last_modified', 'Name', 'ID']
 
     sys.stdout.write('# ')

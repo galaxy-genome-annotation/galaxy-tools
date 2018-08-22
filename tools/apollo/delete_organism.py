@@ -37,8 +37,6 @@ if __name__ == '__main__':
         raise Exception("Action not permitted")
     org = wa.organisms.findOrganismByCn(org_cn)
 
-
-
     # Call setSequence to tell apollo which organism we're working with
     wa.annotations.setSequence(org['commonName'], org['id'])
     # Then get a list of features.
