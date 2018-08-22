@@ -8,7 +8,7 @@ import shutil
 import sys
 import time
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, PermissionCheck, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -46,14 +46,9 @@ if __name__ == '__main__':
         org = None
 
     if org:
-        has_perms = False
         old_directory = org['directory']
-        for user_owned_organism in gx_user.organismPermissions:
-            if 'WRITE' in user_owned_organism['permissions']:
-                has_perms = True
-                break
 
-        if not has_perms:
+        if not PermissionCheck(gx_user, org_cn, "WRITE"):
             print("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
             sys.exit(2)
 

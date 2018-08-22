@@ -478,6 +478,8 @@ def AssertAdmin(user):
     else:
         raise Exception("User is not an administrator. Permission denied")
 
+def PermissionCheck(user, org_cn, permission_type):
+    return any(org["organism"] == org_cn and permission_type in org["permissions"] for org in user.organismPermissions)
 
 def PasswordGenerator(length):
     chars = list('qwrtpsdfghjklzxcvbnm')
