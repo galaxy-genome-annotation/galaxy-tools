@@ -4,7 +4,7 @@ from __future__ import print_function
 import argparse
 import logging
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance, accessible_organisms
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -30,8 +30,14 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # TODO: Check user perms on org.
+    all_orgs = wa.organisms.findAllOrganisms()
+    user_orgs = accessible_organisms(gx_user, all_orgs)
+
+    if not any(org_cn == organism[0] for organism in user_orgs):
+        raise Exception("Action not permitted")
     org = wa.organisms.findOrganismByCn(org_cn)
+
+
 
     # Call setSequence to tell apollo which organism we're working with
     wa.annotations.setSequence(org['commonName'], org['id'])

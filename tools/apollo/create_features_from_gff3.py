@@ -36,9 +36,13 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # TODO: Check user perms on org.
-    org = wa.organisms.findOrganismByCn(org_cn)
+    all_orgs = wa.organisms.findAllOrganisms()
+    user_orgs = accessible_organisms(gx_user, all_orgs)
 
+    if not any(org_cn == organism[0] for organism in user_orgs):
+        raise Exception("Action not permitted")
+    org = wa.organisms.findOrganismByCn(org_cn)
+    
     bad_quals = ['date_creation', 'source', 'owner', 'date_last_modified', 'Name', 'ID']
 
     sys.stdout.write('# ')

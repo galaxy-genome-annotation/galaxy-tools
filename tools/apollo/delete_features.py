@@ -5,7 +5,7 @@ import argparse
 import logging
 import random
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance, retry
+from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, WAAuth, WebApolloInstance, retry, accessible_organisms
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -32,8 +32,13 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # TODO: Check user perms on org.
+    all_orgs = wa.organisms.findAllOrganisms()
+    user_orgs = accessible_organisms(gx_user, all_orgs)
+
+    if not any(org_cn == organism[0] for organism in user_orgs):
+        raise Exception("Action not permitted")
     org = wa.organisms.findOrganismByCn(org_cn)
+
 
     sequences = wa.organisms.getSequencesForOrganism(org['id'])
     for sequence in sequences['sequences']:

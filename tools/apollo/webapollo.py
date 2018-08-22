@@ -1267,7 +1267,10 @@ class OrganismsClient(Client):
         return self.request('addOrganism', data)
 
     def findAllOrganisms(self):
-        return self.request('findAllOrganisms', {})
+        orgs = self.request('findAllOrganisms', {})
+        if not isinstance(orgs, (list,)):
+            orgs = []
+        return orgs
 
     def findOrganismByCn(self, cn):
         orgs = self.findAllOrganisms()
