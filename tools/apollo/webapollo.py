@@ -1384,7 +1384,7 @@ class UsersClient(Client):
             # 'organismPermissions': [],
         }
         returnData = self.request('createUser', data)
-        if addToHistory and not Str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']):
+        if addToHistory and ('GALAXY_WEBAPOLLO_REMOTE_USER' not in os.environ or not Str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER'])):
             f = open("Apollo_credentials.txt", "w")
             f.write('Username: %s\tPassword: %s' % (email, newPassword))
         return returnData
