@@ -78,18 +78,16 @@ if __name__ == '__main__':
 
     org_cn_list, seqs = GuessCn(args, wa)
 
-#List?
-    #User must have an apollo account, if not, create it
+    # User must have an apollo account, if not, create it
     try:
         gx_user = AssertUser(wa.users.loadUsers(email=args.email))
     except Exception:
         returnData = wa.users.createUser(args.email, args.email, args.email, PasswordGenerator(12), role='user', addToHistory=True)
         gx_user = AssertUser(wa.users.loadUsers(email=args.email))
 
-
     org_data = []
     for org_cn in org_cn_list:
-        #User must have read permission on organism
+        # User must have read permission on organism
         if not PermissionCheck(gx_user, org_cn, "READ"):
             continue
         indiv_org_data = export(org_cn, seqs)
