@@ -16,6 +16,7 @@
         --gff "$gff_out"
         --fasta "$fasta_out"
         --json "$json_out"
+        "$__user_email__"
 
         &&
 

@@ -17,6 +17,8 @@ python $__tool_directory__/export.py
 --fasta "$fasta_out"
 --json "$json_out"
 
+"$__user_email__"
+
 ]]></command>
   <inputs>
     <expand macro="cn_or_guess" />
@@ -24,7 +26,9 @@ python $__tool_directory__/export.py
   <outputs>
     <data format="gff3" name="gff_out" label="Annotations from Apollo"/>
     <data format="fasta" name="fasta_out" label="Sequence(s) from Apollo"/>
-    <data format="json" name="json_out" label="Metadata from Apollo"/>
+    <data format="json" name="json_out" label="Metadata from Apollo">
+        <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
+    </data>
   </outputs>
   <tests>
       <test expect_failure="true">

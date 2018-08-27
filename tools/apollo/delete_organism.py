@@ -39,7 +39,9 @@ if __name__ == '__main__':
     # Then get a list of features.
     features = wa.annotations.getFeatures()
     # For each feature in the features
-    for feature in features['features']:
-        # We see that deleteFeatures wants a uniqueName, and so we pass
-        # is the uniquename field in the feature.
-        print(wa.annotations.deleteFeatures([feature['uniquename']]))
+    # If it exists
+    if 'features' in features:
+        for feature in features['features']:
+            # We see that deleteFeatures wants a uniqueName, and so we pass
+            # is the uniquename field in the feature.
+            print(wa.annotations.deleteFeatures([feature['uniquename']]))
