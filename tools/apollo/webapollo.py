@@ -488,8 +488,11 @@ def PasswordGenerator(length):
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-def Str2bool(string):
-    if string.lower() in ('true', 't', '1'):
+def IsRemoteUser():
+    if 'GALAXY_WEBAPOLLO_REMOTE_USER' not in os.environ:
+        return False
+    value = os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']
+    if value.lower() in ('true', 't', '1'):
         return True
     else:
         return False
@@ -1384,7 +1387,7 @@ class UsersClient(Client):
             # 'organismPermissions': [],
         }
         returnData = self.request('createUser', data)
-        if addToHistory and ('GALAXY_WEBAPOLLO_REMOTE_USER' not in os.environ or not Str2bool(os.environ['GALAXY_WEBAPOLLO_REMOTE_USER'])):
+        if addToHistory and not IsRemoteUser():
             f = open("Apollo_credentials.txt", "w")
             f.write('Username: %s\tPassword: %s' % (email, newPassword))
         return returnData
