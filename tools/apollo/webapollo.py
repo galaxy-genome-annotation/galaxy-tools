@@ -1396,9 +1396,9 @@ class UsersClient(Client):
         try:
             gx_user = AssertUser(self.loadUsers(email))
         except Exception:
-            returnData = self.createUser(email, email, email, PasswordGenerator(12), role='user', addToHistory=True)
-        return AssertUser(self.loadUsers(email))
-
+            self.createUser(email, email, email, PasswordGenerator(12), role='user', addToHistory=True)
+            gx_user = AssertUser(self.loadUsers(email))
+        return gx_user
 
     def deleteUser(self, user):
         return self.request('deleteUser', {'userId': user.userId})
