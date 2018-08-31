@@ -28,9 +28,9 @@ chakin feature load_fasta
 #if $match_on_name:
   $match_on_name
 #end if
-#if $update:
-  $update
-#end if
+
+$update
+
 #if $ext_db.db:
   --db '${ext_db.db}'
 #end if
