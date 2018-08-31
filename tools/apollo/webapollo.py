@@ -1392,6 +1392,14 @@ class UsersClient(Client):
             f.write('Username: %s\tPassword: %s' % (email, newPassword))
         return returnData
 
+    def assertOrCreateUser(self, email):
+        try:
+            gx_user = AssertUser(self.loadUsers(email))
+        except Exception:
+            returnData = self.createUser(email, email, email, PasswordGenerator(12), role='user', addToHistory=True)
+        return AssertUser(self.loadUsers(email))
+
+
     def deleteUser(self, user):
         return self.request('deleteUser', {'userId': user.userId})
 

@@ -8,7 +8,7 @@ from BCBio import GFF
 
 from six.moves.builtins import str
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, PermissionCheck, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry
+from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance, featuresToFeatureSchema, retry
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -25,11 +25,7 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
     # User must have an account
-    try:
-        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-    except Exception:
-        returnData = wa.users.createUser(args.email, args.email, args.email, PasswordGenerator(12), role='user', addToHistory=True)
-        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    gx_user = wa.users.assertOrCreateUser(args.email)
 
     # Get organism
     org_cn = GuessOrg(args, wa)

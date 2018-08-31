@@ -9,7 +9,7 @@ from BCBio import GFF
 
 from Bio import SeqIO
 
-from webapollo import AssertUser, CnOrGuess, GuessCn, PasswordGenerator, PermissionCheck, WAAuth, WebApolloInstance
+from webapollo import CnOrGuess, GuessCn, PermissionCheck, WAAuth, WebApolloInstance
 
 try:
     import StringIO as io
@@ -79,11 +79,7 @@ if __name__ == '__main__':
     org_cn_list, seqs = GuessCn(args, wa)
 
     # User must have an apollo account, if not, create it
-    try:
-        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-    except Exception:
-        returnData = wa.users.createUser(args.email, args.email, args.email, PasswordGenerator(12), role='user', addToHistory=True)
-        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    gx_user = wa.users.assertOrCreateUser(args.email)
 
     org_data = []
     for org_cn in org_cn_list:

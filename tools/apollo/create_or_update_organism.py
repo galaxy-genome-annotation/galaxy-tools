@@ -8,7 +8,7 @@ import shutil
 import sys
 import time
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, PasswordGenerator, PermissionCheck, WAAuth, WebApolloInstance
+from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -33,11 +33,7 @@ if __name__ == '__main__':
         org_cn = org_cn[0]
 
     # User must have an account, if not, create it
-    try:
-        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
-    except Exception:
-        returnData = wa.users.createUser(args.email, args.email, args.email, PasswordGenerator(12), role='user', addToHistory=True)
-        gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    gx_user = wa.users.assertOrCreateUser(args.email)
 
     log.info("Determining if add or update required")
     try:
