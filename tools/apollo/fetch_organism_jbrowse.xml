@@ -15,7 +15,9 @@ python $__tool_directory__/fetch_organism_jbrowse.py
 @ADMIN_AUTH@
 
 @ORG_OR_GUESS@
-$jbrowse.files_path/ &&
+$jbrowse.files_path/ 
+
+"$__user_email__" &&
 
 cp $dummyIndex $jbrowse &&
 find $jbrowse.files_path -type f -printf '<li><a href="%P">%P</a></li>\n' | sort >> $jbrowse &&
@@ -56,7 +58,9 @@ echo '</ul></body></html>' >> $jbrowse
     <expand macro="org_or_guess" />
   </inputs>
   <outputs>
-    <data format="html" name="jbrowse"/>
+    <data format="html" name="jbrowse">
+        <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
+    </data>
   </outputs>
   <tests>
       <test expect_failure="true">

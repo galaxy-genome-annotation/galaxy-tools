@@ -4,7 +4,7 @@ from __future__ import print_function
 import argparse
 import logging
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
+from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -19,14 +19,15 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
     # User must have an account
-    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    gx_user = wa.users.assertOrCreateUser(args.email)
 
     # Get organism
     org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # TODO: Check user perms on org.
+    if not PermissionCheck(gx_user, org_cn, "WRITE"):
+        raise Exception("You do not have write permission on this organism")
     org = wa.organisms.findOrganismByCn(org_cn)
 
     # Call setSequence to tell apollo which organism we're working with
@@ -34,7 +35,9 @@ if __name__ == '__main__':
     # Then get a list of features.
     features = wa.annotations.getFeatures()
     # For each feature in the features
-    for feature in features['features']:
-        # We see that deleteFeatures wants a uniqueName, and so we pass
-        # is the uniquename field in the feature.
-        print(wa.annotations.deleteFeatures([feature['uniquename']]))
+    # If it exists
+    if 'features' in features:
+        for feature in features['features']:
+            # We see that deleteFeatures wants a uniqueName, and so we pass
+            # is the uniquename field in the feature.
+            print(wa.annotations.deleteFeatures([feature['uniquename']]))

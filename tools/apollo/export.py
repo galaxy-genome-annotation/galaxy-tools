@@ -9,7 +9,7 @@ from BCBio import GFF
 
 from Bio import SeqIO
 
-from webapollo import CnOrGuess, GuessCn, WAAuth, WebApolloInstance
+from webapollo import CnOrGuess, GuessCn, PermissionCheck, WAAuth, WebApolloInstance
 
 try:
     import StringIO as io
@@ -71,15 +71,21 @@ if __name__ == '__main__':
     parser.add_argument('--gff', type=argparse.FileType('w'))
     parser.add_argument('--fasta', type=argparse.FileType('w'))
     parser.add_argument('--json', type=argparse.FileType('w'))
-
+    parser.add_argument('email', help='User Email')
     args = parser.parse_args()
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
     org_cn_list, seqs = GuessCn(args, wa)
 
+    # User must have an apollo account, if not, create it
+    gx_user = wa.users.assertOrCreateUser(args.email)
+
     org_data = []
     for org_cn in org_cn_list:
+        # User must have read permission on organism
+        if not PermissionCheck(gx_user, org_cn, "READ"):
+            continue
         indiv_org_data = export(org_cn, seqs)
         org_data.append(indiv_org_data)
     args.json.write(json.dumps(org_data, indent=2))

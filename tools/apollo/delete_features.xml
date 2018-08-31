@@ -15,6 +15,7 @@
 	--gff "$gff_out"
 	--fasta "$fasta_out"
 	--json "$json_out"
+    "$__user_email__"
 
     &&
 
@@ -42,7 +43,9 @@
     <param name="ask_one" type="boolean" truevalue="yes" falsevalue="" label="Are you SURE you want to do this?" help="It will PERMANENTLY delete all of the features on this organism."/>
   </inputs>
   <outputs>
-    <data format="tabular" name="output" label="Process and Error Log"/>
+    <data format="tabular" name="output" label="Process and Error Log">
+        <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
+    </data>
 
     <data format="gff3" name="gff_out" label="Annotations from Apollo" hidden="true"/>
     <data format="fasta" name="fasta_out" label="Sequence(s) from Apollo" hidden="true"/>

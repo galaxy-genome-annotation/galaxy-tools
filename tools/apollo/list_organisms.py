@@ -4,7 +4,7 @@ from __future__ import print_function
 import argparse
 import json
 
-from webapollo import AssertUser, WAAuth, WebApolloInstance, accessible_organisms
+from webapollo import WAAuth, WebApolloInstance, accessible_organisms
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='List all organisms available in an Apollo instance')
@@ -14,7 +14,8 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
-    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    gx_user = wa.users.assertOrCreateUser(args.email)
+
     all_orgs = wa.organisms.findAllOrganisms()
 
     orgs = accessible_organisms(gx_user, all_orgs)

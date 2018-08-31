@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 
-from webapollo import GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
+from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     WAAuth(parser)
     OrgOrGuess(parser)
     parser.add_argument('target_dir', help='Target directory')
+    parser.add_argument('email', help='User Email')
 
     args = parser.parse_args()
 
@@ -64,6 +65,14 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
     org = wa.organisms.findOrganismByCn(org_cn)
+
+    # User must have an account, if not, create it
+    gx_user = wa.users.assertOrCreateUser(args.email)
+
+    # User must have READ access
+
+    if not PermissionCheck(gx_user, org_cn, "READ"):
+        raise Exception("READ permissions are required for this action")
 
     if not os.path.exists(args.target_dir):
         os.makedirs(args.target_dir)

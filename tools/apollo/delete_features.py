@@ -5,7 +5,7 @@ import argparse
 import logging
 import random
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance, retry
+from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance, retry
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -21,14 +21,15 @@ if __name__ == '__main__':
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
     # User must have an account
-    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    gx_user = wa.users.assertOrCreateUser(args.email)
 
     # Get organism
     org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # TODO: Check user perms on org.
+    if not PermissionCheck(gx_user, org_cn, "WRITE"):
+        raise Exception("Action not permitted")
     org = wa.organisms.findOrganismByCn(org_cn)
 
     sequences = wa.organisms.getSequencesForOrganism(org['id'])

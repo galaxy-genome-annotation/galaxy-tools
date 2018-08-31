@@ -5,6 +5,7 @@ import collections
 import json
 import logging
 import os
+import random
 import time
 from abc import abstractmethod
 
@@ -476,6 +477,25 @@ def AssertAdmin(user):
         return True
     else:
         raise Exception("User is not an administrator. Permission denied")
+
+
+def PermissionCheck(user, org_cn, permission_type):
+    return any(org["organism"] == org_cn and permission_type in org["permissions"] for org in user.organismPermissions)
+
+
+def PasswordGenerator(length):
+    chars = list('qwrtpsdfghjklzxcvbnm')
+    return ''.join(random.choice(chars) for _ in range(length))
+
+
+def IsRemoteUser():
+    if 'GALAXY_WEBAPOLLO_REMOTE_USER' not in os.environ:
+        return False
+    value = os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']
+    if value.lower() in ('true', 't', '1'):
+        return True
+    else:
+        return False
 
 
 class WebApolloInstance(object):
@@ -1254,7 +1274,10 @@ class OrganismsClient(Client):
         return self.request('addOrganism', data)
 
     def findAllOrganisms(self):
-        return self.request('findAllOrganisms', {})
+        orgs = self.request('findAllOrganisms', {})
+        if not isinstance(orgs, (list,)):
+            orgs = []
+        return orgs
 
     def findOrganismByCn(self, cn):
         orgs = self.findAllOrganisms()
@@ -1352,7 +1375,7 @@ class UsersClient(Client):
         data = {'group': group.name, 'userId': user.userId}
         return self.request('removeUserFromGroup', data)
 
-    def createUser(self, email, firstName, lastName, newPassword, role="user", groups=None):
+    def createUser(self, email, firstName, lastName, newPassword, role="user", groups=None, addToHistory=False):
         data = {
             'firstName': firstName,
             'lastName': lastName,
@@ -1363,7 +1386,19 @@ class UsersClient(Client):
             'newPassword': newPassword,
             # 'organismPermissions': [],
         }
-        return self.request('createUser', data)
+        returnData = self.request('createUser', data)
+        if addToHistory and not IsRemoteUser():
+            f = open("Apollo_credentials.txt", "w")
+            f.write('Username: %s\tPassword: %s' % (email, newPassword))
+        return returnData
+
+    def assertOrCreateUser(self, email):
+        try:
+            gx_user = AssertUser(self.loadUsers(email))
+        except Exception:
+            self.createUser(email, email, email, PasswordGenerator(12), role='user', addToHistory=True)
+            gx_user = AssertUser(self.loadUsers(email))
+        return gx_user
 
     def deleteUser(self, user):
         return self.request('deleteUser', {'userId': user.userId})
@@ -1532,11 +1567,6 @@ def galaxy_list_groups(trans, *args, **kwargs):
         os.environ['GALAXY_WEBAPOLLO_USER'],
         os.environ['GALAXY_WEBAPOLLO_PASSWORD']
     )
-    # Assert that the email exists in apollo
-    try:
-        gx_user = wa.requireUser(email)
-    except UnknownUserException:
-        return []
 
     # Key for cached data
     cacheKey = 'groups-' + email
@@ -1545,7 +1575,7 @@ def galaxy_list_groups(trans, *args, **kwargs):
     if cacheKey not in cache:
         # However if it ISN'T there, we know we're safe to fetch + put in
         # there.
-        data = _galaxy_list_groups(wa, gx_user, *args, **kwargs)
+        data = _galaxy_list_groups(wa, *args, **kwargs)
         cache[cacheKey] = data
         return data
     try:
@@ -1558,12 +1588,12 @@ def galaxy_list_groups(trans, *args, **kwargs):
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
-        data = _galaxy_list_groups(wa, gx_user, *args, **kwargs)
+        data = _galaxy_list_groups(wa, *args, **kwargs)
         cache[cacheKey] = data
         return data
 
 
-def _galaxy_list_groups(wa, gx_user, *args, **kwargs):
+def _galaxy_list_groups(wa, *args, **kwargs):
     # Fetch the groups.
     group_data = []
     for group in wa.groups.loadGroups():

@@ -8,10 +8,9 @@ import shutil
 import sys
 import time
 
-from webapollo import AssertUser, GuessOrg, OrgOrGuess, WAAuth, WebApolloInstance
+from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
@@ -33,8 +32,8 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # User must have an account
-    gx_user = AssertUser(wa.users.loadUsers(email=args.email))
+    # User must have an account, if not, create it
+    gx_user = wa.users.assertOrCreateUser(args.email)
 
     log.info("Determining if add or update required")
     try:
@@ -43,14 +42,9 @@ if __name__ == '__main__':
         org = None
 
     if org:
-        has_perms = False
         old_directory = org['directory']
-        for user_owned_organism in gx_user.organismPermissions:
-            if 'WRITE' in user_owned_organism['permissions']:
-                has_perms = True
-                break
 
-        if not has_perms:
+        if not PermissionCheck(gx_user, org_cn, "WRITE"):
             print("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
             sys.exit(2)
 
