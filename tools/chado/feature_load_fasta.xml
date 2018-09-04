@@ -25,11 +25,10 @@ chakin feature load_fasta
 #if $re_uniquename:
   --re_uniquename '$re_uniquename'
 #end if
-#if $match_on_name:
-  $match_on_name
-#end if
 
-$update
+$match_on_name
+
+$do_update
 
 #if $ext_db.db:
   --db '${ext_db.db}'
@@ -64,7 +63,7 @@ $update
 		<param name="re_name" label="Name regular expression" argument="re_name" type="text" help="Regular expression to extract the feature name from the fasta sequence id (first capturing group will be used)." optional="true" />
 		<param name="re_uniquename" label="Uniquename regular expression" argument="re_uniquename" type="text" help="Regular expression to extract the feature name from the fasta sequence id (first capturing group will be used)." optional="true" />
 		<param name="match_on_name" label="Match on name" argument="match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match existing features using their name instead of their uniquename" />
-		<param name="update" label="Update" argument="update" type="boolean" truevalue="--update" falsevalue="" help="Update existing feature with new sequence instead of throwing an error" />
+		<param name="do_update" label="Update" argument="update" type="boolean" truevalue="--update" falsevalue="" help="Update existing feature with new sequence instead of throwing an error" />
 	    <conditional name="relationships">
 			<param name="rel_type"
 				   argument="--rel_type"

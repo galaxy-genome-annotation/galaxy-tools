@@ -26,12 +26,10 @@ chakin feature load_gff
 #if $fasta:
   --fasta '$fasta'
 #end if
-#if $no_seq_compute:
-  $no_seq_compute
-#end if
-#if $add_only:
-  $add_only
-#end if
+
+$no_seq_compute
+
+$add_only
 
 --quiet
 
