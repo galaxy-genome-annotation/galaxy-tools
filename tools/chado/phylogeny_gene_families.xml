@@ -13,9 +13,8 @@ chakin phylogeny gene_families
 #if $family_name:
   --family_name '$family_name'
 #end if
-#if $nuke:
-  $nuke
-#end if
+
+$nuke
 
  > $results
     ]]></command>

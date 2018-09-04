@@ -22,9 +22,9 @@ chakin phylogeny load_tree
 #if $xref_accession:
   --xref_accession '$xref_accession'
 #end if
-#if $match_on_name:
-  $match_on_name
-#end if
+
+$match_on_name
+
 #if $prefix:
   --prefix '$prefix'
 #end if

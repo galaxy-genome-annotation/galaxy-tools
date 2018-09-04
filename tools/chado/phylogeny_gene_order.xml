@@ -10,9 +10,7 @@
 
 chakin phylogeny gene_order
 
-#if $nuke:
-  $nuke
-#end if
+$nuke
 
  > $results
     ]]></command>

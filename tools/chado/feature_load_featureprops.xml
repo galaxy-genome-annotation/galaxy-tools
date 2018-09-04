@@ -18,9 +18,8 @@ chakin feature load_featureprops
 #if $feature_type:
   --feature_type '$feature_type'
 #end if
-#if $match_on_name:
-  $match_on_name
-#end if
+
+$match_on_name
 
 | jq -S . > $results
     ]]></command>
