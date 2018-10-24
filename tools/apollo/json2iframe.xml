@@ -20,7 +20,7 @@ python $__tool_directory__/json2iframe.py
   <tests>
       <test>
           <param name="json_file" value="fake.json"/>
-          <output name="html">
+          <output name="output">
               <assert_contents>
                   <has_text text="Embedded Apollo Access" />
               </assert_contents>
