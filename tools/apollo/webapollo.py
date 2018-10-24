@@ -1544,10 +1544,7 @@ def accessible_organisms(user, orgs):
     permissionMap = {
         x['organism']: x['permissions']
         for x in user.organismPermissions
-        if 'WRITE' in x['permissions'] or
-        'READ' in x['permissions'] or
-        'ADMINISTRATE' in x['permissions'] or
-        user.role == 'ADMIN'
+        if 'WRITE' in x['permissions'] or 'READ' in x['permissions'] or 'ADMINISTRATE' in x['permissions'] or user.role == 'ADMIN'
     }
 
     if 'error' in orgs:
