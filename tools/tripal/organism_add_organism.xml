@@ -92,7 +92,6 @@
             <param name="abbr" value="test" />
             <param name="common" value="test stuff" />
             <param name="common" value="My cool new test organism" />
-
             <expand macro="test_result" />
         </test>
         <test expect_failure="true">
@@ -106,7 +105,6 @@
                 <param name="rank" value="subspecies" />
                 <param name="name" value="strain3" />
             </conditional>
-
             <expand macro="test_result" />
         </test>
     </tests>
