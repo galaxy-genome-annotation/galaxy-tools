@@ -23,10 +23,10 @@
                 --infraspecific_name '$infra.name'
             #end if
 
-            '$genus'
-            '$species'
             --common '$common'
             --abbr '$abbr'
+            '$genus'
+            '$species'
 
             | jq -S . > $results
     ]]></command>
