@@ -39,6 +39,9 @@ jobs:
     - stage: test
       env: CHUNK=2
 
+    - stage: test
+      env: CHUNK=3
+
     - stage: deploy
       if: (type = push) AND (branch = master)
       addons: {}
@@ -68,7 +71,7 @@ jobs:
 
 before_install:
   - export GALAXY_REPO=https://github.com/galaxyproject/galaxy
-  - export GALAXY_RELEASE=release_17.09
+  - export GALAXY_RELEASE=release_18.09
   - export PLANEMO_CONDA_PREFIX="$HOME/conda"
   - unset JAVA_HOME
 
@@ -80,7 +83,7 @@ install:
     bash -c ". /home/travis/.planemo/gx_venv/bin/activate; pip install future tripal biopython bcbio-gff; deactivate"
   - planemo conda_init
   - export PATH="$PLANEMO_CONDA_PREFIX/bin:$PATH"
-  - conda install -y -c conda-forge conda=4.3.33
+  - conda install -y -c conda-forge conda=4.3.34 
   - planemo --version
   - conda --version
   - git diff --quiet "$TRAVIS_COMMIT_RANGE" -- ; GIT_DIFF_EXIT_CODE=$?
@@ -100,11 +103,11 @@ install:
   - |
     if [ -s changed_repositories.list ]; then
         if [ $(wc -l < changed_repositories.list) -eq 1 ]; then
-            planemo ci_find_tools --chunk_count 3 --chunk "${CHUNK}" \
+            planemo ci_find_tools --chunk_count 4 --chunk "${CHUNK}" \
                                   --output changed_tools_chunk.list \
                                   $(cat changed_repositories.list)
         else
-            planemo ci_find_repos --chunk_count 3 --chunk "${CHUNK}" \
+            planemo ci_find_repos --chunk_count 4 --chunk "${CHUNK}" \
                                   --output changed_repositories_chunk.list \
                                   $(cat changed_repositories.list)
         fi
@@ -117,9 +120,9 @@ script:
   - set -e
   - |
     if [ -s changed_tools_chunk.list ]; then
-        planemo test --conda_dependency_resolution --conda_auto_install --conda_channels iuc,bioconda,conda-forge,defaults --galaxy_branch "$GALAXY_RELEASE" --galaxy_source "$GALAXY_REPO" $(cat changed_tools_chunk.list)
+        planemo test --conda_dependency_resolution --conda_auto_install --conda_channels iuc,conda-forge,bioconda,defaults --galaxy_branch "$GALAXY_RELEASE" --galaxy_source "$GALAXY_REPO" $(cat changed_tools_chunk.list)
     elif [ -s changed_repositories_chunk.list ]; then
         while read -r DIR; do
-            planemo test --conda_dependency_resolution --conda_auto_install --conda_channels iuc,bioconda,conda-forge,defaults --galaxy_branch "$GALAXY_RELEASE" --galaxy_source "$GALAXY_REPO" "$DIR"
+            planemo test --conda_dependency_resolution --conda_auto_install --conda_channels iuc,conda-forge,bioconda,defaults --galaxy_branch "$GALAXY_RELEASE" --galaxy_source "$GALAXY_REPO" "$DIR"
         done < changed_repositories_chunk.list
     fi
