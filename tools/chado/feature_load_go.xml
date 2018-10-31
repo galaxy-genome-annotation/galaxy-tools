@@ -32,14 +32,8 @@ $skip_missing
   	<inputs>
           <!-- arguments -->
       	<param name="input" label="GO annotation" argument="input" type="data" format="tabular" help="Path to the GO annotation file to load" />
-      	<param argument="analysis_id"
-          		 type="select"
-          		 dynamic_options="list_analyses()"
-          		 label="Analysis" />
-        <param argument="organism_id"
-               type="select"
-               dynamic_options="list_organisms()"
-               label="Organism" />
+      	<param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" />
+    	<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
 
         <!-- options -->
         <param name="query_type" label="Query type" argument="query_type" type="text" help="The feature type (e.g. 'gene', 'mRNA', 'polypeptide', 'contig') of the query. It must be a valid Sequence Ontology term." value="polypeptide" />
