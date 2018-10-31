@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<tool id="feature_load_go" name="Chado load GO annotation" version="@WRAPPER_VERSION@.0">
+    <description></description>
+    <macros>
+    	 <import>macros.xml</import>
+    </macros>
+    <code file="chado.py"/>
+    <expand macro="requirements"/>
+    <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin feature load_go
+'$input'
+'$organism_id'
+'$analysis_id'
+
+--query_type '$query_type'
+
+$match_on_name
+
+--name_column '$name_column'
+--go_column '$go_column'
+
+#if $re_name:
+  --re_name '$re_name'
+#end if
+
+$skip_missing
+
+ > $results
+    ]]></command>
+  	<inputs>
+          <!-- arguments -->
+      	<param name="input" label="GO annotation" argument="input" type="data" format="tabular" help="Path to the GO annotation file to load" />
+      	<param argument="analysis_id"
+          		 type="select"
+          		 dynamic_options="list_analyses()"
+          		 label="Analysis" />
+        <param argument="organism_id"
+               type="select"
+               dynamic_options="list_organisms()"
+               label="Organism" />
+
+        <!-- options -->
+        <param name="query_type" label="Query type" argument="query_type" type="text" help="The feature type (e.g. 'gene', 'mRNA', 'polypeptide', 'contig') of the query. It must be a valid Sequence Ontology term." value="polypeptide" />
+
+    	<param name="match_on_name" label="Match On Name" argument="match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match features using their name instead of their uniquename" />
+
+    	<param name="name_column" label="Identifier column" argument="name_column" type="integer" value="2" help="Column containing the feature identifiers." />
+
+    	<param name="go_column" label="GO column" argument="go_column" type="integer" value="5" help="Column containing the GO id." />
+
+    	<param name="re_name" label="Name regular expression" argument="re_name" type="text" help="Regular expression to extract the feature name from the input file (first capturing group will be used)." optional="true">
+            <expand macro="sanitized"/>
+        </param>
+
+    	<param name="skip_missing" label="Skip Missing" argument="skip_missing" type="boolean" truevalue="--skip_missing" falsevalue="" help="Skip lines with unknown features or GO id instead of aborting everything." />
+
+        <expand macro="wait_for"/>
+  	</inputs>
+  	<outputs>
+  		  <data format="txt" name="results"/>
+  	</outputs>
+  	<help>
+Load GO annotation from a tabular file
+
+@HELP@
+  	</help>
+</tool>
