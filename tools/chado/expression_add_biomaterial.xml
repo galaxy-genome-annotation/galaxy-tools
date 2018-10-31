@@ -35,17 +35,19 @@ chakin expression add_biomaterial
 | jq -S . > $results
     ]]></command>
 	<inputs>
-    <!-- arguments -->
-	<param name="biomaterial_name" label="Biomaterial Name" argument="biomaterial_name" type="text" help="Biomaterial name" />
-	<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
+	    <!-- arguments -->
+		<param name="biomaterial_name" label="Biomaterial Name" argument="biomaterial_name" type="text" help="Biomaterial name" />
+		<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
 
-    <!-- options -->
-	<param name="description" label="Description" argument="description" type="text" help="Description of the biomaterial" optional="true" />
-	<param name="biomaterial_provider" label="Biomaterial Provider" argument="biomaterial_provider" type="text" help="Biomaterial provider name" optional="true" />
-	<param name="biosample_accession" label="Biosample Accession" argument="biosample_accession" type="text" help="Biosample accession number" optional="true" />
-	<param name="sra_accession" label="Sra Accession" argument="sra_accession" type="text" help="SRA accession number" optional="true" />
-	<param name="bioproject_accession" label="Bioproject Accession" argument="bioproject_accession" type="text" help="Bioproject accession number" optional="true" />
-	<param name="attributes" label="Attributes" argument="attributes" type="data" format="json" help="Custom attributes (In JSON dict form)" />
+	    <!-- options -->
+		<param name="description" label="Description" argument="description" type="text" help="Description of the biomaterial" optional="true" />
+		<param name="biomaterial_provider" label="Biomaterial Provider" argument="biomaterial_provider" type="text" help="Biomaterial provider name" optional="true" />
+		<param name="biosample_accession" label="Biosample Accession" argument="biosample_accession" type="text" help="Biosample accession number" optional="true" />
+		<param name="sra_accession" label="Sra Accession" argument="sra_accession" type="text" help="SRA accession number" optional="true" />
+		<param name="bioproject_accession" label="Bioproject Accession" argument="bioproject_accession" type="text" help="Bioproject accession number" optional="true" />
+		<param name="attributes" label="Attributes" argument="attributes" type="data" format="json" help="Custom attributes (In JSON dict form)" />
+
+		<expand macro="wait_for"/>
 
 	</inputs>
 	<outputs>

@@ -17,11 +17,12 @@ chakin expression add_expression
 | jq -S . > $results
     ]]></command>
 	<inputs>
-    <!-- arguments -->
-	<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
-	<param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" />
-	<param name="file_path" label="Expression matrix" argument="file_path" type="data" format="tabular" help="Tabular file where columns are experimental conditions, and rows are features" />
+	    <!-- arguments -->
+		<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
+		<param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" />
+		<param name="file_path" label="Expression matrix" argument="file_path" type="data" format="tabular" help="Tabular file where columns are experimental conditions, and rows are features" />
 
+		<expand macro="wait_for"/>
 	</inputs>
 	<outputs>
 		<data format="json" name="results"/>

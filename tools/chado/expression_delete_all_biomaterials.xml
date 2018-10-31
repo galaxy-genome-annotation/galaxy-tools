@@ -15,11 +15,10 @@ $confirm
  > $results
     ]]></command>
 	<inputs>
-    <!-- arguments -->
+	    <!-- options -->
+		<param name="confirm" label="Confirm" argument="confirm" type="boolean" truevalue="--confirm" falsevalue="" help="Confirm that you really do want to delete ALL of the biomaterials." />
 
-    <!-- options -->
-	<param name="confirm" label="Confirm" argument="confirm" type="boolean" truevalue="--confirm" falsevalue="" help="Confirm that you really do want to delete ALL of the biomaterials." />
-
+		<expand macro="wait_for"/>
 	</inputs>
 	<outputs>
 		<data format="txt" name="results"/>

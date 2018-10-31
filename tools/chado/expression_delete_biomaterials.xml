@@ -27,14 +27,13 @@ chakin expression delete_biomaterials
 | jq -S . > $results
     ]]></command>
 	<inputs>
-    <!-- arguments -->
+	    <!-- options -->
+		<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
+		<param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" optional="true" />
+		<param name="names" label="Names" argument="names" type="data" format="json" help="JSON list of biomaterial names to delete." optional="true" />
+		<param name="ids" label="Ids" argument="ids" type="data" format="json" help="JSON list of biomaterial ids to delete." optional="true" />
 
-    <!-- options -->
-	<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
-	<param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" optional="true" />
-	<param name="names" label="Names" argument="names" type="data" format="json" help="JSON list of biomaterial names to delete." optional="true" />
-	<param name="ids" label="Ids" argument="ids" type="data" format="json" help="JSON list of biomaterial ids to delete." optional="true" />
-
+		<expand macro="wait_for"/>
 	</inputs>
 	<outputs>
 		<data format="json" name="results"/>
