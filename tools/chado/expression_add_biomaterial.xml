@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<tool id="expression_add_biomaterial" name="Chado biomaterial add" version="@WRAPPER_VERSION@.0">
+ <description></description>
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+	<expand macro="requirements"/>
+    <code file="chado.py"/>
+	<command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin expression add_biomaterial
+'$biomaterial_name'
+'$organism_id'
+
+#if $description:
+  --description '$description'
+#end if
+#if $biomaterial_provider:
+  --biomaterial_provider '$biomaterial_provider'
+#end if
+#if $biosample_accession:
+  --biosample_accession '$biosample_accession'
+#end if
+#if $sra_accession:
+  --sra_accession '$sra_accession'
+#end if
+#if $bioproject_accession:
+  --bioproject_accession '$bioproject_accession'
+#end if
+#if $attributes:
+  --attributes '$attributes'
+#end if
+
+| jq -S . > $results
+    ]]></command>
+	<inputs>
+    <!-- arguments -->
+	<param name="biomaterial_name" label="Biomaterial Name" argument="biomaterial_name" type="text" help="Biomaterial name" />
+	<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
+
+    <!-- options -->
+	<param name="description" label="Description" argument="description" type="text" help="Description of the biomaterial" optional="true" />
+	<param name="biomaterial_provider" label="Biomaterial Provider" argument="biomaterial_provider" type="text" help="Biomaterial provider name" optional="true" />
+	<param name="biosample_accession" label="Biosample Accession" argument="biosample_accession" type="text" help="Biosample accession number" optional="true" />
+	<param name="sra_accession" label="Sra Accession" argument="sra_accession" type="text" help="SRA accession number" optional="true" />
+	<param name="bioproject_accession" label="Bioproject Accession" argument="bioproject_accession" type="text" help="Bioproject accession number" optional="true" />
+	<param name="attributes" label="Attributes" argument="attributes" type="data" format="json" help="Custom attributes (In JSON dict form)" />
+
+	</inputs>
+	<outputs>
+		<data format="json" name="results"/>
+	</outputs>
+	<help>
+Add a new biomaterial to the database
+
+@HELP@
+	</help>
+</tool>

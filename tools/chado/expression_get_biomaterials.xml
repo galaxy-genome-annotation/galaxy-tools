@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<tool id="expression_get_biomaterials" name="Chado biomaterial get" version="@WRAPPER_VERSION@.0">
+ <description></description>
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+	<expand macro="requirements"/>
+    <code file="chado.py"/>
+	<command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
+chakin expression get_biomaterials
+
+#if $provider_id:
+  --provider_id '$provider_id'
+#end if
+#if $biomaterial_id:
+  --biomaterial_id '$biomaterial_id'
+#end if
+#if $organism_id:
+  --organism_id '$organism_id'
+#end if
+#if $biomaterial_name:
+  --biomaterial_name '$biomaterial_name'
+#end if
+#if $analysis_id:
+  --analysis_id '$analysis_id'
+#end if
+
+| jq -S . > $results
+    ]]></command>
+	<inputs>
+    <!-- arguments -->
+
+    <!-- options -->
+	<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
+	<param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" optional="true" />
+	<param name="provider_id" label="Provider Id" argument="provider_id" type="text" help="Limit query to the selected provider" optional="true" />
+	<param name="biomaterial_id" label="Biomaterial Id" argument="biomaterial_id" type="text" help="Limit query to the selected biomaterial id" optional="true" />
+	<param name="biomaterial_name" label="Biomaterial Name" argument="biomaterial_name" type="text" help="Limit query to the selected biomaterial name" optional="true" />
+
+	</inputs>
+	<outputs>
+		<data format="json" name="results"/>
+	</outputs>
+	<help>
+List biomaterials in the database
+
+@HELP@
+	</help>
+</tool>
