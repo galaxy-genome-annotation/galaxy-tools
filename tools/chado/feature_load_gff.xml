@@ -17,12 +17,20 @@ chakin feature load_gff
 #if $landmark_type:
   --landmark_type '$landmark_type'
 #end if
-#if $re_protein:
-  --re_protein '$re_protein'
+
+#if $prot_naming.method == 'regex'
+    #if $re_protein:
+      --re_protein '$re_protein'
+    #end if
+    #if $re_protein_capture:
+      --re_protein_capture '$re_protein_capture'
+    #end if
+#elif $prot_naming.method == "attr"
+    #if $protein_id_attr:
+      --protein_id_attr '$protein_id_attr'
+    #end if
 #end if
-#if $re_protein_capture:
-  --re_protein_capture '$re_protein_capture'
-#end if
+
 #if $fasta:
   --fasta '$fasta'
 #end if
@@ -49,12 +57,27 @@ $add_only
 
           <!-- options -->
       	<param name="landmark_type" label="Landmark Type" argument="landmark_type" type="text" help="Type of the landmarks (will speed up loading if provided, e.g. contig, should be a term of the Sequence ontology)" />
-      	<param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in mRNA name to use in 'Regex protein' (e.g. '^(.*?)-R([A-Z]+)$', default='^(.*?)$' )">
-            <expand macro="sanitized"/>
-        </param>
-      	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture' (e.g. '\1-P\2')">
-            <expand macro="sanitized"/>
-        </param>
+        <conditional name="prot_naming">
+            <param name="method" type="select" label="Protein naming method" help="Will be used to assign uniquename to polypeptide">
+                <option value="auto">Automatic: uses GFF polypeptide features if existing, or derive from mRNA uniquename</option>
+                <option value="regex">Regular expression</option>
+                <option value="attr">From GFF attribute</option>
+            </param>
+            <when value="auto">
+            </when>
+            <when value="regex">
+                <param name="re_protein_capture" label="Regex protein capture" argument="re_protein_capture" type="text" help="Regular expression to capture groups in mRNA uniquename to use in 'Regex protein'" value="^(.*?)-R([A-Z]+)$">
+                    <expand macro="sanitized"/>
+                </param>
+              	<param name="re_protein" label="Regex protein" argument="re_protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture'" value="\1-P\2">
+                    <expand macro="sanitized"/>
+                </param>
+            </when>
+            <when value="attr">
+                <param name="protein_id_attr" label="Protein id attribute" argument="protein_id_attr" type="text" help="Attribute containing the protein uniquename. It is searched at the mRNA level, and if not found at CDS level." value="protein_id"/>
+            </when>
+        </conditional>
+
       	<param name="fasta" label="Fasta" argument="fasta" type="data" format="fasta" help="A Fasta containing sequences for some features. When creating a feature, if its sequence is in this fasta file it will be loaded. Otherwise for mRNA and polypeptides it will be computed from the genome sequence (if available), otherwise it will be left empty." optional="true" />
       	<param name="no_seq_compute" label="Allow computing missing sequences" argument="no_seq_compute" type="boolean" truevalue="" falsevalue="--no_seq_compute" help="Enable the computation of mRNA and polypeptides sequences based on genome sequence and positions." />
       	<param name="add_only" label="Add only" argument="add_only" type="boolean" truevalue="--add_only" falsevalue="" help="Use this flag if you're not updating existing features, but just adding new features to the selected analysis and organism. It will speedup loading, and reduce memory usage, but might produce errors in case of already existing feature." />
