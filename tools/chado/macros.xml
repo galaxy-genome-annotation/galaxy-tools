@@ -16,7 +16,7 @@
         </stdio>
     </xml>
 
-    <token name="@WRAPPER_VERSION@">2.1.5</token>
+    <token name="@WRAPPER_VERSION@">2.2.2</token>
 
     <xml name="citation">
         <citations>
