@@ -10,8 +10,6 @@
 @AUTH@
 
 chakin expression add_biomaterial
-'$biomaterial_name'
-'$organism_id'
 
 #if $description:
   --description '$description'
@@ -32,6 +30,9 @@ chakin expression add_biomaterial
   --attributes '$attributes'
 #end if
 
+'$biomaterial_name'
+'$organism_id'
+
 | jq -S . > $results
     ]]></command>
 	<inputs>
@@ -45,7 +46,7 @@ chakin expression add_biomaterial
 		<param name="biosample_accession" label="Biosample Accession" argument="biosample_accession" type="text" help="Biosample accession number" optional="true" />
 		<param name="sra_accession" label="Sra Accession" argument="sra_accession" type="text" help="SRA accession number" optional="true" />
 		<param name="bioproject_accession" label="Bioproject Accession" argument="bioproject_accession" type="text" help="Bioproject accession number" optional="true" />
-		<param name="attributes" label="Attributes" argument="attributes" type="data" format="json" help="Custom attributes (In JSON dict form)" />
+		<param name="attributes" label="Attributes" argument="attributes" type="data" format="json" help="Custom attributes (In JSON dict form)" optional="true" />
 
 		<expand macro="wait_for"/>
 

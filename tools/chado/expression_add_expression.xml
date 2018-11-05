@@ -14,7 +14,7 @@ chakin expression add_expression
 '$analysis_id'
 '$file_path'
 
-| jq -S . > $results
+ > $results
     ]]></command>
 	<inputs>
 	    <!-- arguments -->
@@ -25,7 +25,7 @@ chakin expression add_expression
 		<expand macro="wait_for"/>
 	</inputs>
 	<outputs>
-		<data format="json" name="results"/>
+		<data format="txt" name="results"/>
 	</outputs>
 	<help>
 Add an expression matrix file to the database
