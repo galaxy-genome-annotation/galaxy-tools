@@ -16,7 +16,7 @@ $nuke
     ]]></command>
 	<inputs>
     <!-- options -->
-		<param name="nuke" label="Nuke" argument="nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene ordering data" />
+		<param name="nuke" label="Nuke" argument="--nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene ordering data" />
 	    <expand macro="wait_for"/>
 
 	</inputs>

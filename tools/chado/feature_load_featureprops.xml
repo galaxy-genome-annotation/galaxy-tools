@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <tool id="feature_load_featureprops" name="Chado load feature properties" version="@WRAPPER_VERSION@.0">
- <description></description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
-	<expand macro="requirements"/>
+    <description></description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
     <code file="chado.py"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
 chakin feature load_featureprops
@@ -23,32 +23,26 @@ $match_on_name
 
 | jq -S . > $results
     ]]></command>
-	<inputs>
+    <inputs>
         <!-- arguments -->
-    	<param name="tab_file" label="Tab File" argument="tab_file" type="data" format="tabular" help="Path to the tabular file to load" />
-    	<param argument="--analysis_id"
-    		type="select"
-    		dynamic_options="list_analyses()"
-    		label="Analysis" />
-        <param argument="--organism"
-               type="select"
-               dynamic_options="list_organisms()"
-               label="Organism" />
-    	<param name="prop_type" label="Property type" argument="prop_type" type="text" help="Type of the feature property (cvterm will be created if it doesn't exist)" />
+        <param name="tab_file" label="Tab File" argument="tab_file" type="data" format="tabular" help="Path to the tabular file to load" />
+        <param argument="analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
+        <param argument="organism" type="select" dynamic_options="list_organisms()" label="Organism" />
+        <param name="prop_type" label="Property type" argument="prop_type" type="text" help="Type of the feature property (cvterm will be created if it doesn't exist)" />
 
         <!-- options -->
-    	<param name="feature_type" label="Feature type" argument="feature_type" type="text" help="Type of the target features in sequence ontology (will speed up loading if specified)" optional="true" />
-    	<param name="match_on_name" label="Match on name" argument="match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match features using their name instead of their uniquename" />
+        <param name="feature_type" label="Feature type" argument="--feature_type" type="text" help="Type of the target features in sequence ontology (will speed up loading if specified)" optional="true" />
+        <param name="match_on_name" label="Match on name" argument="--match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match features using their name instead of their uniquename" />
 
         <expand macro="wait_for"/>
 
-	</inputs>
-	<outputs>
-		<data format="json" name="results"/>
-	</outputs>
-	<help>
+    </inputs>
+    <outputs>
+        <data format="json" name="results"/>
+    </outputs>
+    <help>
 Load feature properties from a tabular file (Column1: feature name or uniquename, Column2: property value)
 
 @HELP@
-	</help>
+    </help>
 </tool>

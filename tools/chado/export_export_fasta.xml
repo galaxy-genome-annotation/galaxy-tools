@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <tool id="export_export_fasta" name="Chado export fasta" version="@WRAPPER_VERSION@.0">
- 	<description></description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
-	<expand macro="requirements"/>
+    <description></description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
     <code file="chado.py"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
 chakin export export_fasta
@@ -14,21 +14,18 @@ chakin export export_fasta
 
  > $results
     ]]></command>
-	<inputs>
+    <inputs>
         <!-- arguments -->
-        <param argument="--organism"
-               type="select"
-               dynamic_options="list_organisms()"
-               label="Organism" />
-   	    <expand macro="wait_for"/>
+        <param argument="--organism" type="select" dynamic_options="list_organisms()" label="Organism" />
+        <expand macro="wait_for"/>
 
-	</inputs>
-	<outputs>
-		<data format="fasta" name="results"/>
-	</outputs>
-	<help>
+    </inputs>
+    <outputs>
+        <data format="fasta" name="results"/>
+    </outputs>
+    <help>
 Export reference sequences as fasta.
 
 @HELP@
-	</help>
+    </help>
 </tool>

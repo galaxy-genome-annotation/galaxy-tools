@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tool id="organism_get_organisms" name="Chado organism get" version="@WRAPPER_VERSION@.0">
- <description></description>
+    <description></description>
 	<macros>
 		<import>macros.xml</import>
 	</macros>
@@ -35,12 +35,12 @@ chakin organism get_organisms
     <!-- arguments -->
 
     <!-- options -->
-	<param name="organism_id" label="Organism Id" argument="organism_id" type="integer" help="organism_id filter" optional="True" />
-	<param name="genus" label="Genus" argument="genus" type="text" help="genus filter" optional="True" />
-	<param name="species" label="Species" argument="species" type="text" help="species filter" optional="True" />
-	<param name="common" label="Common" argument="common" type="text" help="common filter" optional="True" />
-	<param name="abbr" label="Abbr" argument="abbr" type="text" help="abbr filter" optional="True" />
-	<param name="comment" label="Comment" argument="comment" type="text" help="comment filter" optional="True" />
+	<param name="organism_id" label="Organism Id" argument="--organism_id" type="integer" help="organism_id filter" optional="True" />
+	<param name="genus" label="Genus" argument="--genus" type="text" help="genus filter" optional="True" />
+	<param name="species" label="Species" argument="--species" type="text" help="species filter" optional="True" />
+	<param name="common" label="Common" argument="--common" type="text" help="common filter" optional="True" />
+	<param name="abbr" label="Abbr" argument="--abbr" type="text" help="abbr filter" optional="True" />
+	<param name="comment" label="Comment" argument="--comment" type="text" help="comment filter" optional="True" />
 
 	</inputs>
 	<outputs>
