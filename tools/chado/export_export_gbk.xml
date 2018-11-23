@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <tool id="export_export_gbk" name="Chado export gbk" version="@WRAPPER_VERSION@.0">
- 	<description></description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
-	<expand macro="requirements"/>
+    <description></description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
     <code file="chado.py"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
 chakin export export_gbk
@@ -15,23 +15,23 @@ chakin export export_gbk
 
  > $results
     ]]></command>
-	<inputs>
-	    <!-- arguments -->
-	    <param argument="--organism"
-	           type="select"
-	           dynamic_options="list_organisms()"
-	           label="Organism" />
+    <inputs>
+        <!-- arguments -->
+        <param argument="--organism"
+               type="select"
+               dynamic_options="list_organisms()"
+               label="Organism" />
 
-	    <!-- options -->
-	    <expand macro="wait_for"/>
+        <!-- options -->
+        <expand macro="wait_for"/>
 
-	</inputs>
-	<outputs>
-		<data format="genbank" name="results"/>
-	</outputs>
-	<help>
+    </inputs>
+    <outputs>
+        <data format="genbank" name="results"/>
+    </outputs>
+    <help>
 Export organism features as genbank
 
 @HELP@
-	</help>
+    </help>
 </tool>

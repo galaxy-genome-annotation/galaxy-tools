@@ -20,8 +20,8 @@ $nuke
     ]]></command>
 	<inputs>
         <!-- options -->
-    	<param name="family_name" label="Family Name" argument="family_name" type="text" help="Restrict to families beginning with given prefix" />
-    	<param name="nuke" label="Nuke" argument="nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene families data" />
+    	<param name="family_name" label="Family Name" argument="--family_name" type="text" help="Restrict to families beginning with given prefix" />
+    	<param name="nuke" label="Nuke" argument="--nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene families data" />
         <expand macro="wait_for"/>
 
 	</inputs>

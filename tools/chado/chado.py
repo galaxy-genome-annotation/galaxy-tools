@@ -406,6 +406,7 @@ def list_organisms(*args, **kwargs):
         # there.
         data = _list_organisms(ci, *args, **kwargs)
         cache[cacheKey] = data
+        ci.session.close()
         return data
     try:
         # The cache key may or may not be in the cache at this point, it
@@ -413,12 +414,14 @@ def list_organisms(*args, **kwargs):
         # when we checked above and now, so we reference the object from the
         # cache in preparation to return.
         data = cache[cacheKey]
+        ci.session.close()
         return data
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
         data = _list_organisms(ci, *args, **kwargs)
         cache[cacheKey] = data
+        ci.session.close()
         return data
 
 
@@ -447,6 +450,7 @@ def list_analyses(*args, **kwargs):
 
         data = _list_analyses(ci, *args, **kwargs)
         cache[cacheKey] = data
+        ci.session.close()
         return data
     try:
         # The cache key may or may not be in the cache at this point, it
@@ -454,12 +458,14 @@ def list_analyses(*args, **kwargs):
         # when we checked above and now, so we reference the object from the
         # cache in preparation to return.
         data = cache[cacheKey]
+        ci.session.close()
         return data
     except KeyError:
         # If access fails due to eviction, we will fail over and can ensure that
         # data is inserted.
         data = _list_analyses(ci, *args, **kwargs)
         cache[cacheKey] = data
+        ci.session.close()
         return data
 
 

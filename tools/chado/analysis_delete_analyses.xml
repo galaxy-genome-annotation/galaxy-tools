@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <tool id="analysis_delete_analyses" name="Chado analysis delete" version="@WRAPPER_VERSION@.0">
- <description></description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
-	<expand macro="requirements"/>
+    <description></description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
     <code file="chado.py"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
 chakin analysis delete_analyses
@@ -15,22 +15,22 @@ chakin analysis delete_analyses
 
  > $results
     ]]></command>
-	<inputs>
+    <inputs>
     <!-- arguments -->
 
     <!-- options -->
-	<param argument="--analysis_id"
-		type="select"
-		dynamic_options="list_analyses()"
-		label="Analysis" />
+    <param argument="--analysis_id"
+        type="select"
+        dynamic_options="list_analyses()"
+        label="Analysis" />
 
-	</inputs>
-	<outputs>
-		<data format="txt" name="results"/>
-	</outputs>
-	<help>
+    </inputs>
+    <outputs>
+        <data format="txt" name="results"/>
+    </outputs>
+    <help>
 Delete analysis
 
 @HELP@
-	</help>
+    </help>
 </tool>
