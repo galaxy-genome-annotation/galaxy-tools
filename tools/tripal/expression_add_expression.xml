@@ -9,12 +9,20 @@
     </expand>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
+tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
+
+&&
+
+cp '${file_path}' "\${tmp_dir}/expression.tsv"
+
+&&
+
 @AUTH@
 
 tripaille expression add_expression
 '$organism_id'
 '$analysis_id'
-'$file_path'
+"\${tmp_dir}/expression.tsv"
 
 #if $match_type:
   --match_type '$match_type'

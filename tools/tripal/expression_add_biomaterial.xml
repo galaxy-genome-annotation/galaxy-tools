@@ -9,11 +9,19 @@
     </expand>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
+tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
+
+&&
+
+cp '${file_path}' "\${tmp_dir}/biomaterial_input"
+
+&&
+
 @AUTH@
 
 tripaille expression add_biomaterial
 '$organism_id'
-'$file_path'
+"\${tmp_dir}/biomaterial_input"
 '$file_path.extension'
 
 | jq -S . > $results
