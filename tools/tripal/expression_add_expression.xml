@@ -4,9 +4,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements">
-        <requirement type="package" version="1.5">jq</requirement>
-    </expand>
+    <expand macro="requirements"/>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
 tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
@@ -48,8 +46,7 @@ tripaille expression add_expression
 #if $stop_regex:
   --stop_regex '$stop_regex'
 #end if
-
-| jq -S . > $results
+> $results
 ]]></command>
     <inputs>
         <!-- arguments -->
@@ -80,7 +77,7 @@ tripaille expression add_expression
 
     </inputs>
     <outputs>
-        <data format="json" name="results"/>
+        <data format="txt" name="results"/>
     </outputs>
     <help>
 :type organism_id: str :param organism_id: Organism Id
