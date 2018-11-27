@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <tool id="tripaille_expression_get_biomaterials" name="Get biomaterials" version="@WRAPPER_VERSION@.0">
  <description>from Tripal</description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
-	<expand macro="requirements"/>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
     <code file="tripal.py"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <command detect_errors="aggressive"><![CDATA[
 tripaille expression get_biomaterials
 
 #if $provider_id:
@@ -24,22 +24,22 @@ tripaille expression get_biomaterials
 
 | jq -S . > $results
 ]]></command>
-	<inputs>
-	    <!-- arguments -->
+    <inputs>
+        <!-- arguments -->
 
-	    <!-- options -->
-		<param argument="--organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
-		<param name="provider_id" label="Provider Id" argument="provider_id" type="text" help="Limit query to the selected provider" />
-		<param name="biomaterial_id" label="Biomaterial Id" argument="biomaterial_id" type="text" help="Limit query to the selected biomaterial" />
-		<param name="dbxref_id" label="Dbxref Id" argument="dbxref_id" type="text" help="Limit query to the selected ref" />
+        <!-- options -->
+        <param argument="--organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
+        <param name="provider_id" label="Provider Id" argument="provider_id" type="text" help="Limit query to the selected provider" />
+        <param name="biomaterial_id" label="Biomaterial Id" argument="biomaterial_id" type="text" help="Limit query to the selected biomaterial" />
+        <param name="dbxref_id" label="Dbxref Id" argument="dbxref_id" type="text" help="Limit query to the selected ref" />
 
-	</inputs>
-	<outputs>
-		<data format="json" name="results"/>
-	</outputs>
-	<help>
+    </inputs>
+    <outputs>
+        <data format="json" name="results"/>
+    </outputs>
+    <help>
 List biomaterials in the database
 
 @HELP@
-	</help>
+    </help>
 </tool>

@@ -36,12 +36,12 @@
             | jq -S . > $results
     ]]></command>
     <inputs>
-    	<param name="organism_id" label="Organism Id" argument="organism_id" type="text" optional="true" help="An organism ID" />
-    	<param name="genus" label="Genus" argument="genus" type="text" optional="true" help="The genus of the organism" />
-    	<param name="species" label="Species" argument="species" type="text" optional="true" help="The species of the organism" />
-    	<param name="common" label="Common" argument="common" type="text" optional="true" help="The common name of the organism" />
-    	<param name="abbr" label="Abbr" argument="abbr" type="text" optional="true" help="The abbreviation of the organism" />
-    	<param name="comment" label="Comment" argument="comment" type="text" optional="true" help="A comment / description" />
+        <param name="organism_id" label="Organism Id" argument="organism_id" type="text" optional="true" help="An organism ID" />
+        <param name="genus" label="Genus" argument="genus" type="text" optional="true" help="The genus of the organism" />
+        <param name="species" label="Species" argument="species" type="text" optional="true" help="The species of the organism" />
+        <param name="common" label="Common" argument="common" type="text" optional="true" help="The common name of the organism" />
+        <param name="abbr" label="Abbr" argument="abbr" type="text" optional="true" help="The abbreviation of the organism" />
+        <param name="comment" label="Comment" argument="comment" type="text" optional="true" help="A comment / description" />
     </inputs>
     <outputs>
         <data format="json" name="results" label="Tripal organisms" />

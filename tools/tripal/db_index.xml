@@ -59,7 +59,7 @@
                        help="The name of a Chado (or custom) table to index" />
                 <param name="index_name" label="Index Name" argument="--index_name" type="text" help="Index name" />
                 <repeat name="repeat_fields" title="Fields">
-            		<param name="field_name"
+                    <param name="field_name"
                            label="Field name"
                            argument="--fields"
                            type="text"
@@ -81,9 +81,9 @@
                         <option value="geo_shape">geo_shape</option>
                         <option value="completion">completion</option>
                     </param>
-            	</repeat>
-            	<repeat name="repeat_links" title="Links">
-            		<param name="column"
+                </repeat>
+                <repeat name="repeat_links" title="Links">
+                    <param name="column"
                            label="Table column where to display links"
                            type="text"
                            help="Should be in the list of indexed column" />
@@ -91,7 +91,7 @@
                            label="Links url"
                            type="text"
                            help="e.g.: /your/url/[any-column-name]"/>
-            	</repeat>
+                </repeat>
             </when>
         </conditional>
         <param name="tokenizer"

@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
 <tool id="tripaille_feature_delete_orphans" name="Delete orphan features" version="@WRAPPER_VERSION@.0">
  <description>from Tripal</description>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
-	<expand macro="requirements"/>
-	<command detect_errors="aggressive"><![CDATA[
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="aggressive"><![CDATA[
 tripaille feature delete_orphans
 
 | jq -S . > $results
 ]]></command>
-	<inputs>
-	</inputs>
-	<outputs>
-		<data format="json" name="results"/>
-	</outputs>
-	<help>
+    <inputs>
+    </inputs>
+    <outputs>
+        <data format="json" name="results"/>
+    </outputs>
+    <help>
 Delete orphans Drupal feature nodes
 
 @HELP@
-	</help>
+    </help>
 </tool>
