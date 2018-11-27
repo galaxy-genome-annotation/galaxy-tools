@@ -9,6 +9,8 @@
     </expand>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
 tripaille expression delete_biomaterials
 
 #if $names:

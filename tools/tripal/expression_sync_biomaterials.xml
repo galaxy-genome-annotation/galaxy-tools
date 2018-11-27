@@ -8,6 +8,8 @@
         <requirement type="package" version="1.5">jq</requirement>
     </expand>
     <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
 tripaille expression sync_biomaterials
 
 #if $ids:

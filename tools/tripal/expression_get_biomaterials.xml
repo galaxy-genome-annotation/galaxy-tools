@@ -9,6 +9,8 @@
     </expand>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
 tripaille expression get_biomaterials
 
 #if $provider_id:
