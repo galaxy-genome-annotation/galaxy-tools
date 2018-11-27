@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<tool id="tripaille_expression_add_expression" name="Load expression data" version="@WRAPPER_VERSION@.0">
+ <description>into Tripal</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <code file="tripal.py"/>
+    <command detect_errors="aggressive"><![CDATA[
+tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
+
+&&
+
+cp '${file_path}' "\${tmp_dir}/expression.tsv"
+
+&&
+
+@AUTH@
+
+tripaille expression add_expression
+'$organism_id'
+'$analysis_id'
+"\${tmp_dir}/expression.tsv"
+
+#if $match_type:
+  --match_type '$match_type'
+#end if
+#if $biomaterial_provider:
+  --biomaterial_provider '$biomaterial_provider'
+#end if
+#if $array_design:
+  --array_design '$array_design'
+#end if
+#if $assay_id:
+  --assay_id '$assay_id'
+#end if
+#if $acquisition_id:
+  --acquisition_id '$acquisition_id'
+#end if
+#if $quantification_id:
+  --quantification_id '$quantification_id'
+#end if
+#if $start_regex:
+  --start_regex '$start_regex'
+#end if
+#if $stop_regex:
+  --stop_regex '$stop_regex'
+#end if
+
+&&
+
+echo "Data loaded" > $results
+]]></command>
+    <inputs>
+        <!-- arguments -->
+        <param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
+        <param argument="analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
+        <param name="file_path" label="Expression matrix" argument="file_path" type="data" format="tsv,tabular" help="Expression matric (tabular, rows are transcripts, columns are conditions)" />
+
+        <!-- options -->
+        <expand macro="match_type" />
+
+        <param name="biomaterial_provider" label="Biomaterial Provider" argument="biomaterial_provider" type="text" help="The contact who provided the biomaterial. (optional, non functional in Tripal2)" optional="true" />
+
+        <param name="array_design" label="Array Design" argument="array_design" type="text" help="The array design associated with this analysis. This is not required if the experimental data was gathered from next generation sequencing methods. (optional, non functional in Tripal2)" optional="true" />
+
+        <param name="assay_id" label="Assay Id" argument="assay_id" type="text" help="The id of the assay associated with the experiment. (optional, non functional in Tripal2)" optional="true" />
+
+        <param name="acquisition_id" label="Acquisition Id" argument="acquisition_id" type="text" help="The id of the acquisition associated with the experiment (optional, non functional in Tripal2)" optional="true" />
+
+        <param name="quantification_id" label="Quantification Id" argument="quantification_id" type="text" help="The id of the quantification associated with the experiment (optional, non functional in Tripal2)" optional="true" />
+
+        <param name="start_regex" label="Start Regex" argument="start_regex" type="text" help="A regular expression to describe the line that occurs before the start of the expression data. If the file has no header, this is not needed. (optional)">
+            <expand macro="sanitized"/>
+        </param>
+
+        <param name="stop_regex" label="Stop Regex" argument="stop_regex" type="text" help="A regular expression to describe the line that occurs after the end of the expression data. If the file has no footer text, this is not needed. (optional)">
+            <expand macro="sanitized"/>
+        </param>
+
+    </inputs>
+    <outputs>
+        <data format="txt" name="results"/>
+    </outputs>
+    <help>
+:type organism_id: str :param organism_id: Organism Id
+
+@HELP@
+    </help>
+</tool>
