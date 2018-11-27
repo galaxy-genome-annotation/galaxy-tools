@@ -4,7 +4,9 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements"/>
+    <expand macro="requirements">
+        <requirement type="package" version="1.5">jq</requirement>
+    </expand>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
 tripaille expression add_biomaterial
