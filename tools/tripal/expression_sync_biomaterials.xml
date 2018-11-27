@@ -26,7 +26,7 @@ echo "Data loaded" > $results
 
     </inputs>
     <outputs>
-        <data format="json" name="results"/>
+        <data format="txt" name="results"/>
     </outputs>
     <help>
 Synchronize some biomaterials
