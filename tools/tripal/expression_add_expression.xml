@@ -42,9 +42,6 @@ tripaille expression add_expression
 #if $quantification_id:
   --quantification_id '$quantification_id'
 #end if
-#if $file_extension:
-  --file_extension '$file_extension'
-#end if
 #if $start_regex:
   --start_regex '$start_regex'
 #end if
@@ -58,7 +55,7 @@ tripaille expression add_expression
         <!-- arguments -->
         <param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
         <param argument="analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
-        <param name="file_path" label="File Path" argument="file_path" type="text" help="Expression file (tabular, rows are transcripts, columns are conditions)" />
+        <param name="file_path" label="Expression matrix" argument="file_path" type="data" format="tsv,tabular" help="Expression matric (tabular, rows are transcripts, columns are conditions)" />
 
         <!-- options -->
         <expand macro="match_type" />
