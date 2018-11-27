@@ -4,9 +4,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements">
-        <requirement type="package" version="1.5">jq</requirement>
-    </expand>
+    <expand macro="requirements"/>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
 tmp_dir=`mktemp -d -p "@DATA_DIR@"` && chmod a+rx "\${tmp_dir}"
@@ -24,7 +22,9 @@ tripaille expression add_biomaterial
 "\${tmp_dir}/biomaterial_input"
 '$file_path.extension'
 
-| jq -S . > $results
+&&
+
+echo "Data loaded" > $results
 ]]></command>
     <inputs>
         <!-- arguments -->

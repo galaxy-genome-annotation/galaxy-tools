@@ -4,9 +4,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements">
-        <requirement type="package" version="1.5">jq</requirement>
-    </expand>
+    <expand macro="requirements"/>
     <command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
@@ -16,7 +14,9 @@ tripaille expression sync_biomaterials
   --ids '$ids'
 #end if
 
-| jq -S . > $results
+&&
+
+echo "Data loaded" > $results
 ]]></command>
     <inputs>
         <!-- arguments -->

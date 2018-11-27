@@ -46,7 +46,10 @@ tripaille expression add_expression
 #if $stop_regex:
   --stop_regex '$stop_regex'
 #end if
-> $results
+
+&&
+
+echo "Data loaded" > $results
 ]]></command>
     <inputs>
         <!-- arguments -->

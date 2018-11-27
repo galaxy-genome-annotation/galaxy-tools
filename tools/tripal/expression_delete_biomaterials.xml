@@ -4,9 +4,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements">
-        <requirement type="package" version="1.5">jq</requirement>
-    </expand>
+    <expand macro="requirements"/>
     <code file="tripal.py"/>
     <command detect_errors="aggressive"><![CDATA[
 @AUTH@
@@ -23,13 +21,17 @@ tripaille expression delete_biomaterials
   --analysis_id '$analysis_id'
 #end if
 
-| jq -S . > $results
+&&
+
+echo "Data loaded" > $results
 ]]></command>
     <inputs>
         <!-- arguments -->
 
         <!-- options -->
-        <param name="names" label="Names" argument="names" type="text" help="JSON list of biomaterial names to delete." optional="true" />
+        <param name="names" label="Names" argument="names" type="text" help="JSON list of biomaterial names to delete." optional="true">
+            <expand macro="sanitized"/>
+        </param>
 
         <param argument="--organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
         <param argument="--analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" optional="true" />
