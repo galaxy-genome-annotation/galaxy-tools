@@ -2,7 +2,7 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="2.2.3">python-chado</requirement>
+            <requirement type="package" version="2.2.5">python-chado</requirement>
             <requirement type="package" version="1.5">jq</requirement>
             <yield/>
         </requirements>
@@ -16,7 +16,7 @@
         </stdio>
     </xml>
 
-    <token name="@WRAPPER_VERSION@">2.2.3</token>
+    <token name="@WRAPPER_VERSION@">2.2.5</token>
 
     <xml name="citation">
         <citations>
