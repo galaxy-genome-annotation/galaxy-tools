@@ -49,6 +49,8 @@
                    label="Data to index">
                 <option value="website" selected="true">Index all the Tripal content</option>
                 <option value="table">Index a specific table</option>
+                <option value="nodes">Index all website nodes</option>
+                <option value="entities">Index all website entities (Tripal 3 only)</option>
             </param>
             <when value="website"/>
             <when value="table">
@@ -93,6 +95,8 @@
                            help="e.g.: /your/url/[any-column-name]"/>
                 </repeat>
             </when>
+            <when value="nodes"/>
+            <when value="entities"/>
         </conditional>
         <param name="tokenizer"
                type="select"
