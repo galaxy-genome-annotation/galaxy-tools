@@ -38,6 +38,11 @@
                 #end for
             #end if
 
+            #if $expose.do_expose == "yes":
+                --exposed
+                --index_url '${expose.index_url}'
+            #end if
+
         &&
 
         echo "Data loaded" > $results
@@ -114,6 +119,18 @@
             <option value="path_hierarchy">path_hierarchy</option>
         </param>
         <param name="queues" label="Queues" argument="queues" type="integer" value="10" help="Number of indexing task queues" />
+        <conditional name="expose">
+            <param name="do_expose" type="select" label="Expose the index to other websites (read-only)">
+                <option value="yes" selected="true">No</option>
+                <option value="no">No</option>
+            </param>
+            <when value="no"/>
+            <when value="yes">
+                <param name="index_url" label="Index Url" argument="--index_url" type="text" help="In order for other sites to link back to your results page, you must specify a path where the form for this index can be reached" />
+            </when>
+            <when value="nodes"/>
+            <when value="entities"/>
+        </conditional>
         <expand macro="wait_for"/>
     </inputs>
     <outputs>
@@ -132,6 +149,19 @@
                 <param name="mode" value="singles" />
                 <param name="table" value="organism" />
                 <param name="fields" value="genus species description" />
+            </conditional>
+
+            <expand macro="test_result" />
+        </test>
+        <test expect_failure="true" expect_exit_code="1">
+            <conditional name="table">
+                <param name="mode" value="singles" />
+                <param name="table" value="organism" />
+                <param name="fields" value="genus species description" />
+            </conditional>
+            <conditional name="expose">
+                <param name="expose" value="yes" />
+                <param name="index_url" value="http://google.com" />
             </conditional>
 
             <expand macro="test_result" />
