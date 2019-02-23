@@ -52,7 +52,7 @@ $match_on_name
 
         <conditional name="input">
             <param name="input_type" type="select" label="Input type">
-                <option value="file" selected="true">Single Newick file</option>
+                <option value="file" selected="true">Newick file</option>
                 <option value="archive">Tar.gz archive of Newick files</option>
             </param>
             <when value="file">
