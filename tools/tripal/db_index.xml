@@ -121,7 +121,7 @@
         <param name="queues" label="Queues" argument="queues" type="integer" value="10" help="Number of indexing task queues" />
         <conditional name="expose">
             <param name="do_expose" type="select" label="Expose the index to other websites (read-only)">
-                <option value="yes" selected="true">No</option>
+                <option value="yes" selected="true">Yes</option>
                 <option value="no">No</option>
             </param>
             <when value="no"/>
