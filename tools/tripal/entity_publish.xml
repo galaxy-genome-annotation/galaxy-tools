@@ -15,7 +15,9 @@
           --types '$rep.types'
         #end for
 
-        | jq -S . > $results
+        &&
+
+        echo "Data loaded" > $results
 ]]></command>
     <inputs>
         <!-- arguments -->
