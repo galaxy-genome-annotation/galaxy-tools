@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="phylogeny_load_tree" name="Chado load trees" version="@WRAPPER_VERSION@.0">
+<tool id="phylogeny_load_tree" name="Chado load trees" version="@WRAPPER_VERSION@.1">
     <description>for phylogeny module</description>
 	<macros>
 		<import>macros.xml</import>
@@ -9,19 +9,12 @@
 	<command detect_errors="aggressive"><![CDATA[
 @AUTH@
 
-chakin phylogeny load_tree
-'$newick'
-'$analysis_id'
+#if $input.input_type == "archive":
+	mkdir 'newick_arch/' &&
+	tar -C 'newick_arch/' -xzvf '${input.newick_arch}' > /dev/null &&
+#end if
 
-#if $name:
-  --name '$name'
-#end if
-#if $xref_db:
-  --xref_db '$xref_db'
-#end if
-#if $xref_accession:
-  --xref_accession '$xref_accession'
-#end if
+chakin phylogeny load_tree
 
 $match_on_name
 
@@ -29,20 +22,51 @@ $match_on_name
   --prefix '$prefix'
 #end if
 
+#if $xref_db:
+  --xref_db '$xref_db'
+#end if
+
+#if $input.input_type == "archive":
+	#if $name:
+	  --name '$name'
+	#end if
+
+	#if $xref_accession:
+	  --xref_accession '$xref_accession'
+	#end if
+
+	'$newick'
+#else
+	'newick_arch/'
+#end if
+
+'$analysis_id'
+
 | jq -S . > $results
     ]]></command>
 	<inputs>
-	    <!-- arguments -->
-		<param name="newick" label="Newick" argument="newick" type="data" format="txt" help="Newick file to load (or directory containing multiple newick files to load)" />
 		<param argument="analysis_id"
 			type="select"
 			dynamic_options="list_analyses()"
 			label="Analysis" />
 
+        <conditional name="input">
+            <param name="input_type" type="select" label="Input type">
+                <option value="file" selected="true">Newick file</option>
+                <option value="archive">Tar.gz archive of Newick files</option>
+            </param>
+            <when value="file">
+				<param name="newick" label="Newick" argument="newick" type="data" format="newick" help="Newick file to load" />
+				<param name="name" label="Name" argument="--name" type="text" help="The name given to the phylotree entry in the database" />
+				<param name="xref_accession" label="Xref Accession" argument="--xref_accession" type="text" help="The accession to use for dbxrefs for the trees (assumed same as name unless otherwise specified)" />
+			</when>
+            <when value="archive">
+				<param name="newick_arch" label="Newicks archive" type="data" format="tar" help="Archive of Newick files to load (must be at the root of the archive)" />
+			</when>
+		</conditional>
+
 	    <!-- options -->
-		<param name="name" label="Name" argument="--name" type="text" help="The name given to the phylotree entry in the database" />
 		<param name="xref_db" label="Xref db" argument="--xref_db" value="null" type="text" help="The name of the db to link dbxrefs for the trees" />
-		<param name="xref_accession" label="Xref Accession" argument="--xref_accession" type="text" help="The accession to use for dbxrefs for the trees (assumed same as name unless otherwise specified)" />
 		<param name="match_on_name" label="Match On Name" argument="--match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match polypeptide features using their name instead of their uniquename" />
 		<param name="prefix" label="Prefix" argument="--prefix" type="text" help="Comma-separated list of prefix to be removed from identifiers (e.g species prefixes when loading OrthoFinder output)" />
 		<expand macro="wait_for"/>
