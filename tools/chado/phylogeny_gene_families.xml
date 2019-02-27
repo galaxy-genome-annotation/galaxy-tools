@@ -16,7 +16,7 @@ chakin phylogeny gene_families
 
 $nuke
 
- > $results
+ > '$results'
     ]]></command>
 	<inputs>
         <!-- options -->

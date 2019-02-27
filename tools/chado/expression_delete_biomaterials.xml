@@ -23,7 +23,7 @@ chakin expression delete_biomaterials
 #if $analysis_id:
   --analysis_id '$analysis_id'
 #end if
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- options -->

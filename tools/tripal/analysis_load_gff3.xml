@@ -55,7 +55,7 @@
 
         &&
 
-        echo "Data loaded" > $results
+        echo "Data loaded" > '$results'
     ]]></command>
     <inputs>
         <param name="gff3"

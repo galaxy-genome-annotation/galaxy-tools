@@ -26,7 +26,7 @@ tripaille expression get_biomaterials
   --dbxref_id '$dbxref_id'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
 ]]></command>
     <inputs>
         <!-- arguments -->

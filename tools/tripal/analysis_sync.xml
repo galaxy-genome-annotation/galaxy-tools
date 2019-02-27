@@ -17,7 +17,7 @@
 
         &&
 
-        echo "Data loaded" > $results
+        echo "Data loaded" > '$results'
     ]]></command>
     <inputs>
         <param argument="--analysis_id"

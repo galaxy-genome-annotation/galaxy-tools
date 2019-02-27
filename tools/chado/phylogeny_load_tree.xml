@@ -42,7 +42,7 @@ $match_on_name
 
 '$analysis_id'
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
 	<inputs>
 		<param argument="analysis_id"

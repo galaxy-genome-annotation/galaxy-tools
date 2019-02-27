@@ -49,7 +49,7 @@ tripaille expression add_expression
 
 &&
 
-echo "Data loaded" > $results
+echo "Data loaded" > '$results'
 ]]></command>
     <inputs>
         <!-- arguments -->

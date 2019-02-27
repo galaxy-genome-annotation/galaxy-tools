@@ -24,7 +24,7 @@ tripaille expression add_biomaterial
 
 &&
 
-echo "Data loaded" > $results
+echo "Data loaded" > '$results'
 ]]></command>
     <inputs>
         <!-- arguments -->

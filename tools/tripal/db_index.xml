@@ -45,7 +45,7 @@
 
         &&
 
-        echo "Data loaded" > $results
+        echo "Data loaded" > '$results'
     ]]></command>
     <inputs>
         <conditional name="table">

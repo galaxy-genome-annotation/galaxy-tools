@@ -12,7 +12,7 @@ chakin expression delete_all_biomaterials
 
 $confirm
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- options -->

@@ -12,7 +12,7 @@
 chakin export export_fasta
 '$organism'
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->

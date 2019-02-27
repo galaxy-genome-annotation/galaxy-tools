@@ -28,7 +28,7 @@
             '$genus'
             '$species'
 
-            | jq -S . > $results
+            | jq -S . > '$results'
     ]]></command>
     <inputs>
         <param name="genus"

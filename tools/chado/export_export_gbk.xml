@@ -13,7 +13,7 @@ chakin export export_gbk
 '$organism'
 
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->

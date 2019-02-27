@@ -13,7 +13,7 @@ chakin organism delete_organisms
 
 --organism_id $organism
 
- > $results
+ > '$results'
     ]]></command>
 	<inputs>
     <!-- arguments -->

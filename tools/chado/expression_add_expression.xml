@@ -14,7 +14,7 @@ chakin expression add_expression
 '$analysis_id'
 '$file_path'
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->
