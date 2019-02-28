@@ -50,9 +50,11 @@
     <inputs>
         <conditional name="table">
             <param name="mode"
+                   argument="--mode"
                    type="select"
                    label="Data to index">
                 <option value="website" selected="true">Index all the Tripal content</option>
+                <option value="gene">Index all the genes</option>
                 <option value="table">Index a specific table</option>
                 <option value="nodes">Index all website nodes</option>
                 <option value="entities">Index all website entities (Tripal 3 only)</option>
