@@ -24,7 +24,7 @@ chakin feature get_features
   --uniquename '$uniquename'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
     <inputs>
     <!-- options -->

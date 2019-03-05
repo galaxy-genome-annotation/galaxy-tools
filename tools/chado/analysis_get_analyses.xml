@@ -38,7 +38,7 @@ chakin analysis get_analyses
   --description '$description'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
     <inputs>
     <!-- options -->

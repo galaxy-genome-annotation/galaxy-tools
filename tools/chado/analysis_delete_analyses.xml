@@ -13,7 +13,7 @@ chakin analysis delete_analyses
 
 --analysis_id '$analysis_id'
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
     <!-- arguments -->

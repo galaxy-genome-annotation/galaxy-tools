@@ -33,7 +33,7 @@ chakin expression add_biomaterial
 '$biomaterial_name'
 '$organism_id'
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
 	<inputs>
 	    <!-- arguments -->

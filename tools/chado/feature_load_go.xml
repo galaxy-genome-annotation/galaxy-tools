@@ -27,7 +27,7 @@ $match_on_name
 
 $skip_missing
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->

@@ -42,7 +42,7 @@
               --date_executed "$date_executed"
             #end if
 
-            | jq -S . > $results
+            | jq -S . > '$results'
     ]]></command>
     <inputs>
         <param name="analysis_id" label="Analysis Id" argument="analysis_id" type="integer" optional="true" help="An analysis ID" />

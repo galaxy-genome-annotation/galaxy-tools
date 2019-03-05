@@ -6,13 +6,18 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="aggressive"><![CDATA[
-tripaille entity publish
 
-#for $rep in $repeat_types:
-  --types '$rep.types'
-#end for
+        @AUTH@
 
-| jq -S . > $results
+        tripaille entity publish
+
+        #for $rep in $repeat_types:
+          --types '$rep.types'
+        #end for
+
+        &&
+
+        echo "Data loaded" > '$results'
 ]]></command>
     <inputs>
         <!-- arguments -->

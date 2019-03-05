@@ -16,7 +16,7 @@
 
             @ANALYSIS@
 
-            | jq -S . > $results
+            | jq -S . > '$results'
     ]]></command>
     <inputs>
         <expand macro="analysis" />

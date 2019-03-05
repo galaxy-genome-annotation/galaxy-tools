@@ -14,7 +14,7 @@ chakin organism delete_all_organisms
   $confirm
 #end if
 
- > $results
+ > '$results'
     ]]></command>
 	<inputs>
     <!-- arguments -->

@@ -33,7 +33,7 @@
               --comment "$comment"
             #end if
 
-            | jq -S . > $results
+            | jq -S . > '$results'
     ]]></command>
     <inputs>
         <param name="organism_id" label="Organism Id" argument="organism_id" type="text" optional="true" help="An organism ID" />

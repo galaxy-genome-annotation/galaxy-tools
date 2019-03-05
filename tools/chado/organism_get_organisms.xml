@@ -29,7 +29,7 @@ chakin organism get_organisms
   --comment '$comment'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
 	<inputs>
     <!-- arguments -->

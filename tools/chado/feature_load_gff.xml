@@ -41,7 +41,7 @@ $add_only
 
 --quiet
 
- > $results
+ > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->

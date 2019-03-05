@@ -12,7 +12,7 @@ chakin phylogeny gene_order
 
 $nuke
 
- > $results
+ > '$results'
     ]]></command>
 	<inputs>
     <!-- options -->

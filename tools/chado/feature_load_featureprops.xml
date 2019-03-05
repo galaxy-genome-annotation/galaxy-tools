@@ -21,7 +21,7 @@ chakin feature load_featureprops
 
 $match_on_name
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->

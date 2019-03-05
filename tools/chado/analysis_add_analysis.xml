@@ -30,7 +30,7 @@ chakin analysis add_analysis
   --date_executed '$date_executed'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
     <inputs>
     <!-- arguments -->

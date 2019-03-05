@@ -43,7 +43,7 @@ $do_update
     --parent_type '${relationships.rel_subject_type}'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
     <inputs>
         <!-- arguments -->

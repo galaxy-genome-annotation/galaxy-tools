@@ -27,7 +27,7 @@ chakin expression get_biomaterials
   --analysis_id '$analysis_id'
 #end if
 
-| jq -S . > $results
+| jq -S . > '$results'
     ]]></command>
     <inputs>
         <!-- options -->
