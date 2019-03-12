@@ -109,7 +109,7 @@ if __name__ == '__main__':
             genus=args.genus,
             species=args.species,
             public=args.public,
-	        blatdb = blat_db
+            blatdb = blat_db
         )
 
         # Must sleep before we're ready to handle
