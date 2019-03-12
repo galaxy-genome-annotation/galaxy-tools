@@ -4,12 +4,11 @@
   <macros>
     <import>macros.xml</import>
   </macros>
-  <expand macro="requirements"/>
+  <expand macro="requirements">
+    <requirement type="package" version="377">ucsc-fatotwobit</requirement>
+  </expand>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-cp -R '${jbrowse.extra_files_path}/data/' "@DATA_DIR@/${jbrowse.id}"
-
-&&
 
 python $__tool_directory__/create_or_update_organism.py
 
@@ -20,10 +19,13 @@ python $__tool_directory__/create_or_update_organism.py
 #if str($group) != "None":
 --group '${group}'
 #end if
+
 ${remove_old_directory}
 $public
 
 @ORG_OR_GUESS@
+
+'${jbrowse.extra_files_path}/data/'
 
 "@DATA_DIR@/${jbrowse.id}"
 
