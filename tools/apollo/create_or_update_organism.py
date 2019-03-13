@@ -16,6 +16,16 @@ from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloIn
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+def IsBlatEnabled():
+    if 'BLAT_ENABLED' not in os.environ:
+        return False
+    value = os.environ['BLAT_ENABLED']
+    if value.lower() in ('true', 't', '1'):
+        return True
+    else:
+        return False
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
     WAAuth(parser)
@@ -42,7 +52,7 @@ if __name__ == '__main__':
     path_2bit = args.jbrowse + '/seq/genome.2bit'
 
     # Convert fasta if existing
-    if(os.path.exists(path_fasta)):
+    if(IsBlatEnabled() and os.path.exists(path_fasta)):
         arg = ['faToTwoBit', path_fasta, path_2bit]
         tmp_stderr = tempfile.NamedTemporaryFile(prefix="tmp-data-manager-twobit-builder-stderr")
         proc = subprocess.Popen(args=arg, shell=False, cwd=args.jbrowse, stderr=tmp_stderr.fileno())
