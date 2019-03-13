@@ -25,7 +25,6 @@ def IsBlatEnabled():
     else:
         return False
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
     WAAuth(parser)
