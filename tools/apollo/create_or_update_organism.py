@@ -16,6 +16,7 @@ from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloIn
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+
 def IsBlatEnabled():
     if 'BLAT_ENABLED' not in os.environ:
         return False
@@ -24,6 +25,7 @@ def IsBlatEnabled():
         return True
     else:
         return False
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
