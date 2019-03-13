@@ -32,10 +32,9 @@ if __name__ == '__main__':
     CHUNK_SIZE = 2**20
     blat_db = None
 
-
     # Cleanup if existing
     if(os.path.exists(args.jbrowse)):
-    	shutil.rmtree(args.jbrowse)
+        shutil.rmtree(args.jbrowse)
     # Copy files
     shutil.copytree(args.jbrowse_old, args.jbrowse)
 
@@ -44,22 +43,22 @@ if __name__ == '__main__':
 
     # Convert fasta if existing
     if(os.path.exists(path_fasta)):
-      arg = [ 'faToTwoBit', path_fasta, path_2bit]
-      tmp_stderr = tempfile.NamedTemporaryFile( prefix="tmp-data-manager-twobit-builder-stderr" )
-      proc = subprocess.Popen(args=arg, shell=False, cwd=args.jbrowse, stderr=tmp_stderr.fileno() )
-      return_code = proc.wait()
-      if return_code:
-        tmp_stderr.flush()
-        tmp_stderr.seek(0)
-        print("Error building index:", file=sys.stderr)
-        while True:
-            chunk = tmp_stderr.read( CHUNK_SIZE )
-            if not chunk:
-                break
-            sys.stderr.write( chunk )
-        sys.exit( return_code)
-      blat_db = path_2bit
-      tmp_stderr.close()
+        arg = ['faToTwoBit', path_fasta, path_2bit]
+        tmp_stderr = tempfile.NamedTemporaryFile(prefix="tmp-data-manager-twobit-builder-stderr")
+        proc = subprocess.Popen(args=arg, shell=False, cwd=args.jbrowse, stderr=tmp_stderr.fileno())
+        return_code = proc.wait()
+        if return_code:
+            tmp_stderr.flush()
+            tmp_stderr.seek(0)
+            print("Error building index:", file=sys.stderr)
+            while True:
+                chunk = tmp_stderr.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                sys.stderr.write(chunk)
+            sys.exit(return_code)
+        blat_db = path_2bit
+        tmp_stderr.close()
 
     wa = WebApolloInstance(args.apollo, args.username, args.password)
 
@@ -92,7 +91,7 @@ if __name__ == '__main__':
             genus=args.genus,
             species=args.species,
             public=args.public,
-            blatdb = blat_db
+            blatdb=blat_db
         )
         time.sleep(2)
         if args.remove_old_directory and args.jbrowse != old_directory:
@@ -109,7 +108,7 @@ if __name__ == '__main__':
             genus=args.genus,
             species=args.species,
             public=args.public,
-            blatdb = blat_db
+            blatdb=blat_db
         )
 
         # Must sleep before we're ready to handle
