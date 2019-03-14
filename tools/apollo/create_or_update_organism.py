@@ -30,7 +30,7 @@ def IsBlatEnabled():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
     WAAuth(parser)
-    parser.add_argument('jbrowse_old', help='Old JBrowse Data Directory')
+    parser.add_argument('jbrowse_src', help='Old JBrowse Data Directory')
     parser.add_argument('jbrowse', help='JBrowse Data Directory')
     parser.add_argument('email', help='User Email')
     OrgOrGuess(parser)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     if(os.path.exists(args.jbrowse)):
         shutil.rmtree(args.jbrowse)
     # Copy files
-    shutil.copytree(args.jbrowse_old, args.jbrowse)
+    shutil.copytree(args.jbrowse_src, args.jbrowse)
 
     path_fasta = args.jbrowse + '/seq/genome.fasta'
     path_2bit = args.jbrowse + '/seq/genome.2bit'
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Convert fasta if existing
     if(IsBlatEnabled() and os.path.exists(path_fasta)):
         arg = ['faToTwoBit', path_fasta, path_2bit]
-        tmp_stderr = tempfile.NamedTemporaryFile(prefix="tmp-data-manager-twobit-builder-stderr")
+        tmp_stderr = tempfile.NamedTemporaryFile(prefix="tmp-twobit-converter-stderr")
         proc = subprocess.Popen(args=arg, shell=False, cwd=args.jbrowse, stderr=tmp_stderr.fileno())
         return_code = proc.wait()
         if return_code:
