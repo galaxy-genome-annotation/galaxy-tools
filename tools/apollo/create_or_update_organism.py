@@ -47,7 +47,7 @@ if __name__ == '__main__':
     if(os.path.exists(args.jbrowse)):
         shutil.rmtree(args.jbrowse)
     # Copy files
-    shutil.copytree(args.jbrowse_src, args.jbrowse)
+    shutil.copytree(args.jbrowse_src, args.jbrowse, symlinks=True)
 
     path_fasta = args.jbrowse + '/seq/genome.fasta'
     path_2bit = args.jbrowse + '/seq/genome.2bit'

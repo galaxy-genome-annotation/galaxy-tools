@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="organism_add_organism" name="Chado organism add" version="@WRAPPER_VERSION@.0">
+<tool id="organism_add_organism" name="Chado organism add" version="@WRAPPER_VERSION@.1">
     <description></description>
 	<macros>
 		<import>macros.xml</import>
@@ -32,7 +32,7 @@ chakin organism add_organism
 
 	</inputs>
 	<outputs>
-		<data format="json" name="results"/>
+		<data format="json" name="results" label="Chado organism add: ${genus} ${species}"/>
 	</outputs>
 	<help>
 Add a new organism to the Chado database
