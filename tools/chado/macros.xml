@@ -2,11 +2,15 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="2.2.5">python-chado</requirement>
+            <requirement type="package" version="2.2.6">python-chado</requirement>
             <requirement type="package" version="1.5">jq</requirement>
+            <requirement type="package" version="@PG_VERSION@">postgresql</requirement>
+            <requirement type="package" version="0.1">pglite</requirement>
             <yield/>
         </requirements>
     </xml>
+
+    <token name="@PG_VERSION@">11.2</token>
 
     <xml name="stdio">
         <stdio>
@@ -16,7 +20,7 @@
         </stdio>
     </xml>
 
-    <token name="@WRAPPER_VERSION@">2.2.5</token>
+    <token name="@WRAPPER_VERSION@">2.2.6</token>
 
     <xml name="citation">
         <citations>
@@ -30,19 +34,6 @@
     ]]></token>
 
     <token name="@HELP@"><![CDATA[
-    ]]></token>
-
-    <token name="@AUTH@"><![CDATA[
-        echo "__default: local" > '.auth.yml' &&
-        echo "local:" >> '.auth.yml' &&
-        echo "    dbhost: \"\$GALAXY_CHADO_DBHOST\"" >> '.auth.yml' &&
-        echo "    dbname: \"\$GALAXY_CHADO_DBNAME\"" >> '.auth.yml' &&
-        echo "    dbpass: \"\$GALAXY_CHADO_DBPASS\"" >> '.auth.yml' &&
-        echo "    dbuser: \"\$GALAXY_CHADO_DBUSER\"" >> '.auth.yml' &&
-        echo "    dbschema: \"\$GALAXY_CHADO_DBSCHEMA\"" >> '.auth.yml' &&
-        echo "    dbport: \"\$GALAXY_CHADO_DBPORT\"" >> '.auth.yml' &&
-
-        CHAKIN_GLOBAL_CONFIG_PATH='.auth.yml'
     ]]></token>
 
     <xml name="sanitized">
@@ -83,4 +74,63 @@
                label="Sequence type of the parent"
                help="this should be a Sequence Ontology term" />
     </xml>
+
+    <xml name="psql_target">
+      <conditional name="psql_target">
+         <param name="method" type="select" label="Chado Database" help="If you select 'Remote database' make sure credentials are defined in environment variables">
+              <option value="remote">Remote database</option>
+              <option value="pgtools">Database from history</option>
+          </param>
+          <when value="remote"/>
+          <when value="pgtools">
+            <param name="infile" type="data" format="postgresql" label="Input database" />
+            <param name="schema" type="text" label="Schema containing Chado tables" value="public" help="Can be 'chado' for a Tripal database"/>
+          </when>
+      </conditional>
+    </xml>
+
+    <token name="@AUTH@"><![CDATA[
+        if [ -z "$CHAKIN_GLOBAL_CONFIG_PATH" ]; then
+          echo "__default: local" > '.auth.yml' &&
+          echo "local:" >> '.auth.yml' &&
+          echo "    dbhost: \"\$GALAXY_CHADO_DBHOST\"" >> '.auth.yml' &&
+          echo "    dbname: \"\$GALAXY_CHADO_DBNAME\"" >> '.auth.yml' &&
+          echo "    dbpass: \"\$GALAXY_CHADO_DBPASS\"" >> '.auth.yml' &&
+          echo "    dbuser: \"\$GALAXY_CHADO_DBUSER\"" >> '.auth.yml' &&
+          echo "    dbschema: \"\$GALAXY_CHADO_DBSCHEMA\"" >> '.auth.yml' &&
+          echo "    dbport: \"\$GALAXY_CHADO_DBPORT\"" >> '.auth.yml' &&
+
+          export CHAKIN_GLOBAL_CONFIG_PATH='.auth.yml'
+        ; fi
+    ]]></token>
+
+    <token name="@START_PSQL@"><![CDATA[
+        #if $psql_target.method == 'pgtools'
+            tar -xjvf '$psql_target.infile' > /dev/null &&
+            . '$__tool_directory__/prepare_psql.sh' '$psql_target.schema'
+        #else
+            @AUTH@
+        #end if
+    ]]></token>
+
+    <token name="@STOP_PSQL@"><![CDATA[
+        #if $psql_target.method == 'pgtools'
+            pglite stop -d ./postgresql &&
+            timeout 60 bash -c 'until pglite status -d ./postgresql | grep -F -q "no server running"; do sleep 1; done'
+            ;
+            ## Make sure psql is stopped even if loading script failed
+            pglite stop -d ./postgresql || true
+        #end if
+    ]]></token>
+
+    <token name="@ZIP_PSQL@"><![CDATA[
+        #if $psql_target.method == 'pgtools'
+            pglite stop -d ./postgresql &&
+            timeout 60 bash -c 'until pglite status -d ./postgresql | grep -F -q "no server running"; do sleep 1; done' &&
+            tar -cvjf postgresql_out.tar.bz2 postgresql > /dev/null
+            ;
+            ## Make sure psql is stopped even if loading script failed
+            pglite stop -d ./postgresql || true
+        #end if
+    ]]></token>
 </macros>

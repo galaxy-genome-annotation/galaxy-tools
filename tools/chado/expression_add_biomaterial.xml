@@ -7,7 +7,7 @@
 	<expand macro="requirements"/>
     <code file="chado.py"/>
 	<command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin expression add_biomaterial
 
@@ -34,8 +34,11 @@ chakin expression add_biomaterial
 '$organism_id'
 
 | jq -S . > '$results'
+
+&& @ZIP_PSQL@
     ]]></command>
 	<inputs>
+    <expand macro="psql_target"/>
 	    <!-- arguments -->
 		<param name="biomaterial_name" label="Biomaterial Name" argument="biomaterial_name" type="text" help="Biomaterial name" />
 		<param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
@@ -53,6 +56,9 @@ chakin expression add_biomaterial
 	</inputs>
 	<outputs>
 		<data format="json" name="results"/>
+		<data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} '${biomaterial_name}' on ${on_string}">
+			<filter>psql_target['method'] == "pgtools"</filter>
+		</data>
 	</outputs>
 	<help>
 Add a new biomaterial to the database

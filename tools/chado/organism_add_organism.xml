@@ -6,7 +6,7 @@
 	</macros>
 	<expand macro="requirements"/>
 	<command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin organism add_organism
 '$genus'
@@ -19,9 +19,12 @@ chakin organism add_organism
 #end if
 
 | jq -S . > '$results'
+
+&& @ZIP_PSQL@
     ]]></command>
 	<inputs>
-    <!-- arguments -->
+  <expand macro="psql_target"/>
+  <!-- arguments -->
 	<param name="genus" label="Genus" argument="genus" type="text" help="The genus of the organism" />
 	<param name="species" label="Species" argument="species" type="text" help="The species of the organism" />
 	<param name="common" label="Common" argument="common" type="text" help="The common name of the organism" />
@@ -33,6 +36,9 @@ chakin organism add_organism
 	</inputs>
 	<outputs>
 		<data format="json" name="results" label="Chado organism add: ${genus} ${species}"/>
+    <data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} '${genus} ${species}' on ${on_string}">
+			<filter>psql_target['method'] == "pgtools"</filter>
+		</data>
 	</outputs>
 	<help>
 Add a new organism to the Chado database

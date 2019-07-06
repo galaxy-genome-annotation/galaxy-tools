@@ -6,7 +6,7 @@
 	</macros>
 	<expand macro="requirements"/>
 	<command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin organism get_organisms
 
@@ -30,8 +30,11 @@ chakin organism get_organisms
 #end if
 
 | jq -S . > '$results'
+
+&& @STOP_PSQL@
     ]]></command>
 	<inputs>
+    <expand macro="psql_target"/>
     <!-- arguments -->
 
     <!-- options -->
