@@ -7,15 +7,18 @@
 	<expand macro="requirements"/>
     <code file="chado.py"/>
 	<command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin organism delete_organisms
 
 --organism_id $organism
 
  > '$results'
+
+&& @ZIP_PSQL@
     ]]></command>
 	<inputs>
+    <expand macro="psql_target"/>
     <!-- arguments -->
 
     <!-- options -->
@@ -27,6 +30,9 @@ chakin organism delete_organisms
 	</inputs>
 	<outputs>
 		<data format="txt" name="results"/>
+    <data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} on ${on_string}">
+			<filter>psql_target['method'] == "pgtools"</filter>
+		</data>
 	</outputs>
 	<help>
 Delete all organisms

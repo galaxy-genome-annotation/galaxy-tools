@@ -7,15 +7,17 @@
     <expand macro="requirements"/>
     <code file="chado.py"/>
     <command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin export export_gff3
 '$organism'
 
-
  > '$results'
+
+ && @STOP_PSQL@
     ]]></command>
     <inputs>
+        <expand macro="psql_target"/>
         <!-- arguments -->
         <param argument="--organism"
                type="select"

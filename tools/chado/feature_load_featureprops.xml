@@ -7,7 +7,7 @@
     <expand macro="requirements"/>
     <code file="chado.py"/>
     <command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin feature load_featureprops
 '$tab_file'
@@ -22,8 +22,11 @@ chakin feature load_featureprops
 $match_on_name
 
 | jq -S . > '$results'
+
+&& @ZIP_PSQL@
     ]]></command>
     <inputs>
+        <expand macro="psql_target"/>
         <!-- arguments -->
         <param name="tab_file" label="Tab File" argument="tab_file" type="data" format="tabular" help="Path to the tabular file to load" />
         <param argument="analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
@@ -39,6 +42,9 @@ $match_on_name
     </inputs>
     <outputs>
         <data format="json" name="results"/>
+        <data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} on ${on_string}">
+    			<filter>psql_target['method'] == "pgtools"</filter>
+    		</data>
     </outputs>
     <help>
 Load feature properties from a tabular file (Column1: feature name or uniquename, Column2: property value)

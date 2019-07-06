@@ -6,7 +6,7 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin analysis get_analyses
 
@@ -39,18 +39,21 @@ chakin analysis get_analyses
 #end if
 
 | jq -S . > '$results'
+
+&& @STOP_PSQL@
     ]]></command>
     <inputs>
-    <!-- options -->
-    <param name="analysis_id" label="Analysis Id" argument="--analysis_id" type="integer" help="analysis_id filter" optional="True" />
-    <param name="name" label="Name" argument="--name" type="text" help="analysis name filter" optional="True" />
-    <param name="program" label="Program" argument="--program" type="text" help="analysis program filter" optional="True" />
-    <param name="programversion" label="Programversion" argument="--programversion" type="text" help="analysis programversion filter" optional="True" />
-    <param name="algorithm" label="Algorithm" argument="--algorithm" type="text" help="analysis algorithm filter" optional="True" />
-    <param name="sourcename" label="Sourcename" argument="--sourcename" type="text" help="analysis sourcename filter" optional="True" />
-    <param name="sourceversion" label="Sourceversion" argument="--sourceversion" type="text" help="analysis sourceversion filter" optional="True" />
-    <param name="sourceuri" label="Sourceuri" argument="--sourceuri" type="text" help="analysis sourceuri filter" optional="True" />
-    <param name="description" label="Description" argument="--description" type="text" help="analysis description" optional="True" />
+      <expand macro="psql_target"/>
+      <!-- options -->
+      <param name="analysis_id" label="Analysis Id" argument="--analysis_id" type="integer" help="analysis_id filter" optional="True" />
+      <param name="name" label="Name" argument="--name" type="text" help="analysis name filter" optional="True" />
+      <param name="program" label="Program" argument="--program" type="text" help="analysis program filter" optional="True" />
+      <param name="programversion" label="Programversion" argument="--programversion" type="text" help="analysis programversion filter" optional="True" />
+      <param name="algorithm" label="Algorithm" argument="--algorithm" type="text" help="analysis algorithm filter" optional="True" />
+      <param name="sourcename" label="Sourcename" argument="--sourcename" type="text" help="analysis sourcename filter" optional="True" />
+      <param name="sourceversion" label="Sourceversion" argument="--sourceversion" type="text" help="analysis sourceversion filter" optional="True" />
+      <param name="sourceuri" label="Sourceuri" argument="--sourceuri" type="text" help="analysis sourceuri filter" optional="True" />
+      <param name="description" label="Description" argument="--description" type="text" help="analysis description" optional="True" />
 
     </inputs>
     <outputs>

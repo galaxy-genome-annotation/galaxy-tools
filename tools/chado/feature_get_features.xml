@@ -7,7 +7,7 @@
     <expand macro="requirements"/>
     <code file="chado.py"/>
     <command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin feature get_features
 
@@ -25,13 +25,16 @@ chakin feature get_features
 #end if
 
 | jq -S . > '$results'
+
+&& @STOP_PSQL@
     ]]></command>
     <inputs>
-    <!-- options -->
-    <param argument="--organism" type="select" dynamic_options="list_organisms()" label="Organism" />
-    <param argument="--analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
-    <param name="name" label="Name" argument="--name" type="text" help="name filter" />
-    <param name="uniquename" label="Uniquename" argument="--uniquename" type="text" help="uniquename filter" />
+        <expand macro="psql_target"/>
+        <!-- options -->
+        <param argument="--organism" type="select" dynamic_options="list_organisms()" label="Organism" />
+        <param argument="--analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
+        <param name="name" label="Name" argument="--name" type="text" help="name filter" />
+        <param name="uniquename" label="Uniquename" argument="--uniquename" type="text" help="uniquename filter" />
 
     </inputs>
     <outputs>

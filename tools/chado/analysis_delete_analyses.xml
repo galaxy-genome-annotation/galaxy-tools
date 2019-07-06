@@ -31,8 +31,8 @@ chakin analysis delete_analyses
     <outputs>
         <data format="txt" name="results"/>
         <data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} on ${on_string}">
-			<filter>psql_target['method'] == "pgtools"</filter>
-		</data>
+    			<filter>psql_target['method'] == "pgtools"</filter>
+    		</data>
     </outputs>
     <help>
 Delete analysis
