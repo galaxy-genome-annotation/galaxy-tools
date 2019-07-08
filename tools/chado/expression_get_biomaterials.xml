@@ -7,7 +7,7 @@
     <expand macro="requirements"/>
     <code file="chado.py"/>
     <command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin expression get_biomaterials
 
@@ -28,8 +28,11 @@ chakin expression get_biomaterials
 #end if
 
 | jq -S . > '$results'
+
+&& @STOP_PSQL@
     ]]></command>
     <inputs>
+      <expand macro="psql_target"/>
         <!-- options -->
         <param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" optional="true" />
         <param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" optional="true" />

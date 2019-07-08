@@ -6,15 +6,18 @@
 	</macros>
 	<expand macro="requirements"/>
 	<command detect_errors="aggressive"><![CDATA[
-@AUTH@
+@START_PSQL@ &&
 
 chakin phylogeny gene_order
 
 $nuke
 
  > '$results'
+
+ && @ZIP_PSQL@
     ]]></command>
 	<inputs>
+		<expand macro="psql_target"/>
     <!-- options -->
 		<param name="nuke" label="Nuke" argument="--nuke" type="boolean" truevalue="--nuke" falsevalue="" help="Removes all previous gene ordering data" />
 	    <expand macro="wait_for"/>
@@ -22,6 +25,9 @@ $nuke
 	</inputs>
 	<outputs>
 		<data format="txt" name="results"/>
+    <data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} on ${on_string}">
+      <filter>psql_target['method'] == "pgtools"</filter>
+    </data>
 	</outputs>
 	<help>
 Orders all the genes in the database by their order on their respective chromosomes in the gene_order table (for use in https://github.com/legumeinfo/lis_context_viewer/).
