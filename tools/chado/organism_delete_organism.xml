@@ -15,7 +15,7 @@ chakin organism delete_organisms
 
  > '$results'
 
-&& @ZIP_PSQL@
+@ZIP_PSQL@
     ]]></command>
 	<inputs>
     <expand macro="psql_target"/>

@@ -89,32 +89,29 @@
       </conditional>
     </xml>
 
-    <token name="@AUTH@"><![CDATA[
-        if [ -z "$CHAKIN_GLOBAL_CONFIG_PATH" ]; then
-          echo "__default: local" > '.auth.yml' &&
-          echo "local:" >> '.auth.yml' &&
-          echo "    dbhost: \"\$GALAXY_CHADO_DBHOST\"" >> '.auth.yml' &&
-          echo "    dbname: \"\$GALAXY_CHADO_DBNAME\"" >> '.auth.yml' &&
-          echo "    dbpass: \"\$GALAXY_CHADO_DBPASS\"" >> '.auth.yml' &&
-          echo "    dbuser: \"\$GALAXY_CHADO_DBUSER\"" >> '.auth.yml' &&
-          echo "    dbschema: \"\$GALAXY_CHADO_DBSCHEMA\"" >> '.auth.yml' &&
-          echo "    dbport: \"\$GALAXY_CHADO_DBPORT\"" >> '.auth.yml' &&
-
-          export CHAKIN_GLOBAL_CONFIG_PATH='.auth.yml'
-        ; fi
-    ]]></token>
-
     <token name="@START_PSQL@"><![CDATA[
         #if $psql_target.method == 'pgtools'
             tar -xjvf '$psql_target.infile' > /dev/null &&
             . '$__tool_directory__/prepare_psql.sh' '$psql_target.schema'
         #else
-            @AUTH@
+            if [ -z "\$CHAKIN_GLOBAL_CONFIG_PATH" ]; then
+              echo "__default: local" > '.auth.yml' &&
+              echo "local:" >> '.auth.yml' &&
+              echo "    dbhost: \"\$GALAXY_CHADO_DBHOST\"" >> '.auth.yml' &&
+              echo "    dbname: \"\$GALAXY_CHADO_DBNAME\"" >> '.auth.yml' &&
+              echo "    dbpass: \"\$GALAXY_CHADO_DBPASS\"" >> '.auth.yml' &&
+              echo "    dbuser: \"\$GALAXY_CHADO_DBUSER\"" >> '.auth.yml' &&
+              echo "    dbschema: \"\$GALAXY_CHADO_DBSCHEMA\"" >> '.auth.yml' &&
+              echo "    dbport: \"\$GALAXY_CHADO_DBPORT\"" >> '.auth.yml' &&
+
+              export CHAKIN_GLOBAL_CONFIG_PATH='.auth.yml'
+            ; fi
         #end if
     ]]></token>
 
     <token name="@STOP_PSQL@"><![CDATA[
         #if $psql_target.method == 'pgtools'
+            &&
             pglite stop -d ./postgresql &&
             timeout 60 bash -c 'until pglite status -d ./postgresql | grep -F -q "no server running"; do sleep 1; done'
             ;
@@ -125,6 +122,7 @@
 
     <token name="@ZIP_PSQL@"><![CDATA[
         #if $psql_target.method == 'pgtools'
+            &&
             pglite stop -d ./postgresql &&
             timeout 60 bash -c 'until pglite status -d ./postgresql | grep -F -q "no server running"; do sleep 1; done' &&
             tar -cvjf postgresql_out.tar.bz2 postgresql > /dev/null
