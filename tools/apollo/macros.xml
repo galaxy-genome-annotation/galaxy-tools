@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <macros>
+  <token name="@WRAPPER_VERSION@">4.0.0</token>
+
   <xml name="requirements">
     <requirements>
       <requirement type="package" version="2.7">python</requirement>

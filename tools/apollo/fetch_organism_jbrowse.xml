@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="fetch_jbrowse" name="Retrieve JBrowse" version="3.3" profile="16.04">
+<tool id="fetch_jbrowse" name="Retrieve JBrowse" version="@WRAPPER_VERSION@" profile="16.04">
   <description>for an organism, from Apollo</description>
   <macros>
     <import>macros.xml</import>
@@ -15,7 +15,7 @@ python $__tool_directory__/fetch_organism_jbrowse.py
 @ADMIN_AUTH@
 
 @ORG_OR_GUESS@
-$jbrowse.files_path/ 
+$jbrowse.files_path/
 
 "$__user_email__" &&
 
