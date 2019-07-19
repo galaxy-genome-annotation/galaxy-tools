@@ -10,9 +10,12 @@ python $__tool_directory__/json2iframe.py
 @URL@
 '$json_file'
 @EXT_URL@
+$tracklist
 > $output]]></command>
   <inputs>
     <param name="json_file" type="data" format="json" label="Apollo Organism Listing" />
+    <param name="tracklist" type="boolean" truevalue="--tracklist" falsevalue="" label="Force the tracklist on in JBrowse"/>
+
   </inputs>
   <outputs>
     <data format="html" name="output"/>
