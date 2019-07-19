@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # https://fqdn/apollo/annotator/loadLink?loc=NC_005880:0..148317&organism=326&tracks=
+    # https://fqdn/apollo/annotator/loadLink?loc=NC_005880:0..148317&organism=326
     data = json.load(args.json)
 
     # This is base64 encoded to get past the toolshed's filters.
@@ -24,7 +24,7 @@ if __name__ == '__main__':
                 <style type="text/css">body {{margin: 0;}} iframe {{border: 0;width: 100%;height: 100%}}</style>
             </head>
             <body>
-                <iframe src="{base_url}/annotator/loadLink?loc={chrom}&organism={orgId}&tracklist=1"></iframe>
+                <iframe src="{base_url}/annotator/loadLink?loc={chrom}&organism={orgId}"></iframe>
             </body>
         </html>
     """
