@@ -49,7 +49,7 @@
           echo "    password: \"\$GALAXY_TRIPAL_PASSWORD\"" >> '.auth.yml' &&
 
           TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
-        ; fi &&
+        ; fi && echo \$TRIPAILLE_GLOBAL_CONFIG_PATH && cat \$TRIPAILLE_GLOBAL_CONFIG_PATH && 
     ]]></token>
 
     <xml name="wait_for">
