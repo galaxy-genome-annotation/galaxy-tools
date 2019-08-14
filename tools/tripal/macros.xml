@@ -48,8 +48,8 @@
           echo "    username: \"\$GALAXY_TRIPAL_USER\"" >> '.auth.yml' &&
           echo "    password: \"\$GALAXY_TRIPAL_PASSWORD\"" >> '.auth.yml' &&
 
-          TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
-        ; fi && echo \$TRIPAILLE_GLOBAL_CONFIG_PATH && cat \$TRIPAILLE_GLOBAL_CONFIG_PATH && 
+          export TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
+        ; fi &&
     ]]></token>
 
     <xml name="wait_for">
