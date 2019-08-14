@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <macros>
+  <token name="@WRAPPER_VERSION@">4.0.0</token>
+
   <xml name="requirements">
     <requirements>
       <requirement type="package" version="3.1">apollo</requirement>
@@ -112,6 +114,7 @@
 
   <xml name="citations">
       <citations>
+        <citation type="doi">10.1371/journal.pcbi.1006790</citation>
       </citations>
   </xml>
   <xml name="gff3_input">
@@ -136,7 +139,7 @@
 **Citation**
 
 If you use this tool in Galaxy, please cite:
-Eric Rasche (2016), `Galaxy Apollo Tools <https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/apollo>`_
+Helena Rasche, Anthony Bretaudeau, and Mateo Boudet (2019), `Galaxy Apollo Tools <https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/apollo>`_
 ]]>
     </token>
 </macros>
