@@ -41,13 +41,15 @@
     <token name="@DATA_DIR@">\$GALAXY_TRIPAL_SHARED_DIR</token>
 
     <token name="@AUTH@"><![CDATA[
-        echo "__default: local" > '.auth.yml' &&
-        echo "local:" >> '.auth.yml' &&
-        echo "    tripal_url: \"\$GALAXY_TRIPAL_URL\"" >> '.auth.yml' &&
-        echo "    username: \"\$GALAXY_TRIPAL_USER\"" >> '.auth.yml' &&
-        echo "    password: \"\$GALAXY_TRIPAL_PASSWORD\"" >> '.auth.yml' &&
+        if [ -z "\$TRIPAILLE_GLOBAL_CONFIG_PATH" ]; then
+          echo "__default: local" > '.auth.yml' &&
+          echo "local:" >> '.auth.yml' &&
+          echo "    tripal_url: \"\$GALAXY_TRIPAL_URL\"" >> '.auth.yml' &&
+          echo "    username: \"\$GALAXY_TRIPAL_USER\"" >> '.auth.yml' &&
+          echo "    password: \"\$GALAXY_TRIPAL_PASSWORD\"" >> '.auth.yml' &&
 
-        TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
+          TRIPAILLE_GLOBAL_CONFIG_PATH='.auth.yml'
+        ; fi &&
     ]]></token>
 
     <xml name="wait_for">
@@ -155,7 +157,7 @@
         <section name="matching" title="Feature matching" expanded="True">
             <param name="query_type"
                    type="text"
-                   label="The feature type of the blast query"
+                   label="The feature type of the query"
                    help="It must be a valid Sequence Ontology term. e.g. 'contig', 'gene', 'mRNA', 'polypeptide'" />
 
             <param name="query_uniquename"
@@ -163,13 +165,13 @@
                    checked="false"
                    truevalue="--query_uniquename"
                    falsevalue=""
-                   label="Find blast query features using their Unique name"
+                   label="Find query features using their Unique name"
                    help="Feature name will be used otherwise" />
 
             <param name="query_re"
                    type="text"
                    optional="true"
-                   label="Regular expression to extract the feature name from the blast query name"
+                   label="Regular expression to extract the feature name from the query name"
                    help="leave empty if the first word in query name is sufficient">
                 <expand macro="sanitized"/>
             </param>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="expression_add_expression" name="Load expression data" version="@WRAPPER_VERSION@.0">
+<tool id="expression_add_expression" name="Load expression data" version="@WRAPPER_VERSION@.1">
  <description>into Tripal</description>
     <macros>
         <import>macros.xml</import>
@@ -77,6 +77,8 @@ echo "Data loaded" > '$results'
         <param name="stop_regex" label="Stop Regex" argument="stop_regex" type="text" help="A regular expression to describe the line that occurs after the end of the expression data. If the file has no footer text, this is not needed. (optional)">
             <expand macro="sanitized"/>
         </param>
+
+        <expand macro="wait_for"/>
 
     </inputs>
     <outputs>

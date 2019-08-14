@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="db_index" profile="16.04" name="Index Tripal data" version="@WRAPPER_VERSION@.0">
+<tool id="db_index" profile="16.04" name="Index Tripal data" version="@WRAPPER_VERSION@.1">
     <description>using Elasticsearch</description>
     <macros>
         <import>macros.xml</import>
@@ -123,8 +123,8 @@
         <param name="queues" label="Queues" argument="queues" type="integer" value="10" help="Number of indexing task queues" />
         <conditional name="expose">
             <param name="do_expose" type="select" label="Expose the index to other websites (read-only)">
-                <option value="yes" selected="true">Yes</option>
-                <option value="no">No</option>
+                <option value="yes">Yes</option>
+                <option value="no" selected="true">No</option>
             </param>
             <when value="no"/>
             <when value="yes">
