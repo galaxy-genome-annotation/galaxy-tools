@@ -2,6 +2,7 @@
 <macros>
   <xml name="requirements">
     <requirements>
+      <requirement type="package" version="3.1">apollo</requirement>
       <requirement type="package" version="2.7">python</requirement>
       <requirement type="package" version="1.65">biopython</requirement>
       <requirement type="package" version="0.6.2">bcbiogff</requirement>
@@ -22,6 +23,18 @@
 "\$GALAXY_WEBAPOLLO_USER"
 "\$GALAXY_WEBAPOLLO_PASSWORD"
   </token>
+
+  <token name="@AUTH@"><![CDATA[
+      if [ -z "\$ARROW_GLOBAL_CONFIG_PATH" ]; then
+        echo "__default: local" > '.auth.yml' &&
+        echo "local:" >> '.auth.yml' &&
+        echo "    url: \"\$GALAXY_WEBAPOLLO_URL\"" >> '.auth.yml' &&
+        echo "    username: \"\$GALAXY_WEBAPOLLO_USER\"" >> '.auth.yml' &&
+        echo "    password: \"\$GALAXY_WEBAPOLLO_PASSWORD\"" >> '.auth.yml' &&
+
+        export ARROW_GLOBAL_CONFIG_PATH='.auth.yml'
+      ; fi &&
+  ]]></token>
 
   <token name="@ORG_OR_GUESS@">
 <![CDATA[

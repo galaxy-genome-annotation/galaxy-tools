@@ -4,15 +4,16 @@ from __future__ import print_function
 import argparse
 import json
 
-from webapollo import WAAuth, WebApolloInstance, accessible_organisms
+from arrow.apollo import get_apollo_instance
+
+from webapollo import accessible_organisms
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='List all organisms available in an Apollo instance')
-    WAAuth(parser)
     parser.add_argument('email', help='User Email')
     args = parser.parse_args()
 
-    wa = WebApolloInstance(args.apollo, args.username, args.password)
+    wa = get_apollo_instance()
 
     gx_user = wa.users.assertOrCreateUser(args.email)
 
