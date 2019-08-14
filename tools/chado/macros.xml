@@ -2,7 +2,7 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="2.2.6">python-chado</requirement>
+            <requirement type="package" version="@LIB_VERSION@">python-chado</requirement>
             <requirement type="package" version="1.5">jq</requirement>
             <requirement type="package" version="@PG_VERSION@">postgresql</requirement>
             <requirement type="package" version="0.1">pglite</requirement>
@@ -10,6 +10,8 @@
         </requirements>
     </xml>
 
+    <token name="@LIB_VERSION@">2.3.0</token>
+    <token name="@WRAPPER_VERSION@">@LIB_VERSION@</token>
     <token name="@PG_VERSION@">11.2</token>
 
     <xml name="stdio">
@@ -19,8 +21,6 @@
             <exit_code range="1:" />
         </stdio>
     </xml>
-
-    <token name="@WRAPPER_VERSION@">2.2.6</token>
 
     <xml name="citation">
         <citations>
