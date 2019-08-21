@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<tool id="feature_load_go" name="Chado load GO annotation" version="@WRAPPER_VERSION@">
-    <description></description>
+<tool id="load_blast" name="Chado load Blast results" version="@WRAPPER_VERSION@.0">
+ <description></description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -9,17 +9,16 @@
     <command detect_errors="aggressive"><![CDATA[
 @START_PSQL@ &&
 
-chakin load go
-'$input'
-'$organism_id'
+chakin load blast
 '$analysis_id'
+'$organism_id'
+'$input'
+
+--blastdb_id '$blastdb_id'
 
 --query_type '$query_type'
 
 $match_on_name
-
---name_column '$name_column'
---go_column '$go_column'
 
 #if $re_name:
   --re_name '$re_name'
@@ -27,14 +26,14 @@ $match_on_name
 
 $skip_missing
 
- > '$results'
+| jq -S . > $results
 
 @ZIP_PSQL@
     ]]></command>
     <inputs>
         <expand macro="psql_target"/>
         <!-- arguments -->
-        <param name="input" label="GO annotation" argument="input" type="data" format="tabular" help="Path to the GO annotation file to load" />
+        <param name="input" label="Blast results" argument="input" type="data" format="xml" help="Path to the Blast XML file to load" />
         <param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" />
         <param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
 
@@ -43,26 +42,24 @@ $skip_missing
 
         <param name="match_on_name" label="Match On Name" argument="--match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match features using their name instead of their uniquename" />
 
-        <param name="name_column" label="Identifier column" argument="--name_column" type="integer" value="2" help="Column containing the feature identifiers." />
-
-        <param name="go_column" label="GO column" argument="--go_column" type="integer" value="5" help="Column containing the GO id." />
+        <param argument="blastdb_id" type="select" dynamic_options="list_dbs()" label="Database blasted against" />
 
         <param name="re_name" label="Name regular expression" argument="--re_name" type="text" help="Regular expression to extract the feature name from the input file (first capturing group will be used)." optional="true">
             <expand macro="sanitized"/>
         </param>
 
-        <param name="skip_missing" label="Skip Missing" argument="--skip_missing" type="boolean" truevalue="--skip_missing" falsevalue="" help="Skip lines with unknown features or GO id instead of aborting everything." />
+        <param name="skip_missing" label="Skip Missing" argument="--skip_missing" type="boolean" truevalue="--skip_missing" falsevalue="" help="Skip lines with unknown features instead of aborting everything." />
 
         <expand macro="wait_for"/>
     </inputs>
     <outputs>
-        <data format="txt" name="results"/>
+        <data format="json" name="results"/>
         <data format="postgresql" name="outfile" from_work_dir="postgresql_out.tar.bz2" label="${tool.name} on ${on_string}">
-    			<filter>psql_target['method'] == "pgtools"</filter>
-    		</data>
+            <filter>psql_target['method'] == "pgtools"</filter>
+        </data>
     </outputs>
     <help>
-Load GO annotation from a tabular file
+Load a blast analysis, in the same way as does the tripal_analysis_blast module
 
 @HELP@
     </help>

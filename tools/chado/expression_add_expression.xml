@@ -14,6 +14,20 @@ chakin expression add_expression
 '$analysis_id'
 '$file_path'
 
+#if $unit:
+  --unit '$unit'
+#end if
+
+--query_type '$query_type'
+
+$match_on_name
+
+#if $re_name:
+  --re_name '$re_name'
+#end if
+
+$skip_missing
+
  > '$results'
 
 @ZIP_PSQL@
@@ -24,6 +38,18 @@ chakin expression add_expression
         <param argument="organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
         <param argument="analysis_id" type="select" dynamic_options="list_analyses()"  label="Analysis" />
         <param name="file_path" label="Expression matrix" argument="file_path" type="data" format="tabular" help="Tabular file where columns are experimental conditions, and rows are features" />
+
+	      <param name="unit" label="Unit" argument="--unit" type="text" help="The units associated with the loaded values (ie, FPKM, RPKM, raw counts)" />
+
+        <param name="query_type" label="Query type" argument="--query_type" type="text" help="The feature type (e.g. 'gene', 'mRNA', 'polypeptide', 'contig') of the query. It must be a valid Sequence Ontology term." value="mRNA" />
+
+        <param name="match_on_name" label="Match On Name" argument="--match_on_name" type="boolean" truevalue="--match_on_name" falsevalue="" help="Match features using their name instead of their uniquename" />
+
+        <param name="re_name" label="Name regular expression" argument="--re_name" type="text" help="Regular expression to extract the feature name from the input file (first capturing group will be used)." optional="true">
+            <expand macro="sanitized"/>
+        </param>
+
+        <param name="skip_missing" label="Skip Missing" argument="--skip_missing" type="boolean" truevalue="--skip_missing" falsevalue="" help="Skip lines with unknown features instead of aborting everything." />
 
         <expand macro="wait_for"/>
     </inputs>
