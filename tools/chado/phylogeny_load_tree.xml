@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="phylogeny_load_tree" name="Chado load trees" version="@WRAPPER_VERSION@.2">
+<tool id="phylogeny_load_tree" name="Chado load trees" version="@WRAPPER_VERSION@">
     <description>for phylogeny module</description>
 	<macros>
 		<import>macros.xml</import>

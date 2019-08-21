@@ -389,7 +389,8 @@ def _get_instance():
         os.environ['GALAXY_CHADO_DBPASS'],
         os.environ['GALAXY_CHADO_DBSCHEMA'],
         os.environ['GALAXY_CHADO_DBPORT'],
-        no_reflect=True
+        no_reflect=True,
+        pool_connections=False
     )
 
 
@@ -474,3 +475,43 @@ def _list_analyses(ci, *args, **kwargs):
     for an in ci.analysis.get_analyses():
         ans_data.append((an['name'], str(an['analysis_id']), False))
     return ans_data
+
+
+def list_dbs(*args, **kwargs):
+
+    ci = _get_instance()
+
+    # Key for cached data
+    cacheKey = 'dbs'
+    # We don't want to trust "if key in cache" because between asking and fetch
+    # it might through key error.
+    if cacheKey not in cache:
+        # However if it ISN'T there, we know we're safe to fetch + put in
+        # there.<?xml version="1.0"?>
+
+        data = _list_dbs(ci, *args, **kwargs)
+        cache[cacheKey] = data
+        ci.session.close()
+        return data
+    try:
+        # The cache key may or may not be in the cache at this point, it
+        # /likely/ is. However we take no chances that it wasn't evicted between
+        # when we checked above and now, so we reference the object from the
+        # cache in preparation to return.
+        data = cache[cacheKey]
+        ci.session.close()
+        return data
+    except KeyError:
+        # If access fails due to eviction, we will fail over and can ensure that
+        # data is inserted.
+        data = _list_dbs(ci, *args, **kwargs)
+        cache[cacheKey] = data
+        ci.session.close()
+        return data
+
+
+def _list_dbs(ci, *args, **kwargs):
+    dbs_data = []
+    for db in ci.load._get_dbs():
+        dbs_data.append((db['name'], str(db['db_id']), False))
+    return dbs_data

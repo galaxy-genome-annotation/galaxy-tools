@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<tool id="feature_delete_features" name="Chado features delete" version="@WRAPPER_VERSION@.1">
+<tool id="feature_delete_features" name="Chado features delete" version="@WRAPPER_VERSION@">
     <description></description>
     <macros>
         <import>macros.xml</import>
@@ -11,8 +11,8 @@
 
 chakin feature delete_features
 
-#if $organism:
-  --organism_id '$organism'
+#if $organism_id:
+  --organism_id '$organism_id'
 #end if
 #if $analysis_id:
   --analysis_id '$analysis_id'
@@ -31,7 +31,7 @@ chakin feature delete_features
     <inputs>
         <expand macro="psql_target"/>
         <!-- options -->
-        <param argument="--organism" type="select" dynamic_options="list_organisms()" label="Organism" />
+        <param argument="--organism_id" type="select" dynamic_options="list_organisms()" label="Organism" />
         <param argument="--analysis_id" type="select" dynamic_options="list_analyses()" label="Analysis" />
         <param name="name" label="Name" argument="--name" type="text" help="name filter" />
         <param name="uniquename" label="Uniquename" argument="--uniquename" type="text" help="uniquename filter" />
