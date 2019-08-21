@@ -389,7 +389,8 @@ def _get_instance():
         os.environ['GALAXY_CHADO_DBPASS'],
         os.environ['GALAXY_CHADO_DBSCHEMA'],
         os.environ['GALAXY_CHADO_DBPORT'],
-        no_reflect=True
+        no_reflect=True,
+        pool_connections=False
     )
 
 
