@@ -9,7 +9,13 @@ import subprocess
 import sys
 import time
 
-from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
+from apollo import accessible_organisms
+from apollo.util import GuessOrg, OrgOrGuess
+
+from arrow.apollo import get_apollo_instance
+
+from webapollo import UserObj, handle_credentials
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -52,27 +58,34 @@ def are_dir_trees_equal(dir1, dir2):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
-    WAAuth(parser)
     OrgOrGuess(parser)
     parser.add_argument('target_dir', help='Target directory')
     parser.add_argument('email', help='User Email')
 
     args = parser.parse_args()
 
-    wa = WebApolloInstance(args.apollo, args.username, args.password)
+    wa = get_apollo_instance()
     # User must have an account
     org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
-    org = wa.organisms.findOrganismByCn(org_cn)
 
     # User must have an account, if not, create it
-    gx_user = wa.users.assertOrCreateUser(args.email)
+    gx_user = UserObj(**wa.users._assert_or_create_user(args.email))
+    handle_credentials(gx_user)
+
+    all_orgs = wa.organisms.get_organisms()
+    if 'error' in all_orgs:
+        all_orgs = []
+    all_orgs = [org['commonName'] for org in all_orgs]
+    if org_cn not in all_orgs:
+        raise Exception("Could not find organism %s" % org_cn)
 
     # User must have READ access
-
-    if not PermissionCheck(gx_user, org_cn, "READ"):
-        raise Exception("READ permissions are required for this action")
+    orgs = accessible_organisms(gx_user, [org_cn], 'READ')
+    if not orgs:
+        raise Exception("You do not have write permission on this organism")
+    org = wa.organisms.show_organism(org_cn)
 
     if not os.path.exists(args.target_dir):
         os.makedirs(args.target_dir)

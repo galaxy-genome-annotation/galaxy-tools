@@ -7,17 +7,19 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-python $__tool_directory__/export.py
-
-@ADMIN_AUTH@
+@AUTH@
+python '$__tool_directory__/export.py'
 
 @ORG_CN_OR_GUESS@
 
---gff "$gff_out"
---fasta "$fasta_out"
---json "$json_out"
+--gff '$gff_out'
+--fasta_pep '$fasta_pep'
+--fasta_cds '$fasta_cds'
+--fasta_cdna '$fasta_cdna'
+--vcf '$vcf_out'
+--json '$json_out'
 
-"$__user_email__"
+'$__user_email__'
 
 ]]></command>
   <inputs>
@@ -25,21 +27,41 @@ python $__tool_directory__/export.py
   </inputs>
   <outputs>
     <data format="gff3" name="gff_out" label="Annotations from Apollo"/>
-    <data format="fasta" name="fasta_out" label="Sequence(s) from Apollo"/>
+    <data format="fasta" name="fasta_pep" label="Peptide sequences from Apollo"/>
+    <data format="fasta" name="fasta_cds" label="CDS sequences from Apollo"/>
+    <data format="fasta" name="fasta_cdna" label="cDNA sequences from Apollo"/>
+    <data format="vcf" name="vcf_out" label="Sequence alterations from Apollo"/>
     <data format="json" name="json_out" label="Metadata from Apollo">
         <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
     </data>
   </outputs>
   <tests>
-      <test expect_failure="true">
+      <test>
           <conditional name="org_source">
               <param name="source_select" value="direct"/>
-              <param name="org_raw" value="Test org" />
+              <param name="org_raw" value="test_organism" />
           </conditional>
           <conditional name="cn_source">
               <param name="source_select" value="all"/>
           </conditional>
-          <expand macro="test_result" />
+
+          <output name="gff_out">
+              <assert_contents>
+                  <has_text text="##sequence-region Merlin 1 172788" />
+                  <has_text text="owner=admin@local.host;" />
+                  <has_text text="Name=cds-not-under-exon" />
+              </assert_contents>
+          </output>
+          <output name="fasta_pep" file="export/pep.fa" lines_diff="12"/>
+          <output name="fasta_cds" file="export/cds.fa" lines_diff="12"/>
+          <output name="fasta_cdna" file="export/cdna.fa" lines_diff="12"/>
+          <output name="vcf" file="export/out.vcf" lines_diff="4"/>
+          <output name="json_out">
+              <assert_contents>
+                  <has_text text="test_organism" />
+                  <has_text text="apollo_shared_dir/org1" />
+              </assert_contents>
+          </output>
       </test>
   </tests>
   <help><![CDATA[

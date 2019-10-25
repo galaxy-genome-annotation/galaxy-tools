@@ -7,25 +7,32 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
 #if str($ask_one) == "yes":
     #if str($ask_two) == "yes":
         ## Nope, still don't trust them to not be dumb (or malicious), so we backup first.
-        python $__tool_directory__/export.py
-        @ADMIN_AUTH@
+        python '$__tool_directory__/export.py'
         @ORG_OR_GUESS@
-        --gff "$gff_out"
-        --fasta "$fasta_out"
-        --json "$json_out"
-        "$__user_email__"
+        --gff '$gff_out'
+        --fasta_pep '$fasta_pep'
+        --fasta_cds '$fasta_cds'
+        --fasta_cdna '$fasta_cdna'
+        --vcf '$vcf_out'
+        --json '$json_out'
+        '$__user_email__'
+
+        &&
+
+        echo "Export complete, now deleting" > '$output'
 
         &&
 
         ## Now we delete
-        python $__tool_directory__/delete_organism.py
-        @ADMIN_AUTH@
+        python '$__tool_directory__/delete_organism.py'
         @ORG_OR_GUESS@
-        "$__user_email__"
-        > $output;
+        '$__user_email__'
+        >> '$output';
     #else
         echo "Nothing to do" > $output;
     #end if
@@ -44,19 +51,44 @@
     </data>
 
     <data format="gff3" name="gff_out" label="Annotations from Apollo" hidden="true"/>
-    <data format="fasta" name="fasta_out" label="Sequence(s) from Apollo" hidden="true"/>
+    <data format="fasta" name="fasta_pep" label="Peptide sequences from Apollo" hidden="true"/>
+    <data format="fasta" name="fasta_cds" label="CDS sequences from Apollo" hidden="true"/>
+    <data format="fasta" name="fasta_cdna" label="cDNA sequences from Apollo" hidden="true"/>
+    <data format="vcf" name="vcf_out" label="Sequence alterations from Apollo"/>
     <data format="json" name="json_out" label="Metadata from Apollo" hidden="true"/>
   </outputs>
   <tests>
-      <test expect_failure="true">
+      <test>
           <conditional name="org_source">
               <param name="source_select" value="direct"/>
-              <param name="org_raw" value="Test org" />
+              <param name="org_raw" value="org3" />
           </conditional>
-          <param name="filter" value="all"/>
-          <param name="ask_one" value="yes"/>
-          <param name="ask_two" value="yes"/>
-          <expand macro="test_result" />
+          <param name="ask_one" value="true"/>
+          <param name="ask_two" value="true"/>
+
+          <output name="gff_out">
+              <assert_contents>
+                  <has_text text="##sequence-region Merlin 1 172788" />
+                  <has_text text="owner=admin@local.host;" />
+                  <has_text text="Name=cds-not-under-exon" />
+              </assert_contents>
+          </output>
+          <output name="fasta_pep" file="export/pep.fa" lines_diff="12"/>
+          <output name="fasta_cds" file="export/cds.fa" lines_diff="12"/>
+          <output name="fasta_cdna" file="export/cdna.fa" lines_diff="12"/>
+          <output name="vcf_out" file="export/out.vcf" lines_diff="4"/>
+          <output name="json_out">
+              <assert_contents>
+                  <has_text text="org3" />
+                  <has_text text="apollo_shared_dir/org3" />
+              </assert_contents>
+          </output>
+          <output name="output">
+              <assert_contents>
+                  <has_text text="org3" />
+                  <has_text text="apollo_shared_dir/org3" />
+              </assert_contents>
+          </output>
       </test>
   </tests>
   <help><![CDATA[

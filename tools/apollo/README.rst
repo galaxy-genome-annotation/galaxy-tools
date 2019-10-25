@@ -1,22 +1,8 @@
 Galaxy-apollo
 =============
 
-Galaxy tools to interface with Apollo The webapollo.py file is also
-`separately
-available <https://github.com/galaxy-genome-annotation/python-apollo>`__
-as a pip-installable package.
-
-Dependencies
-------------
-
-You will need to install some python modules in the Galaxy virtualenv for these
-tools to be fully functional:
-
-.. code:: bash
-
-    . /path/to/galaxy/.venv/bin/activate
-    pip install six biopython bcbio-gff
-    deactivate
+Galaxy tools to interface with Apollo.
+Uses `python-apollo <https://github.com/galaxy-genome-annotation/python-apollo>`__ for most of it.
 
 Environment
 -----------
@@ -44,6 +30,9 @@ The following environment variables must be set:
 | ``$GALAXY_SHARED_DIR``         | Directory shared between Galaxy and Apollo, used to       |
 |                                | exchange JBrowse instances.                               |
 +--------------------------------+-----------------------------------------------------------+
+
+As an alternative to ``$GALAXY_WEBAPOLLO_URL``, ``$GALAXY_WEBAPOLLO_USER`` and ``$GALAXY_WEBAPOLLO_PASSWORD``, you can
+define ``ARROW_GLOBAL_CONFIG_PATH`` with the path to a python-apollo/arrow conf file.
 
 License
 -------

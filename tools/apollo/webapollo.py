@@ -5,25 +5,16 @@ import collections
 import json
 import logging
 import os
-import random
 import time
 from abc import abstractmethod
-
-from BCBio import GFF
-
-from Bio import SeqIO
 
 import requests
 
 from six.moves.builtins import next
 from six.moves.builtins import object
-from six.moves.builtins import str
 
+import yaml
 
-try:
-    import StringIO as io
-except BaseException:
-    import io
 logging.getLogger("requests").setLevel(logging.CRITICAL)
 log = logging.getLogger()
 
@@ -431,38 +422,6 @@ def CnOrGuess(parser):
     parser.add_argument('--seq_raw', nargs='*', help='Sequence Names')
 
 
-def GuessOrg(args, wa):
-    if args.org_json:
-        orgs = [x.get('commonName', None)
-                for x in json.load(args.org_json)]
-        orgs = [x for x in orgs if x is not None]
-        return orgs
-    elif args.org_raw:
-        org = args.org_raw.strip()
-        if len(org) > 0:
-            return [org]
-        else:
-            raise Exception("Organism Common Name not provided")
-    elif args.org_id:
-        return [wa.organisms.findOrganismById(args.org_id).get('commonName', None)]
-    else:
-        raise Exception("Organism Common Name not provided")
-
-
-def GuessCn(args, wa):
-    org = GuessOrg(args, wa)
-    seqs = []
-    if args.seq_fasta:
-        # If we have a fasta, pull all rec ids from that.
-        for rec in SeqIO.parse(args.seq_fasta, 'fasta'):
-            seqs.append(rec.id)
-    elif args.seq_raw:
-        # Otherwise raw list.
-        seqs = [x.strip() for x in args.seq_raw if len(x.strip()) > 0]
-
-    return org, seqs
-
-
 def AssertUser(user_list):
     if len(user_list) == 0:
         raise UnknownUserException()
@@ -472,50 +431,29 @@ def AssertUser(user_list):
         raise Exception("Too many users!")
 
 
-def AssertAdmin(user):
-    if user.role == 'ADMIN':
-        return True
-    else:
-        raise Exception("User is not an administrator. Permission denied")
-
-
-def PermissionCheck(user, org_cn, permission_type):
-    return any(org["organism"] == org_cn and permission_type in org["permissions"] for org in user.organismPermissions)
-
-
-def PasswordGenerator(length):
-    chars = list('qwrtpsdfghjklzxcvbnm')
-    return ''.join(random.choice(chars) for _ in range(length))
-
-
-def IsRemoteUser():
-    if 'GALAXY_WEBAPOLLO_REMOTE_USER' not in os.environ:
-        return False
-    value = os.environ['GALAXY_WEBAPOLLO_REMOTE_USER']
-    if value.lower() in ('true', 't', '1'):
-        return True
-    else:
-        return False
-
-
 class WebApolloInstance(object):
 
-    def __init__(self, url, username, password):
-        self.apollo_url = url
-        self.username = username
-        self.password = password
+    def __init__(self):
 
-        self.annotations = AnnotationsClient(self)
+        if 'ARROW_GLOBAL_CONFIG_PATH' in os.environ:
+
+            with open(os.environ['ARROW_GLOBAL_CONFIG_PATH'], 'r') as config:
+                conf = yaml.safe_load(config)
+                try:
+                    instance_name = conf['__default']
+                except KeyError:
+                    raise Exception("Unknown Apollo instance and no __default provided")
+                self.apollo_url = conf[instance_name]['url']
+                self.username = conf[instance_name]['username']
+                self.password = conf[instance_name]['password']
+        else:
+            self.apollo_url = os.environ['GALAXY_WEBAPOLLO_URL']
+            self.username = os.environ['GALAXY_WEBAPOLLO_USER']
+            self.password = os.environ['GALAXY_WEBAPOLLO_PASSWORD']
+
         self.groups = GroupsClient(self)
-        self.io = IOClient(self)
         self.organisms = OrganismsClient(self)
         self.users = UsersClient(self)
-        self.metrics = MetricsClient(self)
-        self.bio = RemoteRecord(self)
-        self.status = StatusClient(self)
-        self.canned_comments = CannedCommentsClient(self)
-        self.canned_keys = CannedKeysClient(self)
-        self.canned_values = CannedValuesClient(self)
 
     def __str__(self):
         return '<WebApolloInstance at %s>' % self.apollo_url
@@ -559,29 +497,6 @@ class UserObj(object):
             self.groups = groups
 
         self.__props = kwargs.keys()
-
-    def isAdmin(self):
-        if hasattr(self, 'role'):
-            return self.role == self.ROLE_ADMIN
-        return False
-
-    def refresh(self, wa):
-        # This method requires some sleeping usually.
-        newU = wa.users.loadUser(self).toDict()
-        for prop in newU:
-            setattr(self, prop, newU[prop])
-
-    def toDict(self):
-        data = {}
-        for prop in self.__props:
-            data[prop] = getattr(self, prop)
-        return data
-
-    def orgPerms(self):
-        for orgPer in self.organismPermissions:
-            if len(orgPer['permissions']) > 2:
-                orgPer['permissions'] = json.loads(orgPer['permissions'])
-                yield orgPer
 
     def __str__(self):
         return '<User %s: %s %s <%s>>' % (self.userId, self.firstName,
@@ -647,330 +562,8 @@ class Client(object):
                         (r.status_code, r.text))
 
 
-class MetricsClient(Client):
-    CLIENT_BASE = '/metrics/'
-
-    def getServerMetrics(self):
-        return self.get('metrics', {})
-
-
-class AnnotationsClient(Client):
-    CLIENT_BASE = '/annotationEditor/'
-
-    def _update_data(self, data):
-        if not hasattr(self, '_extra_data'):
-            raise Exception("Please call setSequence first")
-
-        data.update(self._extra_data)
-        return data
-
-    def setSequence(self, sequence, organism):
-        self._extra_data = {
-            'sequence': sequence,
-            'organism': organism,
-        }
-
-    def setDescription(self, featureDescriptions):
-        data = {
-            'features': featureDescriptions,
-        }
-        data = self._update_data(data)
-        return self.request('setDescription', data)
-
-    def setName(self, uniquename, name):
-        # TODO
-        data = {
-            'features': [
-                {
-                    'uniquename': uniquename,
-                    'name': name,
-                }
-            ],
-        }
-        data = self._update_data(data)
-        return self.request('setName', data)
-
-    def setNames(self, features):
-        # TODO
-        data = {
-            'features': features,
-        }
-        data = self._update_data(data)
-        return self.request('setName', data)
-
-    def setStatus(self, statuses):
-        # TODO
-        data = {
-            'features': statuses,
-        }
-        data = self._update_data(data)
-        return self.request('setStatus', data)
-
-    def setSymbol(self, symbols):
-        data = {
-            'features': symbols,
-        }
-        data.update(self._extra_data)
-        return self.request('setSymbol', data)
-
-    def getComments(self, feature_id):
-        data = {
-            'features': [{'uniquename': feature_id}],
-        }
-        data = self._update_data(data)
-        return self.request('getComments', data)
-
-    def addComments(self, feature_id, comments):
-        # TODO: This is probably not great and will delete comments, if I had to guess...
-        data = {
-            'features': [
-                {
-                    'uniquename': feature_id,
-                    'comments': comments
-                }
-            ],
-        }
-        data = self._update_data(data)
-        return self.request('addComments', data)
-
-    def addAttributes(self, feature_id, attributes):
-        nrps = []
-        for (key, values) in attributes.items():
-            for value in values:
-                nrps.append({
-                    'tag': key,
-                    'value': value
-                })
-
-        data = {
-            'features': [
-                {
-                    'uniquename': feature_id,
-                    'non_reserved_properties': nrps
-                }
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('addAttribute', data)
-
-    def deleteAttribute(self, feature_id, key, value):
-        data = {
-            'features': [
-                {
-                    'uniquename': feature_id,
-                    'non_reserved_properties': [
-                        {'tag': key, 'value': value}
-                    ]
-                }
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('addAttribute', data)
-
-    def getFeatures(self):
-        data = self._update_data({})
-        return self.request('getFeatures', data)
-
-    def getSequence(self, uniquename):
-        data = {
-            'features': [
-                {'uniquename': uniquename}
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('getSequence', data)
-
-    def addFeature(self, feature, trustme=False):
-        if not trustme:
-            raise NotImplementedError("Waiting on better docs from project. If you know what you are doing, pass trustme=True to this function.")
-
-        data = {
-            'features': feature,
-        }
-        data = self._update_data(data)
-        return self.request('addFeature', data)
-
-    def addTranscript(self, transcript, trustme=False):
-        if not trustme:
-            raise NotImplementedError("Waiting on better docs from project. If you know what you are doing, pass trustme=True to this function.")
-
-        data = {}
-        data.update(transcript)
-        data = self._update_data(data)
-        return self.request('addTranscript', data)
-
-    # addExon, add/delete/updateComments, addTranscript skipped due to docs
-
-    def duplicateTranscript(self, transcriptId):
-        data = {
-            'features': [{'uniquename': transcriptId}]
-        }
-
-        data = self._update_data(data)
-        return self.request('duplicateTranscript', data)
-
-    def setTranslationStart(self, uniquename, start):
-        data = {
-            'features': [{
-                'uniquename': uniquename,
-                'location': {
-                    'fmin': start
-                }
-            }]
-        }
-        data = self._update_data(data)
-        return self.request('setTranslationStart', data)
-
-    def setTranslationEnd(self, uniquename, end):
-        data = {
-            'features': [{
-                'uniquename': uniquename,
-                'location': {
-                    'fmax': end
-                }
-            }]
-        }
-        data = self._update_data(data)
-        return self.request('setTranslationEnd', data)
-
-    def setLongestOrf(self, uniquename):
-        data = {
-            'features': [{
-                'uniquename': uniquename,
-            }]
-        }
-        data = self._update_data(data)
-        return self.request('setLongestOrf', data)
-
-    def setBoundaries(self, uniquename, start, end):
-        data = {
-            'features': [{
-                'uniquename': uniquename,
-                'location': {
-                    'fmin': start,
-                    'fmax': end,
-                }
-            }]
-        }
-        data = self._update_data(data)
-        return self.request('setBoundaries', data)
-
-    def getSequenceAlterations(self):
-        data = {
-        }
-        data = self._update_data(data)
-        return self.request('getSequenceAlterations', data)
-
-    def setReadthroughStopCodon(self, uniquename):
-        data = {
-            'features': [{
-                'uniquename': uniquename,
-            }]
-        }
-        data = self._update_data(data)
-        return self.request('setReadthroughStopCodon', data)
-
-    def deleteSequenceAlteration(self, uniquename):
-        data = {
-            'features': [{
-                'uniquename': uniquename,
-            }]
-        }
-        data = self._update_data(data)
-        return self.request('deleteSequenceAlteration', data)
-
-    def flipStrand(self, uniquenames):
-        data = {
-            'features': [
-                {'uniquename': x} for x in uniquenames
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('flipStrand', data)
-
-    def mergeExons(self, exonA, exonB):
-        data = {
-            'features': [
-                {'uniquename': exonA},
-                {'uniquename': exonB},
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('mergeExons', data)
-
-    # def splitExon(): pass
-
-    def deleteFeatures(self, uniquenames):
-        assert isinstance(uniquenames, collections.Iterable)
-        data = {
-            'features': [
-                {'uniquename': x} for x in uniquenames
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('deleteFeature', data)
-
-    # def deleteExon(): pass
-
-    # def makeIntron(self, uniquename, ): pass
-
-    def getSequenceSearchTools(self):
-        return self.get('getSequenceSearchTools', {})
-
-    def getCannedComments(self):
-        return self.get('getCannedComments', {})
-
-    def searchSequence(self, searchTool, sequence, database):
-        data = {
-            'key': searchTool,
-            'residues': sequence,
-            'database_id': database,
-        }
-        return self.request('searchSequences', data)
-
-    def getGff3(self, uniquenames):
-        assert isinstance(uniquenames, collections.Iterable)
-        data = {
-            'features': [
-                {'uniquename': x} for x in uniquenames
-            ]
-        }
-        data = self._update_data(data)
-        return self.request('getGff3', data, isJson=False)
-
-
 class GroupsClient(Client):
     CLIENT_BASE = '/group/'
-
-    def createGroup(self, name):
-        data = {'name': name}
-        return self.request('createGroup', data)
-
-    def getOrganismPermissionsForGroup(self, group):
-        data = {
-            'id': group.groupId,
-            'name': group.name,
-        }
-        return self.request('getOrganismPermissionsForGroup', data)
-
-    def loadGroup(self, group):
-        return self.loadGroupById(group.groupId)
-
-    def loadGroupById(self, groupId):
-        res = self.request('loadGroups', {'groupId': groupId})
-        if isinstance(res, list):
-            # We can only match one, right?
-            return GroupObj(**res[0])
-        else:
-            return res
-
-    def loadGroupByName(self, name):
-        res = self.request('loadGroups', {'name': name})
-        if isinstance(res, list):
-            # We can only match one, right?
-            return GroupObj(**res[0])
-        else:
-            return res
 
     def loadGroups(self, group=None):
         res = self.request('loadGroups', {})
@@ -980,298 +573,9 @@ class GroupsClient(Client):
 
         return data
 
-    def deleteGroup(self, group):
-        data = {
-            'id': group.groupId,
-            'name': group.name,
-        }
-        return self.request('deleteGroup', data)
-
-    def updateGroup(self, group, newName):
-        # TODO: Sure would be nice if modifying ``group.name`` would invoke
-        # this?
-        data = {
-            'id': group.groupId,
-            'name': newName,
-        }
-        return self.request('updateGroup', data)
-
-    def updateOrganismPermission(self, group, organismName,
-                                 administrate=False, write=False, read=False,
-                                 export=False):
-        data = {
-            'groupId': group.groupId,
-            'organism': organismName,
-            'ADMINISTRATE': administrate,
-            'WRITE': write,
-            'EXPORT': export,
-            'READ': read,
-        }
-        return self.request('updateOrganismPermission', data)
-
-    def updateMembership(self, group, users):
-        data = {
-            'groupId': group.groupId,
-            'user': [user.email for user in users]
-        }
-        return self.request('updateMembership', data)
-
-
-class IOClient(Client):
-    CLIENT_BASE = '/IOService/'
-
-    def write(self, exportType='FASTA', seqType='peptide',
-              exportFormat='text', sequences=None, organism=None,
-              output='text', exportAllSequences=False,
-              exportGff3Fasta=False):
-        if exportType not in ('FASTA', 'GFF3'):
-            raise Exception("exportType must be one of FASTA, GFF3")
-
-        if seqType not in ('peptide', 'cds', 'cdna', 'genomic'):
-            raise Exception("seqType must be one of peptide, cds, dna, genomic")
-
-        if exportFormat not in ('gzip', 'text'):
-            raise Exception("exportFormat must be one of gzip, text")
-
-        if output not in ('file', 'text'):
-            raise Exception("output must be one of file, text")
-
-        data = {
-            'type': exportType,
-            'seqType': seqType,
-            'format': exportFormat,
-            'sequences': sequences,
-            'organism': organism,
-            'output': output,
-            'exportAllSequences': exportAllSequences,
-            'exportGff3Fasta': exportGff3Fasta,
-        }
-
-        return self.request('write', data, isJson=output == 'file')
-
-    def download(self, uuid, outputFormat='gzip'):
-
-        if outputFormat.lower() not in ('gzip', 'text'):
-            raise Exception("outputFormat must be one of file, text")
-
-        data = {
-            'format': outputFormat,
-            'uuid': uuid,
-        }
-        return self.request('write', data)
-
-
-class StatusClient(Client):
-    CLIENT_BASE = '/availableStatus/'
-
-    def addStatus(self, value):
-        data = {
-            'value': value
-        }
-
-        return self.request('createStatus', data)
-
-    def findAllStatuses(self):
-        return self.request('showStatus', {})
-
-    def findStatusByValue(self, value):
-        statuses = self.findAllStatuses()
-        statuses = [x for x in statuses if x['value'] == value]
-        if len(statuses) == 0:
-            raise Exception("Unknown status value")
-        else:
-            return statuses[0]
-
-    def findStatusById(self, id_number):
-        statuses = self.findAllStatuses()
-        statuses = [x for x in statuses if str(x['id']) == str(id_number)]
-        if len(statuses) == 0:
-            raise Exception("Unknown ID")
-        else:
-            return statuses[0]
-
-    def updateStatus(self, id_number, new_value):
-        data = {
-            'id': id_number,
-            'new_value': new_value
-        }
-
-        return self.request('updateStatus', data)
-
-    def deleteStatus(self, id_number):
-        data = {
-            'id': id_number
-        }
-
-        return self.request('deleteStatus', data)
-
-
-class CannedCommentsClient(Client):
-    CLIENT_BASE = '/cannedComment/'
-
-    def addComment(self, comment, metadata=""):
-        data = {
-            'comment': comment,
-            'metadata': metadata
-        }
-
-        return self.request('createComment', data)
-
-    def findAllComments(self):
-        return self.request('showComment', {})
-
-    def findCommentByValue(self, value):
-        comments = self.findAllComments()
-        comments = [x for x in comments if x['comment'] == value]
-        if len(comments) == 0:
-            raise Exception("Unknown comment")
-        else:
-            return comments[0]
-
-    def findCommentById(self, id_number):
-        comments = self.findAllComments()
-        comments = [x for x in comments if str(x['id']) == str(id_number)]
-        if len(comments) == 0:
-            raise Exception("Unknown ID")
-        else:
-            return comments[0]
-
-    def updateComment(self, id_number, new_value, metadata=None):
-        data = {
-            'id': id_number,
-            'new_comment': new_value
-        }
-
-        if metadata is not None:
-            data['metadata'] = metadata
-
-        return self.request('updateComment', data)
-
-    def deleteComment(self, id_number):
-        data = {
-            'id': id_number
-        }
-
-        return self.request('deleteComment', data)
-
-
-class CannedKeysClient(Client):
-    CLIENT_BASE = '/cannedKey/'
-
-    def addKey(self, key, metadata=""):
-        data = {
-            'key': key,
-            'metadata': metadata
-        }
-
-        return self.request('createKey', data)
-
-    def findAllKeys(self):
-        return self.request('showKey', {})
-
-    def findKeyByValue(self, value):
-        keys = self.findAllKeys()
-        keys = [x for x in keys if x['label'] == value]
-        if len(keys) == 0:
-            raise Exception("Unknown key")
-        else:
-            return keys[0]
-
-    def findKeyById(self, id_number):
-        keys = self.findAllKeys()
-        keys = [x for x in keys if str(x['id']) == str(id_number)]
-        if len(keys) == 0:
-            raise Exception("Unknown ID")
-        else:
-            return keys[0]
-
-    def updateKey(self, id_number, new_key, metadata=None):
-        data = {
-            'id': id_number,
-            'new_key': new_key
-        }
-
-        if metadata is not None:
-            data['metadata'] = metadata
-
-        return self.request('updateKey', data)
-
-    def deleteKey(self, id_number):
-        data = {
-            'id': id_number
-        }
-
-        return self.request('deleteKey', data)
-
-
-class CannedValuesClient(Client):
-    CLIENT_BASE = '/cannedValue/'
-
-    def addValue(self, value, metadata=""):
-        data = {
-            'value': value,
-            'metadata': metadata
-        }
-
-        return self.request('createValue', data)
-
-    def findAllValues(self):
-        return self.request('showValue', {})
-
-    def findValueByValue(self, value):
-        values = self.findAllValues()
-        values = [x for x in values if x['label'] == value]
-        if len(values) == 0:
-            raise Exception("Unknown value")
-        else:
-            return values[0]
-
-    def findValueById(self, id_number):
-        values = self.findAllValues()
-        values = [x for x in values if str(x['id']) == str(id_number)]
-        if len(values) == 0:
-            raise Exception("Unknown ID")
-        else:
-            return values[0]
-
-    def updateValue(self, id_number, new_value, metadata=None):
-        data = {
-            'id': id_number,
-            'new_value': new_value
-        }
-
-        if metadata is not None:
-            data['metadata'] = metadata
-
-        return self.request('updateValue', data)
-
-    def deleteValue(self, id_number):
-        data = {
-            'id': id_number
-        }
-
-        return self.request('deleteValue', data)
-
 
 class OrganismsClient(Client):
     CLIENT_BASE = '/organism/'
-
-    def addOrganism(self, commonName, directory, blatdb=None, species=None,
-                    genus=None, public=False):
-        data = {
-            'commonName': commonName,
-            'directory': directory,
-            'publicMode': public,
-        }
-
-        if blatdb is not None:
-            data['blatdb'] = blatdb
-        if genus is not None:
-            data['genus'] = genus
-        if species is not None:
-            data['species'] = species
-
-        return self.request('addOrganism', data)
 
     def findAllOrganisms(self):
         orgs = self.request('findAllOrganisms', {})
@@ -1279,265 +583,22 @@ class OrganismsClient(Client):
             orgs = []
         return orgs
 
-    def findOrganismByCn(self, cn):
-        orgs = self.findAllOrganisms()
-        orgs = [x for x in orgs if x['commonName'] == cn]
-        if len(orgs) == 0:
-            raise Exception("Unknown common name")
-        else:
-            return orgs[0]
-
-    def findOrganismById(self, id_number):
-        orgs = self.findAllOrganisms()
-        orgs = [x for x in orgs if str(x['id']) == str(id_number)]
-        if len(orgs) == 0:
-            raise Exception("Unknown ID")
-        else:
-            return orgs[0]
-
-    def deleteOrganism(self, organismId):
-        return self.request('deleteOrganism', {'id': organismId})
-
-    def deleteOrganismFeatures(self, organismId):
-        return self.request('deleteOrganismFeatures', {'id': organismId})
-
-    def getSequencesForOrganism(self, commonName):
-        return self.request('getSequencesForOrganism', {'organism': commonName})
-
-    def updateOrganismInfo(self, organismId, commonName, directory, blatdb=None, species=None, genus=None, public=False):
-        data = {
-            'id': organismId,
-            'name': commonName,
-            'directory': directory,
-            'publicMode': public,
-        }
-
-        if blatdb is not None:
-            data['blatdb'] = blatdb
-        if genus is not None:
-            data['genus'] = genus
-        if species is not None:
-            data['species'] = species
-
-        return self.request('updateOrganismInfo', data)
-
 
 class UsersClient(Client):
     CLIENT_BASE = '/user/'
 
-    # Real one
-    # def getOrganismPermissionsForUser(self, user):
-    # data = {
-    # 'userId': user.userId,
-    # }
-    # return self.request('getOrganismPermissionsForUser', data)
-
-    # Utter frigging hack
-    def getOrganismPermissionsForUser(self, user):
-        return self.loadUser(user).organismPermissions
-
-    def updateOrganismPermission(self, user, organism, administrate=False,
-                                 write=False, export=False, read=False):
-        data = {
-            'userId': user.userId,
-            'organism': organism,
-            'ADMINISTRATE': administrate,
-            'WRITE': write,
-            'EXPORT': export,
-            'READ': read,
-        }
-        return self.request('updateOrganismPermission', data)
-
-    def loadUser(self, user):
-        return self.loadUserById(user.userId)
-
-    def loadUserById(self, userId):
-        res = self.request('loadUsers', {'userId': userId})
-        if isinstance(res, list):
-            # We can only match one, right?
-            return UserObj(**res[0])
-        else:
-            return res
-
-    def loadUsers(self, email=None):
+    def loadUsers(self):
         res = self.request('loadUsers', {})
+
         data = [UserObj(**x) for x in res]
-        if email is not None:
-            data = [x for x in data if x.username == email]
 
         return data
 
-    def addUserToGroup(self, group, user):
-        data = {'group': group.name, 'userId': user.userId}
-        return self.request('addUserToGroup', data)
 
-    def removeUserFromGroup(self, group, user):
-        data = {'group': group.name, 'userId': user.userId}
-        return self.request('removeUserFromGroup', data)
-
-    def createUser(self, email, firstName, lastName, newPassword, role="user", groups=None, addToHistory=False):
-        data = {
-            'firstName': firstName,
-            'lastName': lastName,
-            'email': email,
-            'role': role,
-            'groups': [] if groups is None else groups,
-            # 'availableGroups': [],
-            'newPassword': newPassword,
-            # 'organismPermissions': [],
-        }
-        returnData = self.request('createUser', data)
-        if addToHistory and not IsRemoteUser():
-            f = open("Apollo_credentials.txt", "w")
-            f.write('Username: %s\tPassword: %s' % (email, newPassword))
-        return returnData
-
-    def assertOrCreateUser(self, email):
-        try:
-            gx_user = AssertUser(self.loadUsers(email))
-        except Exception:
-            self.createUser(email, email, email, PasswordGenerator(12), role='user', addToHistory=True)
-            gx_user = AssertUser(self.loadUsers(email))
-        return gx_user
-
-    def deleteUser(self, user):
-        return self.request('deleteUser', {'userId': user.userId})
-
-    def updateUser(self, user, email, firstName, lastName, newPassword):
-        data = {
-            'userId': user.userId,
-            'email': email,
-            'firstName': firstName,
-            'lastName': lastName,
-            'newPassword': newPassword,
-        }
-        return self.request('updateUser', data)
-
-
-class RemoteRecord(Client):
-    CLIENT_BASE = None
-
-    def ParseRecord(self, cn):
-        org = self._wa.organisms.findOrganismByCn(cn)
-        self._wa.annotations.setSequence(org['commonName'], org['id'])
-
-        data = io.StringIO(self._wa.io.write(
-            exportType='GFF3',
-            seqType='genomic',
-            exportAllSequences=False,
-            exportGff3Fasta=True,
-            output="text",
-            exportFormat="text",
-            sequences=cn,
-        ))
-        data.seek(0)
-
-        for record in GFF.parse(data):
-            yield WebApolloSeqRecord(record, self._wa)
-
-
-class WebApolloSeqRecord(object):
-    def __init__(self, sr, wa):
-        self._sr = sr
-        self._wa = wa
-
-    def __dir__(self):
-        return dir(self._sr)
-
-    def __getattr__(self, key):
-        if key in ('_sr', '_wa'):
-            return self.__dict__[key]
-        else:
-            if key == 'features':
-                return (WebApolloSeqFeature(x, self._wa)
-                        for x in self._sr.__dict__[key])
-            else:
-                return self._sr.__dict__[key]
-
-    def __setattr__(self, key, value):
-        if key in ('_sd', '_wa'):
-            self.__dict__[key] = value
-        else:
-            self._sr.__dict__[key] = value
-            # Methods acting on the SeqRecord object
-
-
-class WebApolloSeqFeature(object):
-    def __init__(self, sf, wa):
-        self._sf = sf
-        self._wa = wa
-
-    def __dir__(self):
-        return dir(self._sf)
-
-    def __getattr__(self, key):
-        if key in ('_sf', '_wa'):
-            return self.__dict__[key]
-        else:
-            return self._sf.__dict__[key]
-
-    def __setattr__(self, key, value):
-        if key in ('_sf', '_wa'):
-            self.__dict__[key] = value
-        else:
-            # Methods acting on the SeqFeature object
-            if key == 'location':
-                if value.strand != self._sf.location.strand:
-                    self.wa.annotations.flipStrand(
-                        self._sf.qualifiers['ID'][0]
-                    )
-
-                self.wa.annotations.setBoundaries(
-                    self._sf.qualifiers['ID'][0],
-                    value.start,
-                    value.end,
-                )
-
-                self._sf.__dict__[key] = value
-            else:
-                self._sf.__dict__[key] = value
-
-
-def _tnType(feature):
-    if feature.type in ('gene', 'mRNA', 'exon', 'CDS', 'terminator', 'tRNA'):
-        return feature.type
-    else:
-        return 'exon'
-
-
-def _yieldFeatData(features):
-    for f in features:
-        current = {
-            'location': {
-                'strand': f.strand,
-                'fmin': int(f.location.start),
-                'fmax': int(f.location.end),
-            },
-            'type': {
-                'name': _tnType(f),
-                'cv': {
-                    'name': 'sequence',
-                }
-            },
-        }
-        if f.type in ('gene', 'mRNA'):
-            current['name'] = f.qualifiers.get('Name', [f.id])[0]
-        if hasattr(f, 'sub_features') and len(f.sub_features) > 0:
-            current['children'] = [x for x in _yieldFeatData(f.sub_features)]
-
-        yield current
-
-
-def featuresToFeatureSchema(features):
-    compiled = []
-    for feature in features:
-        # if feature.type != 'gene':
-            # log.warn("Not able to handle %s features just yet...", feature.type)
-            # continue
-
-        for x in _yieldFeatData([feature]):
-            compiled.append(x)
-    return compiled
+def handle_credentials(user):
+    if hasattr(user, 'new_password'):
+        f = open("Apollo_credentials.txt", "w")
+        f.write('Username: %s\nPassword: %s' % (user.username, user.new_password))
 
 
 def accessible_organisms(user, orgs):
@@ -1559,11 +620,8 @@ def accessible_organisms(user, orgs):
 
 def galaxy_list_groups(trans, *args, **kwargs):
     email = trans.get_user().email
-    wa = WebApolloInstance(
-        os.environ['GALAXY_WEBAPOLLO_URL'],
-        os.environ['GALAXY_WEBAPOLLO_USER'],
-        os.environ['GALAXY_WEBAPOLLO_PASSWORD']
-    )
+    # FIXME get credentals from ARROW_GLOBAL_CONFIG_PATH if defined
+    wa = WebApolloInstance()
 
     # Key for cached data
     cacheKey = 'groups-' + email
@@ -1601,11 +659,7 @@ def _galaxy_list_groups(wa, *args, **kwargs):
 
 def galaxy_list_orgs(trans, *args, **kwargs):
     email = trans.get_user().email
-    wa = WebApolloInstance(
-        os.environ['GALAXY_WEBAPOLLO_URL'],
-        os.environ['GALAXY_WEBAPOLLO_USER'],
-        os.environ['GALAXY_WEBAPOLLO_PASSWORD']
-    )
+    wa = WebApolloInstance()
     try:
         gx_user = wa.requireUser(email)
     except UnknownUserException:
@@ -1635,53 +689,6 @@ def _galaxy_list_orgs(wa, gx_user, *args, **kwargs):
     return orgs
 
 
-def galaxy_list_users(trans, *args, **kwargs):
-    email = trans.get_user().email
-    wa = WebApolloInstance(
-        os.environ['GALAXY_WEBAPOLLO_URL'],
-        os.environ['GALAXY_WEBAPOLLO_USER'],
-        os.environ['GALAXY_WEBAPOLLO_PASSWORD']
-    )
-    # Assert that the email exists in apollo
-    try:
-        gx_user = wa.requireUser(email)
-    except UnknownUserException:
-        return []
-
-    # Key for cached data
-    cacheKey = 'users-' + email
-    # We don't want to trust "if key in cache" because between asking and fetch
-    # it might through key error.
-    if cacheKey not in cache:
-        # However if it ISN'T there, we know we're safe to fetch + put in
-        # there.
-        data = _galaxy_list_users(wa, gx_user, *args, **kwargs)
-        cache[cacheKey] = data
-        return data
-    try:
-        # The cache key may or may not be in the cache at this point, it
-        # /likely/ is. However we take no chances that it wasn't evicted between
-        # when we checked above and now, so we reference the object from the
-        # cache in preparation to return.
-        data = cache[cacheKey]
-        return data
-    except KeyError:
-        # If access fails due to eviction, we will fail over and can ensure that
-        # data is inserted.
-        data = _galaxy_list_users(wa, gx_user, *args, **kwargs)
-        cache[cacheKey] = data
-        return data
-
-
-def _galaxy_list_users(wa, gx_user, *args, **kwargs):
-    # Fetch the users.
-    user_data = []
-    for user in wa.users.loadUsers():
-        # Reformat
-        user_data.append((user.username, user.username, False))
-    return user_data
-
-
 # This is all for implementing the command line interface for testing.
 class obj(object):
     pass
@@ -1698,45 +705,14 @@ class fakeTrans(object):
         return o
 
 
-def retry(closure, sleep=1, limit=5):
-    """
-    Apollo has the bad habit of returning 500 errors if you call APIs
-    too quickly, largely because of the unholy things that happen in
-    grails.
-
-    To deal with the fact that we cannot send an addComments call too
-    quickly after a createFeature call, we have this function that will
-    keep calling a closure until it works.
-    """
-    count = 0
-    while True:
-        count += 1
-
-        if count >= limit:
-            return False
-        try:
-            # Try calling it
-            closure()
-            # If successful, exit
-            return True
-        except Exception as e:
-            log.info(str(e)[0:100])
-            time.sleep(sleep)
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test access to apollo server')
     parser.add_argument('email', help='Email of user to test')
-    parser.add_argument('--action', choices=['org', 'group', 'users'], default='org', help='Data set to test, fetch a list of groups or users known to the requesting user.')
+    parser.add_argument('--action', choices=['org', 'group'], default='org', help='Data set to test, fetch a list of groups or orgs known to the requesting user.')
     args = parser.parse_args()
 
     trans = fakeTrans(args.email)
     if args.action == 'org':
-        for f in galaxy_list_orgs(trans):
-            print(f)
+        print(galaxy_list_orgs(trans))
     elif args.action == 'group':
-        for f in galaxy_list_groups(trans):
-            print(f)
-    else:
-        for f in galaxy_list_users(trans):
-            print(f)
+        print(galaxy_list_groups(trans))

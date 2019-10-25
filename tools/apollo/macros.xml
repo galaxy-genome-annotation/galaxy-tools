@@ -5,11 +5,6 @@
   <xml name="requirements">
     <requirements>
       <requirement type="package" version="3.1">apollo</requirement>
-      <requirement type="package" version="2.7">python</requirement>
-      <requirement type="package" version="1.65">biopython</requirement>
-      <requirement type="package" version="0.6.2">bcbiogff</requirement>
-      <requirement type="package" version="2.12.4">requests</requirement>
-      <requirement type="package" version="1.11.0">six</requirement>
       <yield/>
     </requirements>
   </xml>
@@ -19,11 +14,6 @@
   </token>
   <token name="@URL@">
 "\$GALAXY_WEBAPOLLO_URL"
-  </token>
-  <token name="@ADMIN_AUTH@">
-"\$GALAXY_WEBAPOLLO_URL"
-"\$GALAXY_WEBAPOLLO_USER"
-"\$GALAXY_WEBAPOLLO_PASSWORD"
   </token>
 
   <token name="@AUTH@"><![CDATA[
@@ -41,11 +31,11 @@
   <token name="@ORG_OR_GUESS@">
 <![CDATA[
 #if $org_source.source_select == "auto_json":
-    --org_json "${org_source.org_file}"
+    --org_json '${org_source.org_file}'
 #elif $org_source.source_select == "select":
-    --org_id "${org_source.org_select}"
+    --org_id '${org_source.org_select}'
 #else:
-    --org_raw "${org_source.org_raw}"
+    --org_raw '${org_source.org_raw}'
 #end if
 ]]>
   </token>
@@ -55,13 +45,13 @@
 
 #if $cn_source.source_select == "auto":
     #if str($cn_source.cn_file) != "None":
-        --seq_fasta $cn_source.cn_file
+        --seq_fasta '$cn_source.cn_file'
     #end if
 #else
     #if $cn_source.source_select != "all" and len($cn_source.refseqs) > 0:
         --seq_raw
         #for $item in $cn_source.refseqs:
-            "${item.refseq}"
+            '${item.refseq}'
         #end for
     #end if
 #end if
@@ -122,12 +112,12 @@
   </xml>
   <token name="@GENOME_SELECTOR_PRE@">
 #if $reference_genome.reference_genome_source == 'history':
-    ln -s $reference_genome.genome_fasta genomeref.fa;
+    ln -s '$reference_genome.genome_fasta' genomeref.fa;
 #end if
   </token>
   <token name="@GENOME_SELECTOR@">
 #if $reference_genome.reference_genome_source == 'cached':
-    "${reference_genome.fasta_indexes.fields.path}"
+    '${reference_genome.fasta_indexes.fields.path}'
 #elif $reference_genome.reference_genome_source == 'history':
     genomeref.fa
 #end if

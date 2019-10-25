@@ -6,20 +6,31 @@
   </macros>
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
-python $__tool_directory__/list_organisms.py
-@ADMIN_AUTH@
-$__user_email__
-> $output]]></command>
+  which python &&
+@AUTH@
+
+python '$__tool_directory__/list_organisms.py'
+'$__user_email__'
+> '$output']]></command>
   <inputs>
   </inputs>
   <outputs>
     <data format="json" name="output">
         <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
     </data>
+    <data format="json" name="credentials" from_work_dir="Apollo_credentials.txt"/>
   </outputs>
   <tests>
-      <test expect_failure="true">
-          <expand macro="test_result" />
+      <test>
+        <output name="output">
+            <assert_contents>
+                <has_text text="alt_org" />
+                <has_text text="test_organism" />
+                <has_text text="apollo_shared_dir/org1" />
+                <has_text text="apollo_shared_dir/org2" />
+                <has_text text="Testus" />
+            </assert_contents>
+        </output>
       </test>
   </tests>
   <help><![CDATA[

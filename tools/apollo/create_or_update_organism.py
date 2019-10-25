@@ -11,8 +11,13 @@ import sys
 import tempfile
 import time
 
+from apollo import accessible_organisms
+from apollo.util import GuessOrg, OrgOrGuess
 
-from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
+from arrow.apollo import get_apollo_instance
+
+from webapollo import UserObj, handle_credentials
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -29,7 +34,6 @@ def IsBlatEnabled():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
-    WAAuth(parser)
     parser.add_argument('jbrowse_src', help='Old JBrowse Data Directory')
     parser.add_argument('jbrowse', help='JBrowse Data Directory')
     parser.add_argument('email', help='User Email')
@@ -71,30 +75,38 @@ if __name__ == '__main__':
         blat_db = path_2bit
         tmp_stderr.close()
 
-    wa = WebApolloInstance(args.apollo, args.username, args.password)
+    wa = get_apollo_instance()
+
+    # User must have an account, if not, create it
+    gx_user = UserObj(**wa.users._assert_or_create_user(args.email))
+    handle_credentials(gx_user)
 
     org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # User must have an account, if not, create it
-    gx_user = wa.users.assertOrCreateUser(args.email)
-
     log.info("Determining if add or update required")
     try:
-        org = wa.organisms.findOrganismByCn(org_cn)
+        org = wa.organisms.show_organism(org_cn)
     except Exception:
         org = None
 
-    if org:
+    if org and 'error' not in org:
         old_directory = org['directory']
 
-        if not PermissionCheck(gx_user, org_cn, "WRITE"):
-            print("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
-            sys.exit(2)
+        all_orgs = wa.organisms.get_organisms()
+        if 'error' in all_orgs:
+            all_orgs = []
+        all_orgs = [org['commonName'] for org in all_orgs]
+        if org_cn not in all_orgs:
+            raise Exception("Could not find organism %s" % org_cn)
+
+        orgs = accessible_organisms(gx_user, [org_cn], 'WRITE')
+        if not orgs:
+            raise Exception("Naming Conflict. You do not have write permission on this organism. Either request permission from the owner, or choose a different name for your organism.")
 
         log.info("\tUpdating Organism")
-        data = wa.organisms.updateOrganismInfo(
+        data = wa.organisms.update_organism(
             org['id'],
             org_cn,
             args.jbrowse,
@@ -108,25 +120,27 @@ if __name__ == '__main__':
         if args.remove_old_directory and args.jbrowse != old_directory:
             shutil.rmtree(old_directory)
 
-        data = [wa.organisms.findOrganismById(org['id'])]
+        data = wa.organisms.show_organism(org_cn)
 
     else:
         # New organism
         log.info("\tAdding Organism")
-        data = wa.organisms.addOrganism(
+        data = wa.organisms.add_organism(
             org_cn,
             args.jbrowse,
+            blatdb=blat_db,
             genus=args.genus,
             species=args.species,
             public=args.public,
-            blatdb=blat_db
+            metadata=None
         )
 
         # Must sleep before we're ready to handle
         time.sleep(2)
         log.info("Updating permissions for %s on %s", gx_user, org_cn)
-        wa.users.updateOrganismPermission(
-            gx_user, org_cn,
+        wa.users.update_organism_permissions(
+            gx_user.username,
+            org_cn,
             write=True,
             export=True,
             read=True,
@@ -134,10 +148,9 @@ if __name__ == '__main__':
 
         # Group access
         if args.group:
-            group = wa.groups.loadGroupByName(name=args.group)
-            res = wa.groups.updateOrganismPermission(group, org_cn,
-                                                     administrate=False, write=True, read=True,
-                                                     export=True)
+            group = wa.groups.get_groups(name=args.group)[0]
+            res = wa.groups.update_organism_permissions(group, org_cn,
+                                                        administrate=False, write=True, read=True,
+                                                        export=True)
 
-    data = [o for o in data if o['commonName'] == org_cn]
     print(json.dumps(data, indent=2))

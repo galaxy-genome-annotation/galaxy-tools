@@ -7,29 +7,29 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
 #if str($ask_one) == "yes":
 	## Nope, still don't trust them to not be dumb (or malicious), so we backup first.
-	python $__tool_directory__/export.py
-	@ADMIN_AUTH@
+	python '$__tool_directory__/export.py'
 	@ORG_OR_GUESS@
-	--gff "$gff_out"
-	--fasta "$fasta_out"
-	--json "$json_out"
-    "$__user_email__"
+	--gff '$gff_out'
+	--fasta '$fasta_out'
+	--json '$json_out'
+  '$__user_email__'
 
     &&
 
 	## Now we delete
-	python $__tool_directory__/delete_features.py
-	@ADMIN_AUTH@
+	python '$__tool_directory__/delete_features.py'
 	@ORG_OR_GUESS@
-	"$__user_email__"
+	'$__user_email__'
 	#if str($filter) != "all"
 		--type $filter
 	#end if
-	> $output;
+	> '$output';
 #else
-    echo "Nothing to do" > $output;
+    echo "Nothing to do" > '$output';
 #end if
     ]]></command>
   <inputs>
