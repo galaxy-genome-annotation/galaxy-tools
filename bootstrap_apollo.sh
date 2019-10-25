@@ -1,0 +1,49 @@
+#!/bin/bash
+
+export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
+mkdir -p "$GALAXY_SHARED_DIR"
+
+docker run -it -p 8888:8080 -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ quay.io/gmod/apollo:2.4.1
+
+echo "[BOOTSTRAP] Waiting while Apollo starts up..."
+# Wait for apollo to be online
+for ((i=0;i<30;i++))
+do
+    APOLLO_UP=$(arrow users get_users 2> /dev/null | head -1 | grep '^\[$' -q; echo "$?")
+	if [[ $APOLLO_UP -eq 0 ]]; then
+		break
+	fi
+    sleep 10
+done
+
+if ! [[ $APOLLO_UP -eq 0 ]]; then
+        echo "Cannot connect to apollo for bootstrapping"
+    exit "${APOLLO_UP}"
+fi
+
+echo "[BOOTSTRAP] Apollo is up, bootstrapping for tests"
+
+# Create some groups
+arrow groups create_group one_group
+arrow groups create_group another_group
+
+# Create a user
+arrow users create_user "test@bx.psu.edu" Junior Galaxy password
+
+# Add some organisms
+cp -r tools/apollo/test-data/dataset_1_files/data/ "${GALAXY_SHARED_DIR}/org1"
+cp -r tools/apollo/test-data/dataset_1_files/data/ "${GALAXY_SHARED_DIR}/org2"
+cp -r tools/apollo/test-data/dataset_1_files/data/ "${GALAXY_SHARED_DIR}/org3"
+arrow organisms add_organism --genus Testus --species organus test_organism $GALAXY_SHARED_DIR/org1
+arrow organisms add_organism --genus Foo --species barus alt_org $GALAXY_SHARED_DIR/org2
+arrow organisms add_organism --genus Foo3 --species barus org3 $GALAXY_SHARED_DIR/org3
+
+# Give access to organisms for test user
+arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" test_organism
+arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" alt_org
+arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" org3
+
+# Load some annotations
+arrow annotations load_gff3 test_organism tools/apollo/test-data/merlin.gff
+arrow annotations load_gff3 alt_org tools/apollo/test-data/merlin.gff
+arrow annotations load_gff3 org3 tools/apollo/test-data/merlin.gff
