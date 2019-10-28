@@ -120,7 +120,7 @@ script:
   - set -e
   - |
     if grep -q "apollo" changed_repositories.list ; then
-      export ARROW_GLOBAL_CONFIG_PATH=`pwd`/test-data/arrow.yml
+      export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
       ./bootstrap_apollo.sh
     fi
   - |
