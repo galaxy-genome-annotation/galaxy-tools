@@ -55,7 +55,7 @@ python '$__tool_directory__/export.py'
           <output name="fasta_pep" file="export/pep.fa" lines_diff="12"/>
           <output name="fasta_cds" file="export/cds.fa" lines_diff="12"/>
           <output name="fasta_cdna" file="export/cdna.fa" lines_diff="12"/>
-          <output name="vcf" file="export/out.vcf" lines_diff="4"/>
+          <output name="vcf_out" file="export/out.vcf" lines_diff="4"/>
           <output name="json_out">
               <assert_contents>
                   <has_text text="test_organism" />

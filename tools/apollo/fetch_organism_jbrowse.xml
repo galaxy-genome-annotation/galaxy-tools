@@ -69,7 +69,7 @@ echo '</ul></body></html>' >> '$jbrowse'
               <param name="source_select" value="direct"/>
               <param name="org_raw" value="alt_org" />
           </conditional>
-          <output name="output">
+          <output name="jbrowse">
               <assert_contents>
                   <has_text text="This is not a full JBrowse instance" />
               </assert_contents>
