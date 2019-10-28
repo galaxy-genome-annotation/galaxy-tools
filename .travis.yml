@@ -76,7 +76,7 @@ before_install:
   - unset JAVA_HOME
 
 install:
-  - pip install planemo
+  - pip install planemo apollo
   # add dependencies to galaxy venv for dynamic options
   - |
     planemo virtualenv /home/travis/.planemo/gx_venv
