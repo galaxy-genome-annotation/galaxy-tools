@@ -97,7 +97,7 @@ if __name__ == '__main__':
         all_orgs = wa.organisms.get_organisms()
         if 'error' in all_orgs:
             all_orgs = []
-        all_orgs = [org['commonName'] for org in all_orgs]
+        all_orgs = [x['commonName'] for x in all_orgs]
         if org_cn not in all_orgs:
             raise Exception("Could not find organism %s" % org_cn)
 
