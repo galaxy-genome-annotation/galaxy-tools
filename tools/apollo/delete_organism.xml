@@ -24,10 +24,6 @@
 
         &&
 
-        echo "Export complete, now deleting" > '$output'
-
-        &&
-
         ## Now we delete
         python '$__tool_directory__/delete_organism.py'
         @ORG_OR_GUESS@
@@ -46,16 +42,16 @@
     <param name="ask_two" type="boolean" truevalue="yes" falsevalue="" label="Are you really, really SURE you want to do this?" help="There's NO coming back from this."/>
   </inputs>
   <outputs>
-    <data format="tabular" name="output" label="Process and Error Log">
+    <data format="json" name="output" label="Process and Error Log">
         <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" visible="true"/>
     </data>
 
-    <data format="gff3" name="gff_out" label="Annotations from Apollo" hidden="true"/>
-    <data format="fasta" name="fasta_pep" label="Peptide sequences from Apollo" hidden="true"/>
-    <data format="fasta" name="fasta_cds" label="CDS sequences from Apollo" hidden="true"/>
-    <data format="fasta" name="fasta_cdna" label="cDNA sequences from Apollo" hidden="true"/>
+    <data format="gff3" name="gff_out" label="Annotations from Apollo"/>
+    <data format="fasta" name="fasta_pep" label="Peptide sequences from Apollo"/>
+    <data format="fasta" name="fasta_cds" label="CDS sequences from Apollo"/>
+    <data format="fasta" name="fasta_cdna" label="cDNA sequences from Apollo"/>
     <data format="vcf" name="vcf_out" label="Sequence alterations from Apollo"/>
-    <data format="json" name="json_out" label="Metadata from Apollo" hidden="true"/>
+    <data format="json" name="json_out" label="Metadata from Apollo"/>
   </outputs>
   <tests>
       <test>
