@@ -107,7 +107,7 @@ if __name__ == '__main__':
     # files / folders before and after.
     sys.stderr.write(' '.join(cmd))
     sys.stderr.write('\n')
-    sys.stderr.write(subprocess.check_output(cmd))
+    sys.stderr.write(subprocess.check_output(cmd).decode(sys.stderr.encoding))
     if not are_dir_trees_equal(
         os.path.join(org['directory'].rstrip('/')),
         os.path.join(args.target_dir, 'data')
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         sys.stderr.write('\n')
         sys.stderr.write(' '.join(cmd))
         sys.stderr.write('\n')
-        sys.stderr.write(subprocess.check_output(cmd))
+        sys.stderr.write(subprocess.check_output(cmd).decode(sys.stderr.encoding))
         if not are_dir_trees_equal(
             os.path.join(org['directory'].rstrip('/'), 'data'),
             os.path.join(args.target_dir, 'data')
@@ -126,7 +126,7 @@ if __name__ == '__main__':
             sys.stderr.write('\n')
             sys.stderr.write(' '.join(cmd))
             sys.stderr.write('\n')
-            sys.stderr.write(subprocess.check_output(cmd))
+            sys.stderr.write(subprocess.check_output(cmd).decode(sys.stderr.encoding))
             if not are_dir_trees_equal(
                 os.path.join(org['directory'].rstrip('/'), 'data'),
                 os.path.join(args.target_dir, 'data')

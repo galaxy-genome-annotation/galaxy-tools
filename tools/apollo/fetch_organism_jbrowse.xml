@@ -64,12 +64,16 @@ echo '</ul></body></html>' >> '$jbrowse'
     </data>
   </outputs>
   <tests>
-      <test expect_failure="true">
+      <test>
           <conditional name="org_source">
               <param name="source_select" value="direct"/>
-              <param name="org_raw" value="Test org" />
+              <param name="org_raw" value="alt_org" />
           </conditional>
-          <expand macro="test_result" />
+          <output name="output">
+              <assert_contents>
+                  <has_text text="This is not a full JBrowse instance" />
+              </assert_contents>
+          </output>
       </test>
   </tests>
   <help><![CDATA[

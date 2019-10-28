@@ -6,11 +6,11 @@ import logging
 import random
 
 from apollo import accessible_organisms
-from apollo.util import GuessOrg, OrgOrGuess
+from apollo.util import GuessOrg, OrgOrGuess, retry
 
 from arrow.apollo import get_apollo_instance
 
-from webapollo import UserObj, handle_credentials, retry
+from webapollo import UserObj, handle_credentials
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     for sequence in sequences['sequences']:
         log.info("Processing %s %s", org['commonName'], sequence['name'])
         # Call setSequence to tell apollo which organism we're working with
-        wa.annotations.set_sequence(sequence['name'], org['id'])  # FIXME is org['id'] the good value??
+        wa.annotations.set_sequence(org['id'], sequence['name'])
         # Then get a list of features.
         features = wa.annotations.get_features()
         # For each feature in the features
@@ -74,7 +74,7 @@ if __name__ == '__main__':
             # We see that deleteFeatures wants a uniqueName, and so we pass
             # is the uniquename field in the feature.
             def fn():
-                wa.annotations.delete_feature([feature['uniquename']])
+                wa.annotations.delete_feature(feature['uniquename'])
                 print('Deleted %s [type=%s]' % (feature['uniquename'], feature['type']['name']))
 
             if not retry(fn, limit=3):

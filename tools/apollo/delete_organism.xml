@@ -34,10 +34,10 @@
         '$__user_email__'
         >> '$output';
     #else
-        echo "Nothing to do" > $output;
+        echo "Nothing to do" > '$output';
     #end if
 #else
-    echo "Nothing to do" > $output;
+    echo "Nothing to do" > '$output';
 #end if
     ]]></command>
   <inputs>
