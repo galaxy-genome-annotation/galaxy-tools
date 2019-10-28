@@ -598,7 +598,7 @@ class UsersClient(Client):
 def handle_credentials(user):
     if hasattr(user, 'new_password'):
         f = open("Apollo_credentials.txt", "w")
-        f.write('Username: %s\nPassword: %s' % (user.username, user.new_password))
+        f.write('Username:\t%s\nPassword:\t%s' % (user.username, user.new_password))
 
 
 def accessible_organisms(user, orgs):
