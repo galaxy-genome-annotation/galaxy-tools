@@ -17,7 +17,8 @@ do
 done
 
 if ! [[ $APOLLO_UP -eq 0 ]]; then
-        echo "Cannot connect to apollo for bootstrapping"
+    echo "Cannot connect to apollo for bootstrapping"
+    arrow users get_users
     exit "${APOLLO_UP}"
 fi
 

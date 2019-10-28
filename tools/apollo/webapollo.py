@@ -620,7 +620,6 @@ def accessible_organisms(user, orgs):
 
 def galaxy_list_groups(trans, *args, **kwargs):
     email = trans.get_user().email
-    # FIXME get credentals from ARROW_GLOBAL_CONFIG_PATH if defined
     wa = WebApolloInstance()
 
     # Key for cached data
