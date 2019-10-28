@@ -149,7 +149,7 @@ if __name__ == '__main__':
         # Group access
         if args.group:
             group = wa.groups.get_groups(name=args.group)[0]
-            res = wa.groups.update_organism_permissions(group, org_cn,
+            res = wa.groups.update_organism_permissions(group['name'], org_cn,
                                                         administrate=False, write=True, read=True,
                                                         export=True)
 
