@@ -32,6 +32,16 @@ def IsBlatEnabled():
         return False
 
 
+def IsOrgCNSuffixEnabled():
+    if 'GALAXY_APOLLO_ORG_SUFFIX' not in os.environ:
+        return False
+    value = os.environ['GALAXY_APOLLO_ORG_SUFFIX']
+    if value.lower() in ('true', 't', '1'):
+        return True
+    else:
+        return False
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
     parser.add_argument('jbrowse_src', help='Old JBrowse Data Directory')
@@ -43,6 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
     parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
+    parser.add_argument('--userid', help='User unique id')
     args = parser.parse_args()
     CHUNK_SIZE = 2**20
     blat_db = None
@@ -84,6 +95,12 @@ if __name__ == '__main__':
     org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
+
+    if IsOrgCNSuffixEnabled() and args.org_raw:
+        if args.userid:
+            org_cn += '_' + args.userid
+        else:
+            org_cn += ' (' + args.email + ')'
 
     log.info("Determining if add or update required")
     try:

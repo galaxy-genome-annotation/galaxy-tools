@@ -7,7 +7,7 @@ Uses `python-apollo <https://github.com/galaxy-genome-annotation/python-apollo>`
 Environment
 -----------
 
-The following environment variables must be set:
+The following environment variables can be set:
 
 +--------------------------------+-----------------------------------------------------------+
 | ENV                            | Use                                                       |
@@ -20,8 +20,10 @@ The following environment variables must be set:
 |                                |                                                           |
 +--------------------------------+-----------------------------------------------------------+
 | ``$GALAXY_WEBAPOLLO_PASSWORD`` | The password for the admin user.                          |
-|                                |                                                           |
-|                                |                                                           |
++--------------------------------+-----------------------------------------------------------+
+| ``$ARROW_GLOBAL_CONFIG_PATH``  | Path to a python-apollo/arrow conf file. Use in place of  |
+|                                | ``$GALAXY_WEBAPOLLO_URL``, ``$GALAXY_WEBAPOLLO_USER``     |
+|                                | and ``$GALAXY_WEBAPOLLO_PASSWORD``.                       |
 +--------------------------------+-----------------------------------------------------------+
 | ``$GALAXY_WEBAPOLLO_EXT_URL``  | May be relative or absolute.                              |
 |                                | The external URL at which Apollo is accessible to end     |
@@ -30,9 +32,9 @@ The following environment variables must be set:
 | ``$GALAXY_SHARED_DIR``         | Directory shared between Galaxy and Apollo, used to       |
 |                                | exchange JBrowse instances.                               |
 +--------------------------------+-----------------------------------------------------------+
-
-As an alternative to ``$GALAXY_WEBAPOLLO_URL``, ``$GALAXY_WEBAPOLLO_USER`` and ``$GALAXY_WEBAPOLLO_PASSWORD``, you can
-define ``ARROW_GLOBAL_CONFIG_PATH`` with the path to a python-apollo/arrow conf file.
+| ``$GALAXY_APOLLO_ORG_SUFFIX `` | Set to 1 if you want organism names to be suffixed with   |
+|                                | username to avoid name collisions                         |
++--------------------------------+-----------------------------------------------------------+
 
 License
 -------

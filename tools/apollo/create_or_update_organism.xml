@@ -19,6 +19,9 @@ python '$__tool_directory__/create_or_update_organism.py'
 --group '${group}'
 #end if
 
+## Uncomment if you prefer to have user id instead of email as common name suffix)
+##--userid '$__user_id__'
+
 ${remove_old_directory}
 $public
 
