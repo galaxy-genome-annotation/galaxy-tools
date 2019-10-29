@@ -36,7 +36,7 @@ def IsOrgCNSuffixEnabled():
     if 'GALAXY_APOLLO_ORG_SUFFIX' not in os.environ:
         return False
     value = os.environ['GALAXY_APOLLO_ORG_SUFFIX']
-    if value.lower() in ('true', 't', '1'):
+    if value.lower() in ('id', 'email'):
         return True
     else:
         return False
@@ -97,10 +97,10 @@ if __name__ == '__main__':
         org_cn = org_cn[0]
 
     if IsOrgCNSuffixEnabled() and args.org_raw:
-        if args.userid:
-            org_cn += '_' + args.userid
-        else:
-            org_cn += ' (' + args.email + ')'
+        if os.environ['GALAXY_APOLLO_ORG_SUFFIX'] == 'id' and args.userid:
+            org_cn += ' (gx%s)' % args.userid
+        elif os.environ['GALAXY_APOLLO_ORG_SUFFIX'] == 'email':
+            org_cn += ' (%s)' % args.email
 
     log.info("Determining if add or update required")
     try:

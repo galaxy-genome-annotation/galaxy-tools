@@ -32,8 +32,9 @@ The following environment variables can be set:
 | ``$GALAXY_SHARED_DIR``         | Directory shared between Galaxy and Apollo, used to       |
 |                                | exchange JBrowse instances.                               |
 +--------------------------------+-----------------------------------------------------------+
-| ``$GALAXY_APOLLO_ORG_SUFFIX `` | Set to 1 if you want organism names to be suffixed with   |
-|                                | username to avoid name collisions                         |
+| ``$GALAXY_APOLLO_ORG_SUFFIX``  | Set to 'id' if you want organism names to be suffixed     |
+|                                | with user id to avoid name collisions. Set to 'email' to  |
+|                                | use user email as suffix. Leave empty for no suffix.      |
 +--------------------------------+-----------------------------------------------------------+
 
 License
