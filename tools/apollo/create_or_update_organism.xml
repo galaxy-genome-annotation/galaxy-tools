@@ -60,7 +60,7 @@ $public
           </conditional>
           <param name="genus" value="genus"/>
           <param name="test_hack" value="yes"/>
-          <output name="output" file="create_org/output.json"/>
+          <output name="output" file="create_org/output.json" lines_diff="4"/>
       </test>
       <test>
           <param name="jbrowse" value="dataset_1.dat"/>
@@ -71,7 +71,7 @@ $public
           <param name="genus" value="genus2"/>
           <param name="species" value="sp"/>
           <param name="test_hack" value="yes"/>
-          <output name="output" file="create_org/output2.json"/>
+          <output name="output" file="create_org/output2.json" lines_diff="4"/>
       </test>
   </tests>
   <help><![CDATA[
