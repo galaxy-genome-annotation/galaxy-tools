@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import argparse
 import logging
+import os
 
 from apollo import accessible_organisms
 from apollo.util import GuessOrg, OrgOrGuess
@@ -13,6 +14,10 @@ from webapollo import UserObj, handle_credentials
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
+
+def IsRemote():
+    return 'GALAXY_SHARED_DIR' not in os.environ or len(os.environ['GALAXY_SHARED_DIR'].lower().strip()) == 0
 
 
 if __name__ == '__main__':
@@ -47,4 +52,7 @@ if __name__ == '__main__':
 
     wa.organisms.delete_features(org['id'])
 
-    print(wa.organisms.delete_organism(org['id']))
+    if IsRemote():
+        print(wa.remote.delete_organism(org['commonName']))
+    else:
+        print(wa.organisms.delete_organism(org['id']))

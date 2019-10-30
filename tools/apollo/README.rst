@@ -30,7 +30,8 @@ The following environment variables can be set:
 |                                | users.                                                    |
 +--------------------------------+-----------------------------------------------------------+
 | ``$GALAXY_SHARED_DIR``         | Directory shared between Galaxy and Apollo, used to       |
-|                                | exchange JBrowse instances.                               |
+|                                | exchange JBrowse instances. If not set, JBrowse data will |
+|                                | be zipped and sent to the remote server.                  |
 +--------------------------------+-----------------------------------------------------------+
 | ``$GALAXY_APOLLO_ORG_SUFFIX``  | Set to 'id' if you want organism names to be suffixed     |
 |                                | with user id to avoid name collisions. Set to 'email' to  |
