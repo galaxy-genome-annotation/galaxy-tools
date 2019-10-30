@@ -2,12 +2,15 @@
 from __future__ import print_function
 
 import argparse
+import glob
 import json
 import logging
 import os
 import shutil
+import stat
 import subprocess
 import sys
+import tarfile
 import tempfile
 import time
 
@@ -42,12 +45,14 @@ def IsOrgCNSuffixEnabled():
     return False
 
 
+def IsRemote():
+    return 'GALAXY_SHARED_DIR' not in os.environ or len(os.environ['GALAXY_SHARED_DIR'].lower().strip()) == 0
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
-    parser.add_argument('jbrowse_src', help='Old JBrowse Data Directory')
-    parser.add_argument('jbrowse', help='JBrowse Data Directory')
+    parser.add_argument('jbrowse_src', help='Source JBrowse Data Directory')
+    parser.add_argument('jbrowse', help='Destination JBrowse Data Directory')
     parser.add_argument('email', help='User Email')
     OrgOrGuess(parser)
     parser.add_argument('--genus', help='Organism Genus')
@@ -60,33 +65,33 @@ if __name__ == '__main__':
     CHUNK_SIZE = 2**20
     blat_db = None
 
-    # Cleanup if existing
-    if(os.path.exists(args.jbrowse)):
-        shutil.rmtree(args.jbrowse)
-    # Copy files
-    shutil.copytree(args.jbrowse_src, args.jbrowse, symlinks=True)
+    path_fasta = args.jbrowse_src + '/seq/genome.fasta'
 
-    path_fasta = args.jbrowse + '/seq/genome.fasta'
-    path_2bit = args.jbrowse + '/seq/genome.2bit'
+    # Cleanup if existing
+    if not IsRemote():
+        if(os.path.exists(args.jbrowse)):
+            shutil.rmtree(args.jbrowse)
+        # Copy files
+        shutil.copytree(args.jbrowse_src, args.jbrowse, symlinks=True)
+
+        path_2bit = args.jbrowse + '/seq/genome.2bit'
+    else:
+        path_2bit = tempfile.NamedTemporaryFile(prefix="genome.2bit")
+        path_2bit = path_2bit.name
+        os.chmod(path_2bit, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     # Convert fasta if existing
-    if(IsBlatEnabled() and os.path.exists(path_fasta)):
+    if IsBlatEnabled() and os.path.exists(path_fasta):
         arg = ['faToTwoBit', path_fasta, path_2bit]
-        tmp_stderr = tempfile.NamedTemporaryFile(prefix="tmp-twobit-converter-stderr")
-        proc = subprocess.Popen(args=arg, shell=False, cwd=args.jbrowse, stderr=tmp_stderr.fileno())
-        return_code = proc.wait()
-        if return_code:
-            tmp_stderr.flush()
-            tmp_stderr.seek(0)
+        proc = subprocess.Popen(args=arg, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = proc.communicate()
+        if proc.returncode:
             print("Error building index:", file=sys.stderr)
-            while True:
-                chunk = tmp_stderr.read(CHUNK_SIZE)
-                if not chunk:
-                    break
-                sys.stderr.write(chunk)
-            sys.exit(return_code)
-        blat_db = path_2bit
-        tmp_stderr.close()
+            sys.stderr.write(err)
+            sys.exit(proc.returncode)
+        if not IsRemote():
+            # No need to send this in remote mode, it will be in the archive
+            blat_db = path_2bit
 
     wa = get_apollo_instance()
 
@@ -126,18 +131,37 @@ if __name__ == '__main__':
             raise Exception("Naming Conflict. You do not have write permission on this organism. Either request permission from the owner, or choose a different name for your organism.")
 
         log.info("\tUpdating Organism")
-        data = wa.organisms.update_organism(
-            org['id'],
-            org_cn,
-            args.jbrowse,
-            # mandatory
-            genus=args.genus,
-            species=args.species,
-            public=args.public,
-            blatdb=blat_db
-        )
+        if IsRemote():
+            with tempfile.NamedTemporaryFile(suffix='.tar.gz') as archive:
+                with tarfile.open(archive.name, mode="w:gz") as tar:
+                    dataset_data_dir = args.jbrowse_src
+                    for file in glob.glob(dataset_data_dir):
+                        tar.add(file, arcname=file.replace(dataset_data_dir, './'))
+                    if IsBlatEnabled():
+                        tar.add(path_2bit, arcname="./searchDatabaseData/genome.2bit")
+                data = wa.remote.update_organism(
+                    org['id'],
+                    archive,
+                    # mandatory
+                    blatdb=blat_db,
+                    genus=args.genus,
+                    species=args.species,
+                    public=args.public
+                )
+        else:
+            data = wa.organisms.update_organism(
+                org['id'],
+                org_cn,
+                args.jbrowse,
+                # mandatory
+                genus=args.genus,
+                species=args.species,
+                public=args.public,
+                blatdb=blat_db
+            )
         time.sleep(2)
-        if args.remove_old_directory and args.jbrowse != old_directory:
+
+        if not IsRemote() and args.remove_old_directory and args.jbrowse != old_directory:
             shutil.rmtree(old_directory)
 
         data = wa.organisms.show_organism(org_cn)
@@ -145,15 +169,39 @@ if __name__ == '__main__':
     else:
         # New organism
         log.info("\tAdding Organism")
-        data = wa.organisms.add_organism(
-            org_cn,
-            args.jbrowse,
-            blatdb=blat_db,
-            genus=args.genus,
-            species=args.species,
-            public=args.public,
-            metadata=None
-        )
+
+        if IsRemote():
+            with tempfile.NamedTemporaryFile(suffix='.tar.gz') as archive:
+                with tarfile.open(archive.name, mode="w:gz") as tar:
+                    dataset_data_dir = args.jbrowse_src
+                    for file in glob.glob(dataset_data_dir):
+                        tar.add(file, arcname=file.replace(dataset_data_dir, './'))
+                    if IsBlatEnabled():
+                        with tempfile.TemporaryDirectory() as empty_dir:
+                            os.chmod(empty_dir, stat.S_IRUSR | stat.S_IXUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                            tar.add(empty_dir, arcname="./searchDatabaseData/")
+                            tar.add(path_2bit, arcname="./searchDatabaseData/genome.2bit")
+                data = wa.remote.add_organism(
+                    org_cn,
+                    archive,
+                    blatdb=blat_db,
+                    genus=args.genus,
+                    species=args.species,
+                    public=args.public,
+                    metadata=None
+                )
+                if isinstance(data, list) and len(data) > 0:
+                    data = data[0]
+        else:
+            data = wa.organisms.add_organism(
+                org_cn,
+                args.jbrowse,
+                blatdb=blat_db,
+                genus=args.genus,
+                species=args.species,
+                public=args.public,
+                metadata=None
+            )
 
         # Must sleep before we're ready to handle
         time.sleep(2)

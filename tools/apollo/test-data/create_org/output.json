@@ -1,6 +1,6 @@
 {
   "commonName": "Test org",
-  "blatdb": null,
+  "blatdb": "/data/temporary/apollo_data/1384-Test_org/searchDatabaseData/genome.2bit",
   "metadata": "{\"creator\":\"20\"}",
   "annotationCount": 0,
   "currentOrganism": true,
