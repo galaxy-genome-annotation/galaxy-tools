@@ -76,8 +76,8 @@ if __name__ == '__main__':
 
         path_2bit = args.jbrowse + '/seq/genome.2bit'
     else:
-        path_2bit = tempfile.NamedTemporaryFile(prefix="genome.2bit")
-        path_2bit = path_2bit.name
+        twobittemp = tempfile.NamedTemporaryFile(prefix="genome.2bit")
+        path_2bit = twobittemp.name
         os.chmod(path_2bit, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     # Convert fasta if existing
