@@ -35,11 +35,13 @@ def IsBlatEnabled():
 def IsOrgCNSuffixEnabled():
     if 'GALAXY_APOLLO_ORG_SUFFIX' not in os.environ:
         return False
-    value = os.environ['GALAXY_APOLLO_ORG_SUFFIX']
-    if value.lower() in ('id', 'email'):
-        return True
-    else:
-        return False
+    value = os.environ['GALAXY_APOLLO_ORG_SUFFIX'].lower()
+    if value in ('id', 'email'):
+        return value
+
+    return False
+
+
 
 
 if __name__ == '__main__':
@@ -96,10 +98,11 @@ if __name__ == '__main__':
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    if IsOrgCNSuffixEnabled() and args.org_raw:
-        if os.environ['GALAXY_APOLLO_ORG_SUFFIX'] == 'id' and args.userid:
+    if args.org_raw:
+        suffix = IsOrgCNSuffixEnabled()
+        if suffix == 'id' and args.userid:
             org_cn += ' (gx%s)' % args.userid
-        elif os.environ['GALAXY_APOLLO_ORG_SUFFIX'] == 'email':
+        elif suffix == 'email':
             org_cn += ' (%s)' % args.email
 
     log.info("Determining if add or update required")
