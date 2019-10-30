@@ -43,8 +43,9 @@ jobs:
       env: CHUNK=3
 
     - stage: test
-      env: APOLLO_REMOTE=1
-      env: CHUNK=0 # set to avoid error
+      env:
+        - APOLLO_REMOTE=1
+        - CHUNK=0 # set to avoid error
 
       script:
         - set -e
@@ -60,7 +61,6 @@ jobs:
               planemo test --galaxy_branch "$GALAXY_RELEASE" --galaxy_source "$GALAXY_REPO" $(cat changed_tools_chunk.list)
             fi
           fi
-        - |
 
     - stage: deploy
       if: (type = push) AND (branch = master)
