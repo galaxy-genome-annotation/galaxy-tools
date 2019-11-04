@@ -157,7 +157,8 @@ if __name__ == '__main__':
                 genus=args.genus,
                 species=args.species,
                 public=args.public,
-                blatdb=blat_db
+                blatdb=blat_db,
+                no_reload_sequences=True
             )
         time.sleep(2)
 
