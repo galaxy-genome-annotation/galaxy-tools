@@ -33,7 +33,7 @@ python '$__tool_directory__/create_features_from_gff3.py'
               <param name="org_raw" value="Test org" />
           </conditional>
           <param name="gff3_data" value="merlin.gff"/>
-          <output name="output" file="load_gff3/output.tsv"/>
+          <output name="output" file="load_gff3/output.tsv" compare="sim_size"/>
       </test>
   </tests>
   <help><![CDATA[

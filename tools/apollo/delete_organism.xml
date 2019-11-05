@@ -82,7 +82,7 @@
           <output name="output">
               <assert_contents>
                   <has_text text="org3" />
-                  <has_text text="apollo_shared_dir/org3" />
+                  <has_text text="org3" />
               </assert_contents>
           </output>
       </test>
