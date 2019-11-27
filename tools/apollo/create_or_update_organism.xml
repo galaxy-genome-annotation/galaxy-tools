@@ -22,6 +22,7 @@ python '$__tool_directory__/create_or_update_organism.py'
 --userid '$__user_id__'
 
 ${remove_old_directory}
+${no_reload_sequences}
 $public
 
 @ORG_OR_GUESS@
@@ -46,6 +47,7 @@ $public
     <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
     <param name="group" type="select" dynamic_options="galaxy_list_groups(__trans__)" label="Grant access to a user group" optional="True" />
     <param name="remove_old_directory" type="boolean" truevalue="--remove_old_directory" falsevalue="" label="Remove old data directory" />
+    <param name="no_reload_sequences" type="boolean" truevalue="" falsevalue="--no_reload_sequences" label="Update genome sequences" help="Select this if you want Apollo to reload the genome sequences when updating an existing organism. BEWARE! You will lose annotation data for all sequences that are not present anymore in the new jbrowse dataset." />
     <param name="test_hack" type="hidden" value="no"/>
   </inputs>
   <outputs>

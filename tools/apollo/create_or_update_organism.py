@@ -60,6 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
     parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
+    parser.add_argument('--no_reload_sequences', action='store_true', help='Disable update genome sequence')
     parser.add_argument('--userid', help='User unique id')
     args = parser.parse_args()
     CHUNK_SIZE = 2**20
@@ -146,7 +147,8 @@ if __name__ == '__main__':
                     blatdb=blat_db,
                     genus=args.genus,
                     species=args.species,
-                    public=args.public
+                    public=args.public,
+                    no_reload_sequences=args.no_reload_sequences
                 )
         else:
             data = wa.organisms.update_organism(
@@ -157,7 +159,8 @@ if __name__ == '__main__':
                 genus=args.genus,
                 species=args.species,
                 public=args.public,
-                blatdb=blat_db
+                blatdb=blat_db,
+                no_reload_sequences=args.no_reload_sequences
             )
         time.sleep(2)
 
