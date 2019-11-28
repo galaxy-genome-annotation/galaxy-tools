@@ -6,7 +6,6 @@
   </macros>
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
-  which python &&
 @AUTH@
 
 python '$__tool_directory__/list_organisms.py'
