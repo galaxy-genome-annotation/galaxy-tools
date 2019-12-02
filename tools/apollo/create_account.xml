@@ -6,14 +6,14 @@
   </macros>
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
-python $__tool_directory__/create_account.py
+@AUTH@
 
-@ADMIN_AUTH@
+python '$__tool_directory__/create_account.py'
 
-$__user_email__
+'$__user_email__'
 
---first "$first"
---last "$last"
+--first '$first'
+--last '$last'
 > $output]]></command>
   <inputs>
     <param name="first" type="text" label="First Name" />
@@ -23,11 +23,18 @@ $__user_email__
     <data format="txt" name="output" label="Apollo Credentials"/>
   </outputs>
   <tests>
-      <test expect_failure="true">
+      <test>
           <param name="first" value="first" />
           <param name="last" value="last" />
-
-          <expand macro="test_result" />
+          <output name="output">
+              <assert_contents>
+                  <has_text text="Updated User" />
+                  <has_text text="Password:" />
+                  <has_text text="Return data:" />
+                  <has_text text="alt_org" />
+                  <has_text text="test_organism" />
+              </assert_contents>
+          </output>
       </test>
   </tests>
   <help><![CDATA[

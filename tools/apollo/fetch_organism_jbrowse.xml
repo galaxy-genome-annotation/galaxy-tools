@@ -7,21 +7,22 @@
   <expand macro="requirements"/>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
-mkdir -p $jbrowse.files_path/
+mkdir -p '$jbrowse.files_path/'
 
 &&
 
-python $__tool_directory__/fetch_organism_jbrowse.py
-@ADMIN_AUTH@
+@AUTH@
+
+python '$__tool_directory__/fetch_organism_jbrowse.py'
 
 @ORG_OR_GUESS@
-$jbrowse.files_path/
+'$jbrowse.files_path/'
 
-"$__user_email__" &&
+'$__user_email__' &&
 
-cp $dummyIndex $jbrowse &&
-find $jbrowse.files_path -type f -printf '<li><a href="%P">%P</a></li>\n' | sort >> $jbrowse &&
-echo '</ul></body></html>' >> $jbrowse
+cp '$dummyIndex' '$jbrowse' &&
+find '$jbrowse.files_path' -type f -printf '<li><a href="%P">%P</a></li>\n' | sort >> $jbrowse &&
+echo '</ul></body></html>' >> '$jbrowse'
 
 ]]></command>
   <configfiles>
@@ -63,12 +64,16 @@ echo '</ul></body></html>' >> $jbrowse
     </data>
   </outputs>
   <tests>
-      <test expect_failure="true">
+      <test>
           <conditional name="org_source">
               <param name="source_select" value="direct"/>
-              <param name="org_raw" value="Test org" />
+              <param name="org_raw" value="alt_org" />
           </conditional>
-          <expand macro="test_result" />
+          <output name="jbrowse">
+              <assert_contents>
+                  <has_text text="This is not a full JBrowse instance" />
+              </assert_contents>
+          </output>
       </test>
   </tests>
   <help><![CDATA[

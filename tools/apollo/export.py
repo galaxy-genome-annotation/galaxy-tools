@@ -3,89 +3,86 @@ from __future__ import print_function
 
 import argparse
 import json
-import sys
+import time
 
-from BCBio import GFF
+from apollo import accessible_organisms
+from apollo.util import CnOrGuess, GuessCn
 
-from Bio import SeqIO
+from arrow.apollo import get_apollo_instance
 
-from webapollo import CnOrGuess, GuessCn, PermissionCheck, WAAuth, WebApolloInstance
-
-try:
-    import StringIO as io
-except ImportError:
-    import io
-
-
-def export(org_cn, seqs):
-    org_data = wa.organisms.findOrganismByCn(org_cn)
-
-    data = io.StringIO()
-
-    kwargs = dict(
-        exportType='GFF3',
-        seqType='genomic',
-        exportGff3Fasta=True,
-        output="text",
-        exportFormat="text",
-        organism=org_cn,
-    )
-
-    if len(seqs) > 0:
-        data.write(wa.io.write(
-            exportAllSequences=False,
-            sequences=seqs,
-            **kwargs
-        ).encode('utf-8'))
-    else:
-        data.write(wa.io.write(
-            exportAllSequences=True,
-            sequences=[],
-            **kwargs
-        ).encode('utf-8'))
-
-    # Seek back to start
-    data.seek(0)
-
-    records = list(GFF.parse(data))
-    if len(records) == 0:
-        print("Could not find any sequences or annotations for this organism + reference sequence")
-        sys.exit(2)
-    else:
-        for record in records:
-            record.annotations = {}
-            record.features = sorted(record.features, key=lambda x: x.location.start)
-            if args.gff:
-                GFF.write([record], args.gff)
-            record.description = ""
-            if args.fasta:
-                SeqIO.write([record], args.fasta, 'fasta')
-
-    return org_data
-
+from webapollo import UserObj, handle_credentials
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
-    WAAuth(parser)
+    parser = argparse.ArgumentParser(description='Script to export data from Apollo via web services')
     CnOrGuess(parser)
     parser.add_argument('--gff', type=argparse.FileType('w'))
-    parser.add_argument('--fasta', type=argparse.FileType('w'))
+    parser.add_argument('--fasta_pep', type=argparse.FileType('w'))
+    parser.add_argument('--fasta_cds', type=argparse.FileType('w'))
+    parser.add_argument('--fasta_cdna', type=argparse.FileType('w'))
+    parser.add_argument('--vcf', type=argparse.FileType('w'))
     parser.add_argument('--json', type=argparse.FileType('w'))
     parser.add_argument('email', help='User Email')
     args = parser.parse_args()
 
-    wa = WebApolloInstance(args.apollo, args.username, args.password)
-
-    org_cn_list, seqs = GuessCn(args, wa)
+    wa = get_apollo_instance()
 
     # User must have an apollo account, if not, create it
-    gx_user = wa.users.assertOrCreateUser(args.email)
+    gx_user = UserObj(**wa.users._assert_or_create_user(args.email))
+    handle_credentials(gx_user)
+
+    org_cns, seqs = GuessCn(args, wa)
+    if not isinstance(org_cns, list):
+        org_cns = [org_cns]
+
+    all_orgs = wa.organisms.get_organisms()
+    if 'error' in all_orgs:
+        all_orgs = []
+    all_orgs = [org['commonName'] for org in all_orgs]
 
     org_data = []
-    for org_cn in org_cn_list:
-        # User must have read permission on organism
-        if not PermissionCheck(gx_user, org_cn, "READ"):
-            continue
-        indiv_org_data = export(org_cn, seqs)
-        org_data.append(indiv_org_data)
+    for org_cn in org_cns:
+        if org_cn not in all_orgs:
+            raise Exception("Could not find organism %s" % org_cn)
+
+        orgs = accessible_organisms(gx_user, [org_cn], 'READ')
+        if not orgs:
+            raise Exception("You do not have read permission on organism %s" % org_cn)
+
+        org = wa.organisms.show_organism(org_cn)
+
+        uuid_gff = wa.io.write_downloadable(org['commonName'], 'GFF3', export_gff3_fasta=True, sequences=seqs)
+        if 'error' in uuid_gff or 'uuid' not in uuid_gff:
+            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_gff)
+        args.gff.write(wa.io.download(uuid_gff['uuid'], output_format="text"))
+
+        time.sleep(1)
+
+        uuid_vcf = wa.io.write_downloadable(org['commonName'], 'VCF', sequences=seqs)
+        if 'error' in uuid_vcf or 'uuid' not in uuid_vcf:
+            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_vcf)
+        args.vcf.write(wa.io.download(uuid_vcf['uuid'], output_format="text"))
+
+        time.sleep(1)
+
+        uuid_fa = wa.io.write_downloadable(org['commonName'], 'FASTA', sequences=seqs, seq_type='cdna')
+        if 'error' in uuid_fa or 'uuid' not in uuid_fa:
+            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_fa)
+        args.fasta_cdna.write(wa.io.download(uuid_fa['uuid'], output_format="text"))
+
+        time.sleep(1)
+
+        uuid_fa = wa.io.write_downloadable(org['commonName'], 'FASTA', sequences=seqs, seq_type='cds')
+        if 'error' in uuid_fa or 'uuid' not in uuid_fa:
+            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_fa)
+        args.fasta_cds.write(wa.io.download(uuid_fa['uuid'], output_format="text"))
+
+        time.sleep(1)
+
+        uuid_fa = wa.io.write_downloadable(org['commonName'], 'FASTA', sequences=seqs, seq_type='peptide')
+        if 'error' in uuid_fa or 'uuid' not in uuid_fa:
+            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_fa)
+        args.fasta_pep.write(wa.io.download(uuid_fa['uuid'], output_format="text"))
+
+        org_data.append(org)
+
     args.json.write(json.dumps(org_data, indent=2))

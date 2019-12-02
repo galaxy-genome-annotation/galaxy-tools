@@ -2,17 +2,25 @@
 from __future__ import print_function
 
 import argparse
+import glob
 import json
 import logging
 import os
 import shutil
+import stat
 import subprocess
 import sys
+import tarfile
 import tempfile
 import time
 
+from apollo import accessible_organisms
+from apollo.util import GuessOrg, OrgOrGuess
 
-from webapollo import GuessOrg, OrgOrGuess, PermissionCheck, WAAuth, WebApolloInstance
+from arrow.apollo import get_apollo_instance
+
+from webapollo import UserObj, handle_credentials
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -27,11 +35,24 @@ def IsBlatEnabled():
         return False
 
 
+def IsOrgCNSuffixEnabled():
+    if 'GALAXY_APOLLO_ORG_SUFFIX' not in os.environ:
+        return False
+    value = os.environ['GALAXY_APOLLO_ORG_SUFFIX'].lower()
+    if value in ('id', 'email'):
+        return value
+
+    return False
+
+
+def IsRemote():
+    return 'GALAXY_SHARED_DIR' not in os.environ or len(os.environ['GALAXY_SHARED_DIR'].lower().strip()) == 0
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create or update an organism in an Apollo instance')
-    WAAuth(parser)
-    parser.add_argument('jbrowse_src', help='Old JBrowse Data Directory')
-    parser.add_argument('jbrowse', help='JBrowse Data Directory')
+    parser.add_argument('jbrowse_src', help='Source JBrowse Data Directory')
+    parser.add_argument('jbrowse', help='Destination JBrowse Data Directory')
     parser.add_argument('email', help='User Email')
     OrgOrGuess(parser)
     parser.add_argument('--genus', help='Organism Genus')
@@ -39,94 +60,158 @@ if __name__ == '__main__':
     parser.add_argument('--public', action='store_true', help='Make organism public')
     parser.add_argument('--group', help='Give access to a user group')
     parser.add_argument('--remove_old_directory', action='store_true', help='Remove old directory')
+    parser.add_argument('--no_reload_sequences', action='store_true', help='Disable update genome sequence')
+    parser.add_argument('--userid', help='User unique id')
     args = parser.parse_args()
     CHUNK_SIZE = 2**20
     blat_db = None
 
-    # Cleanup if existing
-    if(os.path.exists(args.jbrowse)):
-        shutil.rmtree(args.jbrowse)
-    # Copy files
-    shutil.copytree(args.jbrowse_src, args.jbrowse, symlinks=True)
+    path_fasta = args.jbrowse_src + '/seq/genome.fasta'
 
-    path_fasta = args.jbrowse + '/seq/genome.fasta'
-    path_2bit = args.jbrowse + '/seq/genome.2bit'
+    # Cleanup if existing
+    if not IsRemote():
+        if(os.path.exists(args.jbrowse)):
+            shutil.rmtree(args.jbrowse)
+        # Copy files
+        shutil.copytree(args.jbrowse_src, args.jbrowse, symlinks=True)
+
+        path_2bit = args.jbrowse + '/seq/genome.2bit'
+    else:
+        twobittemp = tempfile.NamedTemporaryFile(prefix="genome.2bit")
+        path_2bit = twobittemp.name
+        os.chmod(path_2bit, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     # Convert fasta if existing
-    if(IsBlatEnabled() and os.path.exists(path_fasta)):
+    if IsBlatEnabled() and os.path.exists(path_fasta):
         arg = ['faToTwoBit', path_fasta, path_2bit]
-        tmp_stderr = tempfile.NamedTemporaryFile(prefix="tmp-twobit-converter-stderr")
-        proc = subprocess.Popen(args=arg, shell=False, cwd=args.jbrowse, stderr=tmp_stderr.fileno())
-        return_code = proc.wait()
-        if return_code:
-            tmp_stderr.flush()
-            tmp_stderr.seek(0)
+        proc = subprocess.Popen(args=arg, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = proc.communicate()
+        if proc.returncode:
             print("Error building index:", file=sys.stderr)
-            while True:
-                chunk = tmp_stderr.read(CHUNK_SIZE)
-                if not chunk:
-                    break
-                sys.stderr.write(chunk)
-            sys.exit(return_code)
-        blat_db = path_2bit
-        tmp_stderr.close()
+            sys.stderr.write(err)
+            sys.exit(proc.returncode)
+        if not IsRemote():
+            # No need to send this in remote mode, it will be in the archive
+            blat_db = path_2bit
 
-    wa = WebApolloInstance(args.apollo, args.username, args.password)
+    wa = get_apollo_instance()
+
+    # User must have an account, if not, create it
+    gx_user = UserObj(**wa.users._assert_or_create_user(args.email))
+    handle_credentials(gx_user)
 
     org_cn = GuessOrg(args, wa)
     if isinstance(org_cn, list):
         org_cn = org_cn[0]
 
-    # User must have an account, if not, create it
-    gx_user = wa.users.assertOrCreateUser(args.email)
+    if args.org_raw:
+        suffix = IsOrgCNSuffixEnabled()
+        if suffix == 'id' and args.userid:
+            org_cn += ' (gx%s)' % args.userid
+        elif suffix == 'email':
+            org_cn += ' (%s)' % args.email
 
     log.info("Determining if add or update required")
     try:
-        org = wa.organisms.findOrganismByCn(org_cn)
+        org = wa.organisms.show_organism(org_cn)
     except Exception:
         org = None
 
-    if org:
+    if org and 'error' not in org:
         old_directory = org['directory']
 
-        if not PermissionCheck(gx_user, org_cn, "WRITE"):
-            print("Naming Conflict. You do not have permissions to access this organism. Either request permission from the owner, or choose a different name for your organism.")
-            sys.exit(2)
+        all_orgs = wa.organisms.get_organisms()
+        if 'error' in all_orgs:
+            all_orgs = []
+        all_orgs = [x['commonName'] for x in all_orgs]
+        if org_cn not in all_orgs:
+            raise Exception("Could not find organism %s" % org_cn)
+
+        orgs = accessible_organisms(gx_user, [org_cn], 'WRITE')
+        if not orgs:
+            raise Exception("Naming Conflict. You do not have write permission on this organism. Either request permission from the owner, or choose a different name for your organism.")
 
         log.info("\tUpdating Organism")
-        data = wa.organisms.updateOrganismInfo(
-            org['id'],
-            org_cn,
-            args.jbrowse,
-            # mandatory
-            genus=args.genus,
-            species=args.species,
-            public=args.public,
-            blatdb=blat_db
-        )
+        if IsRemote():
+            with tempfile.NamedTemporaryFile(suffix='.tar.gz') as archive:
+                with tarfile.open(archive.name, mode="w:gz") as tar:
+                    dataset_data_dir = args.jbrowse_src
+                    for file in glob.glob(dataset_data_dir):
+                        tar.add(file, arcname=file.replace(dataset_data_dir, './'))
+                    if IsBlatEnabled():
+                        tar.add(path_2bit, arcname="./searchDatabaseData/genome.2bit")
+                data = wa.remote.update_organism(
+                    org['id'],
+                    archive,
+                    # mandatory
+                    blatdb=blat_db,
+                    genus=args.genus,
+                    species=args.species,
+                    public=args.public,
+                    no_reload_sequences=args.no_reload_sequences
+                )
+        else:
+            data = wa.organisms.update_organism(
+                org['id'],
+                org_cn,
+                args.jbrowse,
+                # mandatory
+                genus=args.genus,
+                species=args.species,
+                public=args.public,
+                blatdb=blat_db,
+                no_reload_sequences=args.no_reload_sequences
+            )
         time.sleep(2)
-        if args.remove_old_directory and args.jbrowse != old_directory:
+
+        if not IsRemote() and args.remove_old_directory and args.jbrowse != old_directory:
             shutil.rmtree(old_directory)
 
-        data = [wa.organisms.findOrganismById(org['id'])]
+        data = wa.organisms.show_organism(org_cn)
 
     else:
         # New organism
         log.info("\tAdding Organism")
-        data = wa.organisms.addOrganism(
-            org_cn,
-            args.jbrowse,
-            genus=args.genus,
-            species=args.species,
-            public=args.public,
-            blatdb=blat_db
-        )
+
+        if IsRemote():
+            with tempfile.NamedTemporaryFile(suffix='.tar.gz') as archive:
+                with tarfile.open(archive.name, mode="w:gz") as tar:
+                    dataset_data_dir = args.jbrowse_src
+                    for file in glob.glob(dataset_data_dir):
+                        tar.add(file, arcname=file.replace(dataset_data_dir, './'))
+                    if IsBlatEnabled():
+                        with tempfile.TemporaryDirectory() as empty_dir:
+                            os.chmod(empty_dir, stat.S_IRUSR | stat.S_IXUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                            tar.add(empty_dir, arcname="./searchDatabaseData/")
+                            tar.add(path_2bit, arcname="./searchDatabaseData/genome.2bit")
+                data = wa.remote.add_organism(
+                    org_cn,
+                    archive,
+                    blatdb=blat_db,
+                    genus=args.genus,
+                    species=args.species,
+                    public=args.public,
+                    metadata=None
+                )
+                if isinstance(data, list) and len(data) > 0:
+                    data = data[0]
+        else:
+            data = wa.organisms.add_organism(
+                org_cn,
+                args.jbrowse,
+                blatdb=blat_db,
+                genus=args.genus,
+                species=args.species,
+                public=args.public,
+                metadata=None
+            )
 
         # Must sleep before we're ready to handle
         time.sleep(2)
         log.info("Updating permissions for %s on %s", gx_user, org_cn)
-        wa.users.updateOrganismPermission(
-            gx_user, org_cn,
+        wa.users.update_organism_permissions(
+            gx_user.username,
+            org_cn,
             write=True,
             export=True,
             read=True,
@@ -134,10 +219,9 @@ if __name__ == '__main__':
 
         # Group access
         if args.group:
-            group = wa.groups.loadGroupByName(name=args.group)
-            res = wa.groups.updateOrganismPermission(group, org_cn,
-                                                     administrate=False, write=True, read=True,
-                                                     export=True)
+            group = wa.groups.get_groups(name=args.group)[0]
+            res = wa.groups.update_organism_permissions(group['name'], org_cn,
+                                                        administrate=False, write=True, read=True,
+                                                        export=True)
 
-    data = [o for o in data if o['commonName'] == org_cn]
     print(json.dumps(data, indent=2))

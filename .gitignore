@@ -55,7 +55,6 @@ target/
 
 *.7z
 *.dmg
-*.gz
 *.iso
 *.jar
 *.rar
@@ -69,3 +68,5 @@ tool_test_output.html
 tool_test_output.json
 
 .idea
+
+apollo_shared_dir

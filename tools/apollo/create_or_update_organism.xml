@@ -9,10 +9,9 @@
   </expand>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
+@AUTH@
 
-python $__tool_directory__/create_or_update_organism.py
-
-@ADMIN_AUTH@
+python '$__tool_directory__/create_or_update_organism.py'
 
 --genus '$genus'
 --species '$species'
@@ -20,18 +19,26 @@ python $__tool_directory__/create_or_update_organism.py
 --group '${group}'
 #end if
 
+--userid '$__user_id__'
+
 ${remove_old_directory}
+${no_reload_sequences}
 $public
 
 @ORG_OR_GUESS@
 
+#if $test_hack == "yes":
+## When testing we can't access extra_files_path, but we know the path of test data
+'$__tool_directory__/test-data/dataset_1_files/data/'
+#else:
 '${jbrowse.extra_files_path}/data/'
+#end if
 
 "@DATA_DIR@/${jbrowse.id}"
 
-$__user_email__
+'$__user_email__'
 
-> $output]]></command>
+> '$output']]></command>
   <inputs>
     <param name="jbrowse" type="data" format="html" label="JBrowse HTML Output" />
     <expand macro="org_or_guess" />
@@ -40,6 +47,8 @@ $__user_email__
     <param name="public" type="boolean" truevalue="--public" falsevalue="" label="Is Organism Public" />
     <param name="group" type="select" dynamic_options="galaxy_list_groups(__trans__)" label="Grant access to a user group" optional="True" />
     <param name="remove_old_directory" type="boolean" truevalue="--remove_old_directory" falsevalue="" label="Remove old data directory" />
+    <param name="no_reload_sequences" type="boolean" truevalue="" falsevalue="--no_reload_sequences" label="Update genome sequences" help="Select this if you want Apollo to reload the genome sequences when updating an existing organism. BEWARE! You will lose annotation data for all sequences that are not present anymore in the new jbrowse dataset." />
+    <param name="test_hack" type="hidden" value="no"/>
   </inputs>
   <outputs>
     <data format="json" name="output">
@@ -47,16 +56,27 @@ $__user_email__
     </data>
   </outputs>
   <tests>
-      <test expect_failure="true">
-          <param name="jbrowse" value="good-model.gff3"/>
+      <test>
+          <param name="jbrowse" value="dataset_1.dat"/>
           <conditional name="org_source">
               <param name="source_select" value="direct"/>
               <param name="org_raw" value="Test org" />
           </conditional>
           <param name="genus" value="genus"/>
-          <assert_stderr>
-              <has_text text="cannot stat" />
-          </assert_stderr>
+          <param name="test_hack" value="yes"/>
+          <output name="output" file="create_org/output.json" lines_diff="6"/>
+      </test>
+      <test>
+          <!-- Send the same input to test updating -->
+          <param name="jbrowse" value="dataset_1.dat"/>
+          <conditional name="org_source">
+              <param name="source_select" value="direct"/>
+              <param name="org_raw" value="Test org" />
+          </conditional>
+          <param name="genus" value="genus2"/>
+          <param name="species" value="sp"/>
+          <param name="test_hack" value="yes"/>
+          <output name="output" file="create_org/output2.json" lines_diff="6"/>
       </test>
   </tests>
   <help><![CDATA[
