@@ -16,6 +16,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
     parser.add_argument('email', help='User Email')
     parser.add_argument('--source', help='URL where the input dataset can be found.')
+    parser.add_argument('--use_name', action='store_true', help='Use the given name instead of generating one.')
+    parser.add_argument('--disable_cds_recalculation', action='store_true', help='Disable CDS recalculation and instead use the one provided.')
+    parser.add_argument('--verbose', action='store_true', help='Verbose mode.')
     OrgOrGuess(parser)
 
     parser.add_argument('gff3', type=argparse.FileType('r'), help='GFF3 file')
@@ -42,4 +45,4 @@ if __name__ == '__main__':
     if not orgs:
         raise Exception("You do not have write permission on this organism")
 
-    wa.annotations.load_gff3(org_cn, args.gff3, args.source)
+    wa.annotations.load_gff3(org_cn, args.gff3, args.source, use_name=args.use_name, disable_cds_recalculation=args.disable_cds_recalculation, verbose=args.verbose)
