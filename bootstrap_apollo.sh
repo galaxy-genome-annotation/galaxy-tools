@@ -3,7 +3,7 @@
 if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
     echo "Running Apollo with mounted shared dir"
     mkdir -p "$GALAXY_SHARED_DIR"
-    docker run -d -it -p 8888:8080 -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ quay.io/gmod/apollo:2.5.0
+    docker run -d -it -p 8888:8080 -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ quay.io/gmod/apollo:latest
 else
     echo "Running Apollo in remote mode"
     docker run -d -it -p 8888:8080 quay.io/gmod/apollo:latest
