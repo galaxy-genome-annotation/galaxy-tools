@@ -35,7 +35,7 @@ $disable_cds_recalculation
               <param name="org_raw" value="Test org" />
           </conditional>
           <param name="gff3_data" value="merlin.gff"/>
-          <output name="output" file="load_gff3/output.txt"/>
+          <output name="output" file="load_gff3/output.txt" compare="sim_size"/>
       </test>
   </tests>
   <help><![CDATA[
