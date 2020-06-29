@@ -1,7 +1,7 @@
 {
   "commonName": "Test org",
   "blatdb": "/data/temporary/apollo_data/1384-Test_org/searchDatabaseData/genome.2bit",
-  "metadata": "{\"creator\":\"20\"}",
+  "metadata": "{\"creator\":\"xx\"}",
   "annotationCount": 0,
   "currentOrganism": true,
   "obsolete": false,
@@ -11,6 +11,6 @@
   "valid": true,
   "genus": "genus2",
   "species": "sp",
-  "id": 23,
+  "id": "xx",
   "nonDefaultTranslationTable": null
 }

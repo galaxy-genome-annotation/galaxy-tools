@@ -64,7 +64,7 @@ $public
           </conditional>
           <param name="genus" value="genus"/>
           <param name="test_hack" value="yes"/>
-          <output name="output" file="create_org/output.json" lines_diff="6"/>
+          <output name="output" file="create_org/output.json" lines_diff="8"/>
       </test>
       <test>
           <!-- Send the same input to test updating -->
@@ -76,7 +76,7 @@ $public
           <param name="genus" value="genus2"/>
           <param name="species" value="sp"/>
           <param name="test_hack" value="yes"/>
-          <output name="output" file="create_org/output2.json" lines_diff="6"/>
+          <output name="output" file="create_org/output2.json" lines_diff="8"/>
       </test>
   </tests>
   <help><![CDATA[

@@ -57,7 +57,7 @@ def are_dir_trees_equal(dir1, dir2):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Sample script to add an attribute to a feature via web services')
+    parser = argparse.ArgumentParser(description='Script to fetch organism data dir from apollo')
     OrgOrGuess(parser)
     parser.add_argument('target_dir', help='Target directory')
     parser.add_argument('email', help='User Email')

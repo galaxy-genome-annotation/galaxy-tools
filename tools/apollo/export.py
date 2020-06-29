@@ -52,28 +52,28 @@ if __name__ == '__main__':
 
         uuid_gff = wa.io.write_downloadable(org['commonName'], 'GFF3', export_gff3_fasta=True, sequences=seqs)
         if 'error' in uuid_gff or 'uuid' not in uuid_gff:
-            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_gff)
+            raise Exception("Apollo failed to prepare the GFF3 file for download: %s" % uuid_gff)
         args.gff.write(wa.io.download(uuid_gff['uuid'], output_format="text"))
 
         time.sleep(1)
 
         uuid_vcf = wa.io.write_downloadable(org['commonName'], 'VCF', sequences=seqs)
         if 'error' in uuid_vcf or 'uuid' not in uuid_vcf:
-            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_vcf)
+            raise Exception("Apollo failed to prepare the VCF file for download: %s" % uuid_vcf)
         args.vcf.write(wa.io.download(uuid_vcf['uuid'], output_format="text"))
 
         time.sleep(1)
 
         uuid_fa = wa.io.write_downloadable(org['commonName'], 'FASTA', sequences=seqs, seq_type='cdna')
         if 'error' in uuid_fa or 'uuid' not in uuid_fa:
-            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_fa)
+            raise Exception("Apollo failed to prepare the cdna FASTA file for download: %s" % uuid_fa)
         args.fasta_cdna.write(wa.io.download(uuid_fa['uuid'], output_format="text"))
 
         time.sleep(1)
 
         uuid_fa = wa.io.write_downloadable(org['commonName'], 'FASTA', sequences=seqs, seq_type='cds')
         if 'error' in uuid_fa or 'uuid' not in uuid_fa:
-            raise Exception("Apollo failed to prepare the file for download: %s" % uuid_fa)
+            raise Exception("Apollo failed to prepare the cds FASTA file for download: %s" % uuid_fa)
         args.fasta_cds.write(wa.io.download(uuid_fa['uuid'], output_format="text"))
 
         time.sleep(1)

@@ -24,8 +24,6 @@ python '$__tool_directory__/list_organisms.py'
             <assert_contents>
                 <has_text text="alt_org" />
                 <has_text text="test_organism" />
-                <has_text text="apollo_shared_dir/org1" />
-                <has_text text="apollo_shared_dir/org2" />
                 <has_text text="Testus" />
             </assert_contents>
         </output>

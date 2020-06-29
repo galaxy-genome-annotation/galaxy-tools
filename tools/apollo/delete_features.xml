@@ -14,10 +14,10 @@
 	python '$__tool_directory__/export.py'
 	@ORG_OR_GUESS@
 	--gff '$gff_out'
-        --fasta_pep '$fasta_pep'
-        --fasta_cds '$fasta_cds'
-        --fasta_cdna '$fasta_cdna'
-        --vcf '$vcf_out'
+  --fasta_pep '$fasta_pep'
+  --fasta_cds '$fasta_cds'
+  --fasta_cdna '$fasta_cdna'
+  --vcf '$vcf_out'
 	--json '$json_out'
   '$__user_email__'
 
@@ -70,7 +70,6 @@
               <assert_contents>
                   <has_text text="##sequence-region Merlin 1 172788" />
                   <has_text text="owner=admin@local.host;" />
-                  <has_text text="Name=cds-not-under-exon" />
               </assert_contents>
           </output>
           <output name="fasta_pep" file="export/pep.fa" lines_diff="12"/>
