@@ -1,5 +1,6 @@
 # 'sudo required' will give us 7,5 GB memory, but has slower startup times, as we start a VM instead of a Container
 sudo: required
+dist: bionic
 language: python
 cache: pip
 
@@ -91,7 +92,7 @@ jobs:
 
 before_install:
   - export GALAXY_REPO=https://github.com/galaxyproject/galaxy
-  - export GALAXY_RELEASE=release_19.05
+  - export GALAXY_RELEASE=release_20.05
   - export PLANEMO_CONDA_PREFIX="$HOME/conda"
   - unset JAVA_HOME
 
