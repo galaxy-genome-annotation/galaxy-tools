@@ -219,7 +219,8 @@ if __name__ == '__main__':
                 genus=args.genus,
                 species=args.species,
                 public=args.public,
-                metadata=None
+                metadata=None,
+                return_all=False
             )
 
         # Must sleep before we're ready to handle
