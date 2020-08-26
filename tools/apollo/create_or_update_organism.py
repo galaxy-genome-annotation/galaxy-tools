@@ -207,8 +207,7 @@ if __name__ == '__main__':
                     genus=args.genus,
                     species=args.species,
                     public=args.public,
-                    metadata=None,
-                    suppress_output=True
+                    metadata=None
                 )
                 if isinstance(data, list) and len(data) > 0:
                     data = data[0]
