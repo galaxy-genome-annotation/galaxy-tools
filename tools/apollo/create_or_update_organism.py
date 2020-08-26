@@ -208,7 +208,7 @@ if __name__ == '__main__':
                     species=args.species,
                     public=args.public,
                     metadata=None,
-                    suppress_output=False
+                    suppress_output=True
                 )
                 if isinstance(data, list) and len(data) > 0:
                     data = data[0]
@@ -221,7 +221,7 @@ if __name__ == '__main__':
                 species=args.species,
                 public=args.public,
                 metadata=None,
-                suppress_output=False
+                suppress_output=True
             )
 
         # Must sleep before we're ready to handle
