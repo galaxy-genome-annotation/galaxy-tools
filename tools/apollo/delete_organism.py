@@ -55,4 +55,5 @@ if __name__ == '__main__':
     if IsRemote():
         print(wa.remote.delete_organism(org['commonName']))
     else:
-        print(wa.organisms.delete_organism(org['id']))
+        wa.organisms.delete_organism(org['id'], suppress_output=True)
+        print(org)

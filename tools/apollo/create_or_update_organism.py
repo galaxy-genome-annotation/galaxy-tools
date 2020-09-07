@@ -177,7 +177,8 @@ if __name__ == '__main__':
                 species=args.species,
                 public=args.public,
                 blatdb=blat_db,
-                no_reload_sequences=args.no_reload_sequences
+                no_reload_sequences=args.no_reload_sequences,
+                suppress_output=True
             )
         time.sleep(2)
 
@@ -219,7 +220,8 @@ if __name__ == '__main__':
                 genus=args.genus,
                 species=args.species,
                 public=args.public,
-                metadata=None
+                metadata=None,
+                suppress_output=True
             )
 
         # Must sleep before we're ready to handle
@@ -239,5 +241,7 @@ if __name__ == '__main__':
             res = wa.groups.update_organism_permissions(group['name'], org_cn,
                                                         administrate=False, write=True, read=True,
                                                         export=True)
+        # Get expected metadata for organism since AllOrganism  output is suppressed from add_organism
+        data = wa.organisms.show_organism(org_cn)
 
-    print(json.dumps(data, indent=2))
+    print(json.dumps([data], indent=2))
