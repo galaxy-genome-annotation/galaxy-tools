@@ -22,7 +22,7 @@ if __name__ == '__main__':
         <html>
             <head>
                 <title>Embedded Apollo Access</title>
-                <style type="text/css">body {{margin: 0;}} iframe {{border: 0;width: 100%;height: 100%}}</style>
+                <style type="text/css">body {{margin: 0;}} iframe {{border: 0;width: 100%;height: 100vh}}</style>
             </head>
             <body>
                 <iframe src="{base_url}/annotator/loadLink?loc={chrom}&organism={orgId}{tracklist}"></iframe>
