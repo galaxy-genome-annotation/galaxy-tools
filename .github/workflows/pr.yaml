@@ -66,6 +66,7 @@ jobs:
         PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_source $GALAXY_REPO --galaxy_branch $GALAXY_RELEASE
     - name: Install GMOD python modules
       run: |
+        planemo virtualenv ~/.planemo/gx_venv
         . ~/.planemo/gx_venv/bin/activate
         pip install tripal biopython bcbio-gff chado
         deactivate
@@ -320,6 +321,7 @@ jobs:
         fi
     - name: Install GMOD python modules
       run: |
+        planemo virtualenv ~/.planemo/gx_venv
         . ~/.planemo/gx_venv/bin/activate
         pip install tripal biopython bcbio-gff chado
         deactivate
