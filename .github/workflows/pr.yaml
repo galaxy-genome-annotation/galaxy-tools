@@ -268,7 +268,7 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.setup.outputs.chunk_list) }}
         python-version: [3.7]
-        apollo: [local, apollo]
+        apollo: [0, 1]
     services:
       postgres:
         image: postgres:11
@@ -317,7 +317,7 @@ jobs:
       run: cat changed_tools_chunk.list
     - name: Planemo test tools
       env:
-        APOLLO_REMOTE: ${{ "1" if matrix.apollo == "remote" else "0" }}
+        APOLLO_REMOTE: ${{ matrix.apollo }}
       run: |
         if grep -q "apollo" changed_repositories.list ; then
           export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
