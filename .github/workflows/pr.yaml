@@ -200,7 +200,7 @@ jobs:
     - name: Flake8
       run: |
         if [ -s ../workflow_artifacts/changed_repositories.list ]; then
-            flake8 $(cat ../workflow_artifacts/changed_repositories.list)
+            flake8 --ignore=E501,E117 $(cat ../workflow_artifacts/changed_repositories.list)
         fi
 
   lintr:
