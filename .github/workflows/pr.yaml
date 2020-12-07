@@ -321,7 +321,7 @@ jobs:
         fi
     - name: Install GMOD python modules
       run: |
-        planemo virtualenv ~/.planemo/gx_venv
+        virtualenv ~/.planemo/gx_venv
         . ~/.planemo/gx_venv/bin/activate
         pip install tripal biopython bcbio-gff chado
         deactivate
