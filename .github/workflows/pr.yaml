@@ -66,8 +66,8 @@ jobs:
         PIP_QUIET=1 planemo test --galaxy_python_version ${{ matrix.python-version }} --no_conda_auto_init --galaxy_source $GALAXY_REPO --galaxy_branch $GALAXY_RELEASE
     - name: Install GMOD python modules
       run: |
-        virtualenv ~/.planemo/gx_venv
-        . ~/.planemo/gx_venv/bin/activate
+        virtualenv ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE
+        . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
         pip install tripal biopython bcbio-gff chado
         deactivate
     - uses: actions/checkout@v2
@@ -321,8 +321,8 @@ jobs:
         fi
     - name: Install GMOD python modules
       run: |
-        virtualenv ~/.planemo/gx_venv
-        . ~/.planemo/gx_venv/bin/activate
+        virtualenv ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE
+        . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
         pip install tripal biopython bcbio-gff chado
         deactivate
     - name: Show changed tools chunk list
@@ -331,7 +331,7 @@ jobs:
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
       run: |
-        if grep -q "apollo" changed_repositories.list ; then
+        if grep -q "apollo" changed_tools_chunk.list ; then
           export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
           export BLAT_ENABLED="1"
           export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
