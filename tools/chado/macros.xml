@@ -11,7 +11,7 @@
     </xml>
 
     <token name="@LIB_VERSION@">2.3.4</token>
-    <token name="@WRAPPER_VERSION@">@LIB_VERSION@</token>
+    <token name="@WRAPPER_VERSION@">@LIB_VERSION@+galaxy0</token>
     <token name="@PG_VERSION@">11.2</token>
 
     <xml name="stdio">
