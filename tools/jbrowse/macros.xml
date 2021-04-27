@@ -2,14 +2,14 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="2.7">python</requirement>
+            <requirement type="package" version="3.8">python</requirement>
             <yield/>
         </requirements>
     </xml>
 
     <token name="@DATA_DIR@">\$GALAXY_JBROWSE_SHARED_DIR</token>
     <token name="@JBROWSE_BASE_URL@">\$GALAXY_JBROWSE_SHARED_URL</token>
-    <token name="@WRAPPER_VERSION@">0.5.1</token>
+    <token name="@WRAPPER_VERSION@">0.5.2</token>
 
     <xml name="stdio">
         <stdio>
