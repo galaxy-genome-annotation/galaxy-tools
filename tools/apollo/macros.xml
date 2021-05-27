@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <macros>
-  <token name="@WRAPPER_VERSION@">4.2.5</token>
+  <token name="@WRAPPER_VERSION@">4.2.12</token>
 
   <xml name="requirements">
     <requirements>
-      <requirement type="package" version="4.2.5">apollo</requirement>
+      <requirement type="package" version="4.2.12">apollo</requirement>
       <yield/>
     </requirements>
   </xml>
