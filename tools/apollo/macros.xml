@@ -26,6 +26,7 @@
 
         export ARROW_GLOBAL_CONFIG_PATH='.auth.yml'
       ; fi &&
+      echo "Reading auth conf from \$ARROW_GLOBAL_CONFIG_PATH" && cat "\$ARROW_GLOBAL_CONFIG_PATH"
   ]]></token>
 
   <token name="@ORG_OR_GUESS@">
