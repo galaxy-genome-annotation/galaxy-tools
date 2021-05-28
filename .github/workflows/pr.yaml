@@ -331,12 +331,11 @@ jobs:
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
       run: |
+        PLANEMO_JOB_CONF=""
         if grep -q "apollo" changed_tools_chunk.list ; then
-          export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
-          export BLAT_ENABLED="1"
-          export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
           . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
           ./bootstrap_apollo.sh
+          PLANEMO_JOB_CONF="--job_config_file tools/apollo/test-data/job_config.xml"
         fi
         mkdir json_output
         while read -r TOOL_GROUP; do
@@ -347,7 +346,7 @@ jobs:
                 PLANEMO_OPTIONS="--biocontainers --no_dependency_resolution --no_conda_auto_init"
             fi
             json=$(mktemp -u -p json_output --suff .json)
-            PIP_QUIET=1 planemo test --database_connection postgresql://postgres:postgres@localhost:5432/galaxy $PLANEMO_OPTIONS --galaxy_source $GALAXY_REPO --galaxy_branch $GALAXY_RELEASE --galaxy_python_version ${{ matrix.python-version }} --test_output_json "$json" $TOOL_GROUP || true
+            PIP_QUIET=1 planemo test --database_connection postgresql://postgres:postgres@localhost:5432/galaxy $PLANEMO_JOB_CONF $PLANEMO_OPTIONS --galaxy_source $GALAXY_REPO --galaxy_branch $GALAXY_RELEASE --galaxy_python_version ${{ matrix.python-version }} --test_output_json "$json" $TOOL_GROUP || true
             docker system prune --all --force --volumes || true
         done < changed_tools_chunk.list
         if [ ! -s changed_tools_chunk.list ]; then

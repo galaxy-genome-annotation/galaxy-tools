@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<job_conf>
+    <plugins>
+		<plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner" workers="4"/>
+    </plugins>
+    <destinations>
+        <destination id="local" runner="local">
+            <env id="ARROW_GLOBAL_CONFIG_PATH">__PWD__/tools/apollo/test-data/arrow.yml</env>
+            <env id="GALAXY_SHARED_DIR">__PWD__/apollo_shared_dir</env>
+            <env id="BLAT_ENABLED">1</env>
+        </destination>
+    </destinations>
+</job_conf>
