@@ -333,6 +333,8 @@ jobs:
       run: |
         PLANEMO_JOB_CONF=""
         if grep -q "apollo" changed_tools_chunk.list ; then
+          export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
+          export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
           . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
           ./bootstrap_apollo.sh
           PLANEMO_JOB_CONF="--job_config_file tools/apollo/test-data/job_config.xml"
