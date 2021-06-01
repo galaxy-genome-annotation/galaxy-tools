@@ -8,11 +8,6 @@
             <env id="ARROW_GLOBAL_CONFIG_PATH">__PWD__/tools/apollo/test-data/arrow.yml</env>
             <env id="GALAXY_SHARED_DIR">__PWD__/apollo_shared_dir</env>
             <env id="BLAT_ENABLED">1</env>
-            <param id="require_container">false</param>
-            <param id="docker_enabled">True</param>
-            <param id="docker_sudo">False</param>
-            <param id="docker_sudo_cmd">sudo</param>
-            <param id="docker_cmd">docker</param>
         </destination>
     </destinations>
 </job_conf>
