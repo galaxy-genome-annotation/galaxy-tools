@@ -337,7 +337,6 @@ jobs:
           export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
           . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
           ./bootstrap_apollo.sh
-          PLANEMO_JOB_CONF="--job_config_file tools/apollo/test-data/job_config.xml"
         fi
         mkdir json_output
         while read -r TOOL_GROUP; do
