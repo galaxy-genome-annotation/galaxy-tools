@@ -64,6 +64,3 @@ arrow annotations load_gff3 test_organism tools/apollo/test-data/merlin.gff
 arrow annotations load_gff3 alt_org tools/apollo/test-data/merlin.gff
 arrow annotations load_gff3 org3 tools/apollo/test-data/merlin.gff
 arrow annotations load_gff3 org4 tools/apollo/test-data/merlin.gff
-
-# Prepare job_config.xml
-sed -i "s|__PWD__|`pwd`|g" tools/apollo/test-data/job_config.xml
