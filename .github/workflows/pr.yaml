@@ -58,7 +58,7 @@ jobs:
     - name: Install Planemo and flake8
       run: pip install planemo flake8 flake8-import-order
     - name: Install GMOD python modules
-      run: pip install tripal biopython bcbio-gff chado apollo
+      run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.6 apollo==4.2.12
     - name: Fake a Planemo run to update cache
       if: steps.cache-pip.outputs.cache-hit != 'true' || steps.cache-planemo.outputs.cache-hit != 'true'
       run: |
