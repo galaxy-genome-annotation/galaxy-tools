@@ -354,6 +354,9 @@ jobs:
         if [ ! -s changed_tools_chunk.list ]; then
             echo '{"tests":[]}' > "$(mktemp -u -p json_output --suff .json)"
         fi
+        if grep -q "apollo" changed_tools_chunk.list ; then
+          docker logs apollo
+        fi
     - name: Merge tool_test_output.json files
       run: planemo merge_test_reports json_output/*.json tool_test_output.json
     - name: Create tool_test_output.html
