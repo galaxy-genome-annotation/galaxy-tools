@@ -3,10 +3,10 @@
 if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
     echo "Running Apollo with mounted shared dir"
     mkdir -p "$GALAXY_SHARED_DIR"
-    docker run -d -it -p 8888:8080 -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ quay.io/gmod/apollo:latest
+    docker run -d -it -p 8888:8080 --name apollo -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ gmod/apollo:latest
 else
     echo "Running Apollo in remote mode"
-    docker run -d -it -p 8888:8080 quay.io/gmod/apollo:latest
+    docker run -d -it -p 8888:8080 --name apollo gmod/apollo:latest
 fi
 
 echo "[BOOTSTRAP] Waiting while Apollo starts up..."
@@ -37,6 +37,7 @@ arrow users create_user "test@bx.psu.edu" Junior Galaxy password
 
 # Add some organisms
 if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
+    echo "[BOOTSTRAP] Create organisms from shared dir"
     cp -r tools/apollo/test-data/dataset_1_files/data/ "${GALAXY_SHARED_DIR}/org1"
     cp -r tools/apollo/test-data/dataset_1_files/data/ "${GALAXY_SHARED_DIR}/org2"
     cp -r tools/apollo/test-data/dataset_1_files/data/ "${GALAXY_SHARED_DIR}/org3"
@@ -47,6 +48,7 @@ if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
     arrow organisms add_organism --genus Foo3 --species barus org3 $GALAXY_SHARED_DIR/org3
     arrow organisms add_organism --genus Foo4 --species barus org4 $GALAXY_SHARED_DIR/org4
 else
+    echo "[BOOTSTRAP] Create organisms in remote mode"
     arrow remote add_organism --genus Testus --species organus test_organism tools/apollo/test-data/org_remote.tar.gz
     arrow remote add_organism --genus Foo --species barus alt_org tools/apollo/test-data/org_remote.tar.gz
     arrow remote add_organism --genus Foo3 --species barus org3 tools/apollo/test-data/org_remote.tar.gz

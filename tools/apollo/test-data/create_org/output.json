@@ -9,8 +9,10 @@
   "directory": "/XX/apollo_shared_dir/1",
   "publicMode": false,
   "valid": true,
+  "genomeFastaIndex": "seq/genome.fasta.fai",
   "genus": "genus",
   "species": null,
   "id": "xx",
-  "nonDefaultTranslationTable": null
+  "nonDefaultTranslationTable": null,
+  "genomeFasta": "seq/genome.fasta"
 }

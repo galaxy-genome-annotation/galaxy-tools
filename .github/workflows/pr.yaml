@@ -58,7 +58,7 @@ jobs:
     - name: Install Planemo and flake8
       run: pip install planemo flake8 flake8-import-order
     - name: Install GMOD python modules
-      run: pip install tripal biopython bcbio-gff chado
+      run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.6 apollo==4.2.13
     - name: Fake a Planemo run to update cache
       if: steps.cache-pip.outputs.cache-hit != 'true' || steps.cache-planemo.outputs.cache-hit != 'true'
       run: |
@@ -68,7 +68,7 @@ jobs:
       run: |
         virtualenv ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE
         . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
-        pip install tripal biopython bcbio-gff chado
+        pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.6 apollo==4.2.13
         deactivate
     - uses: actions/checkout@v2
       with:
@@ -323,7 +323,7 @@ jobs:
       run: |
         virtualenv ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE
         . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
-        pip install tripal biopython bcbio-gff chado
+        pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.6 apollo==4.2.13
         deactivate
     - name: Show changed tools chunk list
       run: cat changed_tools_chunk.list
@@ -333,8 +333,9 @@ jobs:
       run: |
         if grep -q "apollo" changed_tools_chunk.list ; then
           export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
-          export BLAT_ENABLED="1"
+          export BLAT_ENABLED=1
           export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
+          . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
           ./bootstrap_apollo.sh
         fi
         mkdir json_output
@@ -351,6 +352,9 @@ jobs:
         done < changed_tools_chunk.list
         if [ ! -s changed_tools_chunk.list ]; then
             echo '{"tests":[]}' > "$(mktemp -u -p json_output --suff .json)"
+        fi
+        if grep -q "apollo" changed_tools_chunk.list ; then
+          docker logs apollo
         fi
     - name: Merge tool_test_output.json files
       run: planemo merge_test_reports json_output/*.json tool_test_output.json
