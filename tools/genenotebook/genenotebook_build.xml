@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<tool id="genenotebook_build" name="Build a GeneNoteBook" version="@WRAPPER_VERSION@">
+    <description></description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements">
+        <requirement type="package" version="@MONGODB_VERSION@">mongodb</requirement>
+    </expand>
+    <command detect_errors="aggressive"><![CDATA[
+@START_GNB@
+
+genenotebook add genome -u admin -p admin --port \$GNB_PORT --name '${name}' '${genome}'
+
+
+## TODO create genenotebook datatype
+## TODO change default username/password
+## TODO option to add data to an existing db from history
+## TODO update to newest GNB release
+## TODO allow loading more data
+
+
+@ZIP_GNB@
+    ]]></command>
+    <inputs>
+        <param name="existing" type="data" format="genenotebook" optional="true" label="Load data in an existing GeneNoteBook database" help="Leave empty to start a new database from scratch" />
+        <param name="name" label="Name" argument="--name" type="text" help="Reference genome name" />
+        <param name="genome" label="Genome Fasta file" type="data" format="fasta" />
+    </inputs>
+    <outputs>
+        <data format="genenotebook" name="gnb_db" label="GeneNoteBook on ${on_string}"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="name" value="Test org" />
+            <param name="genome" value="merlin.fa" />
+            <output name="gnb_db" file="genome.tar.bz2" compare="sim_size" />
+        </test>
+        <test>
+            <param name="existing" value="genome.tar.bz2" />
+            <param name="name" value="Test org 2" />
+            <param name="genome" value="merlin.fa" />
+            <output name="gnb_db" file="genome_reload.tar.bz2" compare="sim_size" />
+        </test>
+    </tests>
+    <help><![CDATA[
+Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool.
+    ]]></help>
+    <expand macro="citation" />
+</tool>

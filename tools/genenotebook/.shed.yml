@@ -1,0 +1,16 @@
+categories:
+- Web Services
+long_description: |
+  Galaxy tools allowing to load data into a GeneNoteBook database.
+
+  https://genenotebook.github.io
+homepage_url: https://genenotebook.github.io
+owner: gga
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/genenotebook
+type: unrestricted
+auto_tool_repositories:
+  name_template: "genenotebook_{{ tool_id }}"
+  description_template: "{{ tool_name }} (from the GeneNoteBook tool suite)"
+suite:
+  name: "suite_genenotebook"
+  description: Galaxy tools allowing to load data into a GeneNoteBook database.
