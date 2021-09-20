@@ -23,29 +23,20 @@
     For some unknwon reason, unixSocketPrefix needs an absolute path
     -->
     <token name="@START_GNB@"><![CDATA[
-        export GNB_PORT=\$(bash $__tool_directory__/find_free_port.sh);
+        export GNB_PORT=\$(bash '$__tool_directory__/find_free_port.sh');
         export MONGO_URI=\$(pwd | sed 's|/|%2F|g');
         #if $existing
             tar -xf '${existing}' mongo_db &&
         #else
             mkdir ./mongo_db/ &&
         #end if
-        mongod --dbpath ./mongo_db/ --unixSocketPrefix `pwd` --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid & true &&
-        sleep 5;
-        ## GNB_PID gets wrong value when using && here
-        genenotebook run --port \${GNB_PORT} --mongo-url mongodb://\$MONGO_URI%2Fmongodb-27017.sock/genenotebook & GNB_PID=\$! &&
-        sleep 15 &&
+        . '$__tool_directory__/launch_gnb.sh' &&
     ]]></token>
 
     <token name="@ZIP_GNB@"><![CDATA[
         &&
-        ##cat ./mongod.log 1>&2 &&
-        ## Kill GeneNoteBook
-        kill \$GNB_PID &&
-        ## Kill MongoDB
-        sleep 5 &&
-        kill \$(<"./mongo.pid") &&
-        sleep 5 &&
+        . '$__tool_directory__/kill_gnb.sh' &&
+
         ## Zip the mongodb data dir
         tar -cvjf '${gnb_db}' mongo_db > /dev/null
 
