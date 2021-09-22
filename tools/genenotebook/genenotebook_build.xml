@@ -4,9 +4,6 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements">
-        <requirement type="package" version="@MONGODB_VERSION@">mongodb</requirement>
-    </expand>
     <command detect_errors="aggressive"><![CDATA[
 @START_GNB@
 
