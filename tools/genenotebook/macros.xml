@@ -7,9 +7,9 @@
         </requirements>
     </xml>
 
-    <token name="@TOOL_VERSION@">0.1.16</token>
+    <token name="@TOOL_VERSION@">0.3.0</token>
     <token name="@WRAPPER_VERSION@">@TOOL_VERSION@+galaxy0</token>
-    <token name="@MONGODB_VERSION@">5.0.0</token>
+    <token name="@MONGODB_VERSION@">4.0.3</token>
 
     <xml name="citation">
         <citations>

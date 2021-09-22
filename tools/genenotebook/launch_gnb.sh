@@ -4,12 +4,16 @@ mongod --dbpath ./mongo_db/ --unixSocketPrefix `pwd` --bind_ip fake_socket --log
 
 sleep 5
 
-if ! grep -q "Listening on" ./mongod.log; then
+# "Listening on" is for mongodb 5x
+#if ! grep -q "Listening on" ./mongod.log; then
+if ! grep -q "waiting for connections on port" ./mongod.log; then
   echo "Failed to launch MongoDB:" 1>&2;
   cat ./mongod.log 1>&2;
   kill $GNB_PID;
   exit 1;
 fi;
+
+cp $(dirname `command -v genenotebook`)/../share/genenotebook-0.3.0-0/settings.json .
 
 genenotebook run --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
 

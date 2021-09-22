@@ -14,9 +14,7 @@ genenotebook add genome -u admin -p admin --port \$GNB_PORT --name '${name}' '${
 
 
 ## TODO create genenotebook datatype
-## TODO change default username/password
-## TODO option to add data to an existing db from history
-## TODO update to newest GNB release
+## TODO change default username/password (don't copy settings.json)
 ## TODO allow loading more data
 
 
