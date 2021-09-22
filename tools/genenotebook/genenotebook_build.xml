@@ -10,7 +10,7 @@
 
 genenotebook add genome -u admin -p admin --port \$GNB_PORT --name '${name}' '${genome}'
 
-
+## TODO fix write permissions with biocontainers on /usr/local/share/genenotebook-0.3.0-0/programs/server/assets/app/uploads/genomeFiles
 ## TODO create genenotebook datatype
 ## TODO change default username/password (don't copy settings.json)
 ## TODO allow loading more data
