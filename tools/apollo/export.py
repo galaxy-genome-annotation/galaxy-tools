@@ -74,7 +74,6 @@ if __name__ == '__main__':
             except Exception as e:
                 error(e)
 
-
             try:
                 uuid_vcf = wa.io.write_downloadable(org['commonName'], 'VCF', sequences=[sequence['name']])
                 if 'error' in uuid_vcf or 'uuid' not in uuid_vcf:
