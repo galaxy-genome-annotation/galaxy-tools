@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # This script finds a free port on the local machine in the 7000-65000 interval
 # Should work in biocontainers derived from conda
 # Taken from https://unix.stackexchange.com/a/358101

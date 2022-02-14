@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 mongod --dbpath ./mongo_db/ --unixSocketPrefix `pwd` --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid &
 
 sleep 5
