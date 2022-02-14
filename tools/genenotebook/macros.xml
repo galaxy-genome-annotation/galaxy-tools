@@ -7,7 +7,7 @@
         </requirements>
     </xml>
 
-    <token name="@TOOL_VERSION@">0.3.0</token>
+    <token name="@TOOL_VERSION@">0.3.1</token>
     <token name="@WRAPPER_VERSION@">@TOOL_VERSION@+galaxy0</token>
 
     <xml name="citation">
@@ -15,6 +15,8 @@
             <citation type="doi">10.1093/bioinformatics/btz491</citation>
         </citations>
     </xml>
+
+    <token name="@CONNECT_INFO@">-u admin -p admin --port \$GNB_PORT</token>
 
     <!--
     This runs GeneNoteBook, and a local mongodb server listening only on a unix socket, created in the work dir.
@@ -29,7 +31,7 @@
         #else
             mkdir ./mongo_db/ &&
         #end if
-        . '$__tool_directory__/launch_gnb.sh' &&
+        . '$__tool_directory__/launch_gnb.sh'
     ]]></token>
 
     <token name="@ZIP_GNB@"><![CDATA[
