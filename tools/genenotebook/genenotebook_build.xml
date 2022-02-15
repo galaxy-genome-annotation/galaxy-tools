@@ -39,7 +39,7 @@
     ]]></command>
     <inputs>
         <param name="existing" type="data" format="genenotebook" optional="true" label="Load data in an existing GeneNoteBook database" help="Leave empty to start a new database from scratch" />
-        <repeat name="genomes">
+        <repeat name="genomes" title="Genomes">
             <param name="name" label="Name" argument="--name" type="text" help="Reference genome name" />
             <param name="genome" label="Genome sequence" type="data" format="fasta" />
             <param name="annotation" label="Annotation" optional="true" multiple="true" type="data" format="gff3" />
