@@ -8,39 +8,77 @@
     <command detect_errors="aggressive"><![CDATA[
 @START_GNB@
 
-genenotebook add genome -u admin -p admin --port \$GNB_PORT --name '${name}' '${genome}'
+#for genome in $genomes:
+    && genenotebook add genome @CONNECT_INFO@ --name '${genome.name}' '${genome.genome}'
+
+    #if $genome.annotation:
+        #for annot in $genome.annotation:
+            #if $annot:
+                && genenotebook add annotation @CONNECT_INFO@ --genome-name '${genome.name}' '${annot}'
+            #end if
+        #end for
+    #end if
+#end for
+
+#if $interproscan:
+    #for ips in $interproscan:
+        && genenotebook add interproscan @CONNECT_INFO@ '${ips}'
+    #end for
+#end if
+
+#if $expression:
+    #for exp in $expression:
+        && genenotebook add transcriptome @CONNECT_INFO@ '${exp}'
+    #end for
+#end if
 
 ## TODO fix write permissions with biocontainers on /usr/local/share/genenotebook-0.3.0-0/programs/server/assets/app/uploads/genomeFiles
 ## TODO create genenotebook datatype
-## TODO change default username/password (don't copy settings.json)
-## TODO allow loading more data
-
 
 @ZIP_GNB@
     ]]></command>
     <inputs>
         <param name="existing" type="data" format="genenotebook" optional="true" label="Load data in an existing GeneNoteBook database" help="Leave empty to start a new database from scratch" />
-        <param name="name" label="Name" argument="--name" type="text" help="Reference genome name" />
-        <param name="genome" label="Genome Fasta file" type="data" format="fasta" />
+        <repeat name="genomes">
+            <param name="name" label="Name" argument="--name" type="text" help="Reference genome name" />
+            <param name="genome" label="Genome sequence" type="data" format="fasta" />
+            <param name="annotation" label="Annotation" optional="true" multiple="true" type="data" format="gff3" />
+        </repeat>
+        <param name="interproscan" label="InterProScan results" optional="true" multiple="true" type="data" format="tsv,gff3,xml" />
+        <param name="expression" label="Expression data" optional="true" multiple="true" type="data" format="tsv" />
     </inputs>
     <outputs>
         <data format="genenotebook" name="gnb_db" label="GeneNoteBook on ${on_string}"/>
     </outputs>
     <tests>
         <test>
-            <param name="name" value="Test org" />
-            <param name="genome" value="merlin.fa" />
-            <output name="gnb_db" file="genome.tar.bz2" compare="sim_size" />
+            <repeat name="genomes">
+                <param name="name" value="Test org" />
+                <param name="genome" value="genome.fa" />
+            </repeat>
+            <output name="gnb_db" file="output/genome.tar.bz2" compare="sim_size" />
         </test>
         <test>
-            <param name="existing" value="genome.tar.bz2" />
-            <param name="name" value="Test org 2" />
-            <param name="genome" value="merlin.fa" />
-            <output name="gnb_db" file="genome_reload.tar.bz2" compare="sim_size" />
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <param name="annotation" value="annot.gff" />
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot.tar.bz2" compare="sim_size" />
+        </test>
+        <test>
+            <param name="existing" value="output/genome.tar.bz2" />
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+            </repeat>
+            <output name="gnb_db" file="output/genome_reload.tar.bz2" compare="sim_size" />
         </test>
     </tests>
     <help><![CDATA[
-Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool.
+Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool (to be written).
+
+The resulting GeneNoteBook will contain the default user accounts created on the first launch. You are responsible to change them if you ever want to put your result online.
     ]]></help>
     <expand macro="citation" />
 </tool>
