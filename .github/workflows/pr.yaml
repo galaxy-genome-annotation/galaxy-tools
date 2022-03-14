@@ -22,7 +22,7 @@ jobs:
       chunk_list: ${{ steps.get-chunks.outputs.chunk_list }}
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
     - name: Print github context properties
       run: |
@@ -58,7 +58,7 @@ jobs:
     - name: Install Planemo and flake8
       run: pip install planemo flake8 flake8-import-order
     - name: Install GMOD python modules
-      run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.7 apollo==4.2.13
+      run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.8 apollo==4.2.13
     - name: Fake a Planemo run to update cache
       if: steps.cache-pip.outputs.cache-hit != 'true' || steps.cache-planemo.outputs.cache-hit != 'true'
       run: |
@@ -68,7 +68,7 @@ jobs:
       run: |
         virtualenv ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE
         . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
-        pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.7 apollo==4.2.13
+        pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.8 apollo==4.2.13
         deactivate
     - uses: actions/checkout@v2
       with:
@@ -132,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
     # checkout the repository
     # and use it as the current working directory
@@ -181,7 +181,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
     # checkout the repository to master
     # and use it as the current working directory
@@ -275,7 +275,7 @@ jobs:
       fail-fast: false
       matrix:
         chunk: ${{ fromJson(needs.setup.outputs.chunk_list) }}
-        python-version: [3.7]
+        python-version: [3.8]
         apollo: [0, 1]
     services:
       postgres:
@@ -323,7 +323,7 @@ jobs:
       run: |
         virtualenv ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE
         . ~/.planemo/gx_venv_${{ matrix.python-version }}_$GALAXY_RELEASE/bin/activate
-        pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.7 apollo==4.2.13
+        pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.8 apollo==4.2.13
         deactivate
     - name: Show changed tools chunk list
       run: cat changed_tools_chunk.list
@@ -379,7 +379,7 @@ jobs:
     needs: [setup, test]
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
@@ -424,7 +424,7 @@ jobs:
     needs: [setup, lint, flake8, lintr, combine_outputs]
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.repository_owner == 'galaxy-genome-annotation'
     steps:
