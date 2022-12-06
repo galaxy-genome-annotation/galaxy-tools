@@ -15,7 +15,10 @@ if ! grep -q "waiting for connections on port" ./mongod.log; then
   exit 1;
 fi;
 
-genenotebook run --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
+TMP_STORAGE=$(pwd)/tmp_storage
+mkdir "$TMP_STORAGE"
+
+genenotebook run --storage-path "$TMP_STORAGE" --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
 
 export GNB_PID=$!
 
