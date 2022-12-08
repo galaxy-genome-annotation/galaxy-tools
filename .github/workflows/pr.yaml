@@ -291,15 +291,14 @@ jobs:
     - name: Install GMOD python modules
       run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.9 apollo==4.2.13
     - name: Bootstrap Apollo
+      if: ${{ 'apollo' in needs.setup.outputs.tool-list }}
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
       run: |
-        if grep -q "apollo" <<< "${{ steps.discover.outputs.tool-list }}" ; then
-          export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
-          export BLAT_ENABLED=1
-          export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
-          ./bootstrap_apollo.sh
-        fi
+        export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
+        export BLAT_ENABLED=1
+        export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
+        ./bootstrap_apollo.sh
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
       env:
@@ -316,10 +315,8 @@ jobs:
         # Limit each test to 15 minutes
         test_timeout: 900
     - name: Show Apollo logs
-      run: |
-        if grep -q "apollo" <<< "${{ steps.discover.outputs.tool-list }}" ; then
-          docker logs apollo
-        fi
+      if: ${{ 'apollo' in needs.setup.outputs.tool-list }}
+      run: docker logs apollo
     - uses: actions/upload-artifact@v3
       with:
         name: 'Tool test output ${{ matrix.chunk }}'
