@@ -291,7 +291,7 @@ jobs:
     - name: Install GMOD python modules
       run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.9 apollo==4.2.13
     - name: Bootstrap Apollo
-      if: ${{ 'apollo' in needs.setup.outputs.tool-list }}
+      if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
       run: |
@@ -315,7 +315,7 @@ jobs:
         # Limit each test to 15 minutes
         test_timeout: 900
     - name: Show Apollo logs
-      if: ${{ 'apollo' in needs.setup.outputs.tool-list }}
+      if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
       run: docker logs apollo
     - uses: actions/upload-artifact@v3
       with:
