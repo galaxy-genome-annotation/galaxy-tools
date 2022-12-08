@@ -294,7 +294,7 @@ jobs:
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
       run: |
-        if grep -q "apollo" tool_list.txt ; then
+        if grep -q "apollo" <<< "${{ steps.discover.outputs.tool-list }}" ; then
           export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
           export BLAT_ENABLED=1
           export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
@@ -317,7 +317,7 @@ jobs:
         test_timeout: 900
     - name: Show Apollo logs
       run: |
-        if grep -q "apollo" tool_list.txt ; then
+        if grep -q "apollo" <<< "${{ steps.discover.outputs.tool-list }}" ; then
           docker logs apollo
         fi
     - uses: actions/upload-artifact@v3
