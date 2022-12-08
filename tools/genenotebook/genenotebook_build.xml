@@ -15,10 +15,10 @@
         && genenotebook add annotation @CONNECT_INFO@ --genome-name '${genome.name}' '${annot.annotation}'
         #if $annot.interproscan:
             && genenotebook add interproscan @CONNECT_INFO@ --format
-            #if $annot.interproscan.is_of_type('tsv'):
-                tsv
-            #else:
+            #if $annot.interproscan.is_of_type('gff3'):
                 gff3
+            #else:
+                tsv
             #end if
             '${annot.interproscan}'
         #end if
@@ -74,7 +74,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
-                    <param name="interproscan" value="interproscan.tsv" />
+                    <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot_ips.tar.bz2" compare="sim_size" />
