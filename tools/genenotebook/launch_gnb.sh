@@ -6,9 +6,10 @@ mongod --dbpath ./mongo_db/ --unixSocketPrefix `pwd` --bind_ip fake_socket --log
 
 sleep 5
 
+# "waiting for connections on port" is for mongodb 4x
+#if ! grep -q "waiting for connections on port" ./mongod.log; then
 # "Listening on" is for mongodb 5x
-#if ! grep -q "Listening on" ./mongod.log; then
-if ! grep -q "waiting for connections on port" ./mongod.log; then
+if ! grep -q "Listening on" ./mongod.log; then
   echo "Failed to launch MongoDB:" 1>&2;
   cat ./mongod.log 1>&2;
   kill $GNB_PID;
