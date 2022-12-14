@@ -41,9 +41,8 @@
         tar -cvjf '${gnb_db}' mongo_db > /dev/null;
 
         ## Make sure mongodb and GNB are really really stopped even if anything failed before
-        ;
-        kill \$GNB_PID &> /dev/null || true
-        ;
-        kill \$(<"./mongo.pid") &> /dev/null || true
+        ## We assume the DRM or container exit will kill any remaining process after that, but who knows.
+        kill \$GNB_PID &> /dev/null || true ;
+        kill \$(<"./mongo.pid") &> /dev/null || true ;
     ]]></token>
 </macros>

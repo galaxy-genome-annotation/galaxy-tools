@@ -14,13 +14,13 @@
     #for annot in $genome.annots:
         genenotebook add annotation @CONNECT_INFO@ --genome-name '${genome.name}' '${annot.annotation}';
         #if $annot.interproscan:
-            genenotebook add interproscan @CONNECT_INFO@ --format;
+            genenotebook add interproscan @CONNECT_INFO@ --format
             #if $annot.interproscan.is_of_type('gff3'):
                 gff3
             #else:
                 tsv
             #end if
-            '${annot.interproscan}'
+            '${annot.interproscan}';
         #end if
 
         #if $annot.eggnog:
