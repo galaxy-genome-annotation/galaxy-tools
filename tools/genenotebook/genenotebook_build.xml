@@ -87,6 +87,18 @@
             </repeat>
             <output name="gnb_db" file="output/genome_reload.tar.bz2" compare="sim_size" />
         </test>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <repeat name="annots">
+                    <param name="annotation" value="annot.gff" />
+                    <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
+                    <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
+                </repeat>
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" />
+        </test>
     </tests>
     <help><![CDATA[
 Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool (to be written).
