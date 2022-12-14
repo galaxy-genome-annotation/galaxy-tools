@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<tool id="genenotebook_build" name="Build a GeneNoteBook" version="@WRAPPER_VERSION@" profile="21.05">
+    <description></description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <command detect_errors="aggressive"><![CDATA[
+@START_GNB@
+
+#for genome in $genomes:
+    genenotebook add genome @CONNECT_INFO@ --name '${genome.name}' '${genome.genome}';
+
+    #for annot in $genome.annots:
+        genenotebook add annotation @CONNECT_INFO@ --genome-name '${genome.name}' '${annot.annotation}';
+        #if $annot.interproscan:
+            genenotebook add interproscan @CONNECT_INFO@ --format
+            #if $annot.interproscan.is_of_type('gff3'):
+                gff3
+            #else:
+                tsv
+            #end if
+            '${annot.interproscan}';
+        #end if
+
+        #if $annot.eggnog:
+            genenotebook add eggnog @CONNECT_INFO@ '${annot.eggnog}';
+        #end if
+    #end for
+#end for
+
+## TODO create genenotebook datatype
+## TODO check user accounts
+## TODO gxit
+
+@ZIP_GNB@
+    ]]></command>
+    <inputs>
+        <param name="existing" type="data" format="genenotebook" optional="true" label="Load data in an existing GeneNoteBook database" help="Leave empty to start a new database from scratch" />
+        <repeat name="genomes" title="Genomes">
+            <param argument="--name" label="Name" type="text" help="Reference genome name" />
+            <param name="genome" label="Genome sequence" type="data" format="fasta" />
+            <repeat name="annots" title="Annotations">
+                <param name="annotation" label="Annotation" type="data" format="gff3" />
+                <param name="interproscan" label="InterProScan results" optional="true" type="data" format="tsv,gff3" />
+                <param name="eggnog" label="EggNOG-Mapper results" optional="true" type="data" format="tsv" />
+            </repeat>
+        </repeat>
+    </inputs>
+    <outputs>
+        <data format="genenotebook" name="gnb_db" label="GeneNoteBook on ${on_string}"/>
+    </outputs>
+    <tests>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org" />
+                <param name="genome" value="genome.fa" />
+            </repeat>
+            <output name="gnb_db" file="output/genome.tar.bz2" compare="sim_size" />
+        </test>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <repeat name="annots">
+                    <param name="annotation" value="annot.gff" />
+                </repeat>
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot.tar.bz2" compare="sim_size" />
+        </test>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <repeat name="annots">
+                    <param name="annotation" value="annot.gff" />
+                    <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
+                </repeat>
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot_ips.tar.bz2" compare="sim_size" />
+        </test>
+        <test>
+            <param name="existing" value="output/genome.tar.bz2" />
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+            </repeat>
+            <output name="gnb_db" file="output/genome_reload.tar.bz2" compare="sim_size" />
+        </test>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <repeat name="annots">
+                    <param name="annotation" value="annot.gff" />
+                    <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
+                    <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
+                </repeat>
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" />
+        </test>
+    </tests>
+    <help><![CDATA[
+Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool (to be written).
+
+The resulting GeneNoteBook will contain the default user accounts created on the first launch. You are responsible to change them if you ever want to put your result online.
+    ]]></help>
+    <expand macro="citation" />
+</tool>

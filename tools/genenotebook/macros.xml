@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<macros>
+    <xml name="requirements">
+        <requirements>
+            <requirement type="package" version="@TOOL_VERSION@">genenotebook</requirement>
+            <yield/>
+        </requirements>
+    </xml>
+
+    <token name="@TOOL_VERSION@">0.3.2</token>
+    <token name="@WRAPPER_VERSION@">@TOOL_VERSION@+galaxy0</token>
+
+    <xml name="citation">
+        <citations>
+            <citation type="doi">10.1093/bioinformatics/btz491</citation>
+        </citations>
+    </xml>
+
+    <token name="@CONNECT_INFO@">-u admin -p admin --port \$GNB_PORT</token>
+
+    <!--
+    This runs GeneNoteBook, and a local mongodb server listening only on a unix socket, created in the work dir.
+    The bind_ip option is a trick to prevent mongod from opening a TCP socket.
+    For some unknwon reason, unixSocketPrefix needs an absolute path
+    -->
+    <token name="@START_GNB@"><![CDATA[
+        export GNB_PORT=\$(bash '$__tool_directory__/find_free_port.sh');
+        export MONGO_URI=\$(pwd | sed 's|/|%2F|g');
+        #if $existing
+            tar -xf '${existing}' mongo_db;
+        #else
+            mkdir ./mongo_db/;
+        #end if
+        . '$__tool_directory__/launch_gnb.sh';
+    ]]></token>
+
+    <token name="@ZIP_GNB@"><![CDATA[
+        . '$__tool_directory__/kill_gnb.sh';
+
+        ## Zip the mongodb data dir
+        tar -cvjf '${gnb_db}' mongo_db > /dev/null;
+
+        ## Make sure mongodb and GNB are really really stopped even if anything failed before
+        ## We assume the DRM or container exit will kill any remaining process after that, but who knows.
+        kill \$GNB_PID &> /dev/null || true ;
+        kill \$(<"./mongo.pid") &> /dev/null || true ;
+    ]]></token>
+</macros>
