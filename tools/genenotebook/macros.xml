@@ -27,19 +27,18 @@
         export GNB_PORT=\$(bash '$__tool_directory__/find_free_port.sh');
         export MONGO_URI=\$(pwd | sed 's|/|%2F|g');
         #if $existing
-            tar -xf '${existing}' mongo_db &&
+            tar -xf '${existing}' mongo_db;
         #else
-            mkdir ./mongo_db/ &&
+            mkdir ./mongo_db/;
         #end if
-        . '$__tool_directory__/launch_gnb.sh'
+        . '$__tool_directory__/launch_gnb.sh';
     ]]></token>
 
     <token name="@ZIP_GNB@"><![CDATA[
-        &&
-        . '$__tool_directory__/kill_gnb.sh' &&
+        . '$__tool_directory__/kill_gnb.sh';
 
         ## Zip the mongodb data dir
-        tar -cvjf '${gnb_db}' mongo_db > /dev/null
+        tar -cvjf '${gnb_db}' mongo_db > /dev/null;
 
         ## Make sure mongodb and GNB are really really stopped even if anything failed before
         ;
