@@ -297,7 +297,11 @@ jobs:
         BLAT_ENABLED: 1
         ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
         GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
-      run: ./bootstrap_apollo.sh
+      run: |
+        echo $ARROW_GLOBAL_CONFIG_PATH;
+        ls -l $ARROW_GLOBAL_CONFIG_PATH;
+        cat $ARROW_GLOBAL_CONFIG_PATH;
+        ./bootstrap_apollo.sh
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
       env:
