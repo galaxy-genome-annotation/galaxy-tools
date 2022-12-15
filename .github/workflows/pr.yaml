@@ -294,15 +294,17 @@ jobs:
       if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
-      run: |
-        export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
-        export BLAT_ENABLED=1
-        export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
-        ./bootstrap_apollo.sh
+        BLAT_ENABLED: 1
+        ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
+        GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
+      run: ./bootstrap_apollo.sh
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
+        BLAT_ENABLED: 1
+        ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
+        GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
       id: test
       with:
         mode: test
