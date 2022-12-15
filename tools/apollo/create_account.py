@@ -14,6 +14,12 @@ if __name__ == '__main__':
     parser.add_argument('--last', help='Last Name', default='Aggie')
     args = parser.parse_args()
 
+    import os
+    if 'ARROW_GLOBAL_CONFIG_PATH' in os.environ:
+        print("ARROW_GLOBAL_CONFIG_PATH is %s" % os.environ['ARROW_GLOBAL_CONFIG_PATH'])
+    else:
+        print("ARROW_GLOBAL_CONFIG_PATH not in os.environ")
+
     wa = get_apollo_instance()
 
     password = wa.users._password_generator(12)
