@@ -442,7 +442,7 @@ class WebApolloInstance(object):
     def __init__(self):
 
         if 'ARROW_GLOBAL_CONFIG_PATH' in os.environ:
-            print("ARROW_GLOBAL_CONFIG_PATH is %s" % os.environ['ARROW_GLOBAL_CONFIG_PATH']))
+            print("ARROW_GLOBAL_CONFIG_PATH is %s" % os.environ['ARROW_GLOBAL_CONFIG_PATH'])
 
             with open(os.environ['ARROW_GLOBAL_CONFIG_PATH'], 'r') as config:
                 conf = yaml.safe_load(config)
