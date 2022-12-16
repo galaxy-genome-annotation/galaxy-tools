@@ -297,18 +297,18 @@ jobs:
         BLAT_ENABLED: 1
         ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
         GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
-      run: |
-        echo $ARROW_GLOBAL_CONFIG_PATH;
-        ls -l $ARROW_GLOBAL_CONFIG_PATH;
-        cat $ARROW_GLOBAL_CONFIG_PATH;
-        ./bootstrap_apollo.sh
-    - name: Planemo test
-      uses: galaxyproject/planemo-ci-action@v1
+      run: ./bootstrap_apollo.sh
+    - uses: danielr1996/envsubst-action@1.0.0
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
         BLAT_ENABLED: 1
         ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
         GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
+      with:
+        input: ${{ github.workspace }}/job_conf_apollo.xml
+        output: ${{ github.workspace }}/job_conf_apollo_subst.xml
+    - name: Planemo test
+      uses: galaxyproject/planemo-ci-action@v1
       id: test
       with:
         mode: test
@@ -320,6 +320,7 @@ jobs:
         galaxy-slots: ${{ steps.cpu-cores.outputs.count }}
         # Limit each test to 15 minutes
         test_timeout: 900
+        additional-planemo-options: --job_config_file ${{ github.workspace }}/job_conf_apollo_subst.xml
     - name: Show Apollo logs
       if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
       run: docker logs apollo
