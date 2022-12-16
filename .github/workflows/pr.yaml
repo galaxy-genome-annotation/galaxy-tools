@@ -302,6 +302,7 @@ jobs:
       if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
       uses: danielr1996/envsubst-action@1.0.0
       env:
+        DOCKER_VOLUMES: "$defaults"
         APOLLO_REMOTE: ${{ matrix.apollo }}
         BLAT_ENABLED: 1
         ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
@@ -309,7 +310,7 @@ jobs:
       with:
         input: ${{ github.workspace }}/job_conf_apollo.xml
         output: ${{ github.workspace }}/job_conf_apollo_subst.xml
-    - name: Install GMOD python modules
+    - name: DEBUG envsubst
       run: |
         cat ${{ github.workspace }}/job_conf_apollo.xml
         cat ${{ github.workspace }}/job_conf_apollo_subst.xml
