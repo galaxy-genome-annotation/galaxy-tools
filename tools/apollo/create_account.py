@@ -15,10 +15,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     import os
+    import sys
     if 'ARROW_GLOBAL_CONFIG_PATH' in os.environ:
-        print("ARROW_GLOBAL_CONFIG_PATH is %s" % os.environ['ARROW_GLOBAL_CONFIG_PATH'])
+        print("ARROW_GLOBAL_CONFIG_PATH is %s" % os.environ['ARROW_GLOBAL_CONFIG_PATH'], file=sys.stderr)
     else:
-        print("ARROW_GLOBAL_CONFIG_PATH not in os.environ")
+        print("ARROW_GLOBAL_CONFIG_PATH not in os.environ", file=sys.stderr)
 
     wa = get_apollo_instance()
 

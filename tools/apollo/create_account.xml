@@ -6,7 +6,9 @@
   </macros>
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
+echo "ARROW_GLOBAL_CONFIG_PATH bef: \$ARROW_GLOBAL_CONFIG_PATH" &&
 @AUTH@
+echo "ARROW_GLOBAL_CONFIG_PATH aft: \$ARROW_GLOBAL_CONFIG_PATH" &&
 
 python '$__tool_directory__/create_account.py'
 
