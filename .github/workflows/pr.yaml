@@ -316,6 +316,11 @@ jobs:
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
       id: test
+      env:
+        APOLLO_REMOTE: ${{ matrix.apollo }}
+        BLAT_ENABLED: 1
+        ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
+        GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
       with:
         mode: test
         repository-list: ${{ needs.setup.outputs.repository-list }}
