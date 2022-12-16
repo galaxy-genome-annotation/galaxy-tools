@@ -298,7 +298,9 @@ jobs:
         ARROW_GLOBAL_CONFIG_PATH: ${{ github.workspace }}/tools/apollo/test-data/arrow.yml
         GALAXY_SHARED_DIR: ${{ github.workspace }}/apollo_shared_dir
       run: ./bootstrap_apollo.sh
-    - uses: danielr1996/envsubst-action@1.0.0
+    - name: Prepare specific job_conf for Apollo tools
+      if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
+      uses: danielr1996/envsubst-action@1.0.0
       env:
         APOLLO_REMOTE: ${{ matrix.apollo }}
         BLAT_ENABLED: 1
@@ -307,6 +309,10 @@ jobs:
       with:
         input: ${{ github.workspace }}/job_conf_apollo.xml
         output: ${{ github.workspace }}/job_conf_apollo_subst.xml
+    - name: Install GMOD python modules
+      run: |
+        cat ${{ github.workspace }}/job_conf_apollo.xml
+        cat ${{ github.workspace }}/job_conf_apollo_subst.xml
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
       id: test
