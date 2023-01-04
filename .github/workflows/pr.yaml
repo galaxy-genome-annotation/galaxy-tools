@@ -302,11 +302,11 @@ jobs:
       if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
       uses: danielr1996/envsubst-action@1.0.0
       env:
-        DOCKER_VOLUMES: "$defaults,${{ github.workspace }}/apollo_shared_dir:rw,${{ github.workspace }}/tools/apollo/:ro"
+        DOCKER_VOLUMES: "$defaults,${{ runner.workspace }}/apollo_shared_dir:rw,${{ runner.workspace }}/tools/apollo/:ro"
         APOLLO_REMOTE: "${{ matrix.apollo }}"
         BLAT_ENABLED: "1"
-        ARROW_GLOBAL_CONFIG_PATH: "${{ github.workspace }}/tools/apollo/test-data/arrow.yml"
-        GALAXY_SHARED_DIR: "${{ github.workspace }}/apollo_shared_dir"
+        ARROW_GLOBAL_CONFIG_PATH: "${{ runner.workspace }}/tools/apollo/test-data/arrow.yml"
+        GALAXY_SHARED_DIR: "${{ runner.workspace }}/apollo_shared_dir"
       with:
         input: "${{ github.workspace }}/job_conf_apollo.xml"
         output: "${{ github.workspace }}/job_conf_apollo_subst.xml"
