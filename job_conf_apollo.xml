@@ -14,7 +14,7 @@
             <param id="docker_sudo_cmd">sudo</param>
             <param id="docker_cmd">docker</param>
             <param id="docker_volumes">${DOCKER_VOLUMES}</param>
-            <param id="docker_run_extra_arguments">-e APOLLO_REMOTE='${APOLLO_REMOTE}' -e BLAT_ENABLED='1' -e ARROW_GLOBAL_CONFIG_PATH='${GITHUB_WORKSPACE}/tools/apollo/test-data/arrow.yml' -e GALAXY_SHARED_DIR='${GITHUB_WORKSPACE}/apollo_shared_dir'</param>
+            <param id="docker_run_extra_arguments">-e APOLLO_REMOTE='${APOLLO_REMOTE}' -e BLAT_ENABLED='1' -e ARROW_GLOBAL_CONFIG_PATH='${ARROW_GLOBAL_CONFIG_PATH}' -e GALAXY_SHARED_DIR='${GALAXY_SHARED_DIR}'</param>
             <env id="APOLLO_REMOTE">${APOLLO_REMOTE}</env>
             <env id="BLAT_ENABLED">1</env>
             <env id="ARROW_GLOBAL_CONFIG_PATH">${ARROW_GLOBAL_CONFIG_PATH}</env>
