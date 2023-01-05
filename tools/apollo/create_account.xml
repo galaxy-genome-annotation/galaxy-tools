@@ -9,6 +9,9 @@
 echo "ARROW_GLOBAL_CONFIG_PATH bef: \$ARROW_GLOBAL_CONFIG_PATH" &&
 @AUTH@
 echo "ARROW_GLOBAL_CONFIG_PATH aft: \$ARROW_GLOBAL_CONFIG_PATH" &&
+ls -l \$ARROW_GLOBAL_CONFIG_PATH &&
+cat \$ARROW_GLOBAL_CONFIG_PATH &&
+ls -l /github/workspace/ &&
 
 python '$__tool_directory__/create_account.py'
 
