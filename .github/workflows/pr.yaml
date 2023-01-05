@@ -305,7 +305,7 @@ jobs:
         DOCKER_VOLUMES: "$defaults,${{ runner.workspace }}/apollo_shared_dir:rw,${{ runner.workspace }}/tools/apollo/:ro"
         APOLLO_REMOTE: "${{ matrix.apollo }}"
         BLAT_ENABLED: "1"
-        ARROW_GLOBAL_CONFIG_PATH: "${{ runner.workspace }}/tools/apollo/test-data/arrow.yml"
+        ARROW_GLOBAL_CONFIG_PATH: "${{ runner.workspace }}/galaxy-tools/tools/apollo/test-data/arrow.yml"
         GALAXY_SHARED_DIR: "${{ runner.workspace }}/apollo_shared_dir"
       with:
         input: "${{ github.workspace }}/job_conf_apollo.xml"
@@ -320,7 +320,7 @@ jobs:
       env:
         APOLLO_REMOTE: "${{ matrix.apollo }}"
         BLAT_ENABLED: "1"
-        ARROW_GLOBAL_CONFIG_PATH: "${{ github.workspace }}/tools/apollo/test-data/arrow.yml"
+        ARROW_GLOBAL_CONFIG_PATH: "${{ github.workspace }}/galaxy-tools/tools/apollo/test-data/arrow.yml"
         GALAXY_SHARED_DIR: "${{ github.workspace }}/apollo_shared_dir"
       with:
         mode: test
