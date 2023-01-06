@@ -13,7 +13,7 @@
             <param id="docker_sudo">false</param>
             <param id="docker_sudo_cmd">sudo</param>
             <param id="docker_cmd">docker</param>
-            <param id="docker_volumes">$defaults,${RUNNER_WORKSPACE}/apollo_shared_dir:rw,${RUNNER_WORKSPACE}/tools/apollo/:ro</param>
+            <param id="docker_volumes">$defaults,${RUNNER_WORKSPACE}/apollo_shared_dir:rw,${RUNNER_WORKSPACE}/galaxy-tools/tools/apollo/:ro</param>
             <param id="docker_run_extra_arguments">-e APOLLO_REMOTE='${APOLLO_REMOTE}' -e BLAT_ENABLED='1' -e ARROW_GLOBAL_CONFIG_PATH='${RUNNER_WORKSPACE}/galaxy-tools/tools/apollo/test-data/arrow.yml' -e GALAXY_SHARED_DIR='${RUNNER_WORKSPACE}/apollo_shared_dir'</param>
             <env id="APOLLO_REMOTE">${APOLLO_REMOTE}</env>
             <env id="BLAT_ENABLED">1</env>
