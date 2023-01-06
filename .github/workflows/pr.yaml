@@ -302,7 +302,6 @@ jobs:
       if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
       uses: danielr1996/envsubst-action@1.0.0
       env:
-        DOCKER_VOLUMES: "$defaults,${{ runner.workspace }}/apollo_shared_dir:rw,${{ runner.workspace }}/tools/apollo/:ro"
         APOLLO_REMOTE: "${{ matrix.apollo }}"
         BLAT_ENABLED: "1"
         ARROW_GLOBAL_CONFIG_PATH: "${{ runner.workspace }}/galaxy-tools/tools/apollo/test-data/arrow.yml"
