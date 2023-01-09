@@ -305,7 +305,7 @@ jobs:
         APOLLO_REMOTE: "${{ matrix.apollo }}"
         BLAT_ENABLED: "1"
         ARROW_GLOBAL_CONFIG_PATH: "${{ runner.workspace }}/galaxy-tools/tools/apollo/test-data/arrow.yml"
-        GALAXY_SHARED_DIR: "${{ runner.workspace }}/apollo_shared_dir"
+        GALAXY_SHARED_DIR: "${{ runner.workspace }}/galaxy-tools/apollo_shared_dir"
         DEFAULT_MOUNTS: "$defaults"
       with:
         input: "${{ github.workspace }}/job_conf_apollo.xml"
