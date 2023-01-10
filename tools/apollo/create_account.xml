@@ -6,14 +6,6 @@
   </macros>
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
-  ls -l \$ARROW_GLOBAL_CONFIG_PATH || true;
-  cat \$ARROW_GLOBAL_CONFIG_PATH || true;
-  ls -l /github/workspace/ || true;
-  ls -l /home/runner/work/galaxy-tools/ || true;
-echo "ARROW_GLOBAL_CONFIG_PATH bef: \$ARROW_GLOBAL_CONFIG_PATH" &&
-@AUTH@
-echo "ARROW_GLOBAL_CONFIG_PATH aft: \$ARROW_GLOBAL_CONFIG_PATH" &&
-
 python '$__tool_directory__/create_account.py'
 
 '$__user_email__'

@@ -4,10 +4,10 @@ if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
     echo "Running Apollo with mounted shared dir"
     mkdir -p "$GALAXY_SHARED_DIR"
     chmod 777 "$GALAXY_SHARED_DIR"
-    docker run -d -it -p 8888:8080 --name apollo -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ gmod/apollo:release-2.6.6
+    docker run -d -it -p 8888:8080 --name apollo -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ gmod/apollo:latest
 else
     echo "Running Apollo in remote mode"
-    docker run -d -it -p 8888:8080 --name apollo gmod/apollo:release-2.6.6
+    docker run -d -it -p 8888:8080 --name apollo gmod/apollo:latest
 fi
 
 echo "[BOOTSTRAP] Waiting while Apollo starts up..."
@@ -34,7 +34,7 @@ arrow groups create_group one_group
 arrow groups create_group another_group
 
 # Create a user
-arrow users create_user "test@bx.psu.edu" Junior Galaxy password
+arrow users create_user "planemo@galaxyproject.org" Junior Galaxy password
 
 # Add some organisms
 if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
@@ -57,10 +57,10 @@ else
 fi
 
 # Give access to organisms for test user
-arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" test_organism
-arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" alt_org
-arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" org3
-arrow users update_organism_permissions --write --read --export "test@bx.psu.edu" org4
+arrow users update_organism_permissions --write --read --export "planemo@galaxyproject.org" test_organism
+arrow users update_organism_permissions --write --read --export "planemo@galaxyproject.org" alt_org
+arrow users update_organism_permissions --write --read --export "planemo@galaxyproject.org" org3
+arrow users update_organism_permissions --write --read --export "planemo@galaxyproject.org" org4
 
 # Load some annotations
 arrow annotations load_gff3 test_organism tools/apollo/test-data/merlin.gff
