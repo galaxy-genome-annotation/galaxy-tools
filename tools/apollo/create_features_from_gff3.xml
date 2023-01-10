@@ -32,7 +32,7 @@ $disable_cds_recalculation
       <test>
           <conditional name="org_source">
               <param name="source_select" value="direct"/>
-              <param name="org_raw" value="Testus organus" />
+              <param name="org_raw" value="test_organism" />
           </conditional>
           <param name="gff3_data" value="merlin.gff"/>
           <output name="output" file="load_gff3/output.txt" compare="sim_size"/>
