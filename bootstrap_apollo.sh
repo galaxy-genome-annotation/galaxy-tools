@@ -4,10 +4,10 @@ if [[ ! -z "$GALAXY_SHARED_DIR" ]]; then
     echo "Running Apollo with mounted shared dir"
     mkdir -p "$GALAXY_SHARED_DIR"
     chmod 777 "$GALAXY_SHARED_DIR"
-    docker run -d -it -p 8888:8080 --name apollo -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ gmod/apollo:latest
+    docker run -d -it -p 8888:8080 --name apollo -v `pwd`/apollo_shared_dir/:`pwd`/apollo_shared_dir/ gmod/apollo:release-2.6.6
 else
     echo "Running Apollo in remote mode"
-    docker run -d -it -p 8888:8080 --name apollo gmod/apollo:latest
+    docker run -d -it -p 8888:8080 --name apollo gmod/apollo:release-2.6.6
 fi
 
 echo "[BOOTSTRAP] Waiting while Apollo starts up..."

@@ -310,10 +310,6 @@ jobs:
       with:
         input: "${{ github.workspace }}/job_conf_apollo.xml"
         output: "${{ github.workspace }}/job_conf_apollo_subst.xml"
-    - name: DEBUG envsubst
-      run: |
-        cat "${{ github.workspace }}/job_conf_apollo.xml"
-        cat "${{ github.workspace }}/job_conf_apollo_subst.xml"
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
       id: test
