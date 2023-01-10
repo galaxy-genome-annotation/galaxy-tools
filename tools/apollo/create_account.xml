@@ -6,6 +6,8 @@
   </macros>
   <expand macro="requirements"/>
   <command detect_errors="aggressive"><![CDATA[
+@AUTH@
+
 python '$__tool_directory__/create_account.py'
 
 '$__user_email__'
