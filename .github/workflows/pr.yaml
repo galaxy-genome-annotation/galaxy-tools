@@ -291,7 +291,7 @@ jobs:
     - name: Install GMOD python modules
       run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.9 apollo==4.2.13
     - name: Bootstrap Apollo
-      if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
+      if: ${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') }}
       env:
         APOLLO_REMOTE: "${{ matrix.apollo }}"
         BLAT_ENABLED: "1"
@@ -299,7 +299,7 @@ jobs:
         GALAXY_SHARED_DIR: "${{ github.workspace }}/apollo_shared_dir"
       run: ./bootstrap_apollo.sh
     - name: Prepare specific job_conf for Apollo tools
-      if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
+      if: ${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') }}
       uses: danielr1996/envsubst-action@1.0.0
       env:
         APOLLO_REMOTE: "${{ matrix.apollo }}"
@@ -328,9 +328,9 @@ jobs:
         galaxy-slots: ${{ steps.cpu-cores.outputs.count }}
         # Limit each test to 15 minutes
         test_timeout: 900
-        additional-planemo-options: "${{ contains('tools/apollo', needs.setup.outputs.repository-list) && format('--job_config_file {0}/job_conf_apollo_subst.xml', github.workspace) || '' }}"
+        additional-planemo-options: "${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') && format('--job_config_file {0}/job_conf_apollo_subst.xml', github.workspace) || '' }}"
     - name: Show Apollo logs
-      if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
+      if: ${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') }}
       run: docker logs apollo
     - uses: actions/upload-artifact@v3
       with:
