@@ -29,10 +29,6 @@
     #end for
 #end for
 
-## TODO create genenotebook datatype
-## TODO check user accounts
-## TODO gxit
-
 @ZIP_GNB@
     ]]></command>
     <inputs>
