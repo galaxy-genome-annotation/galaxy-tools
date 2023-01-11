@@ -291,19 +291,33 @@ jobs:
     - name: Install GMOD python modules
       run: pip install tripal==3.2.1 biopython bcbio-gff chado==2.3.9 apollo==4.2.13
     - name: Bootstrap Apollo
-      if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
+      if: ${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') }}
       env:
-        APOLLO_REMOTE: ${{ matrix.apollo }}
-      run: |
-        export ARROW_GLOBAL_CONFIG_PATH=`pwd`/tools/apollo/test-data/arrow.yml
-        export BLAT_ENABLED=1
-        export GALAXY_SHARED_DIR=`pwd`/apollo_shared_dir
-        ./bootstrap_apollo.sh
+        APOLLO_REMOTE: "${{ matrix.apollo }}"
+        BLAT_ENABLED: "1"
+        ARROW_GLOBAL_CONFIG_PATH: "${{ github.workspace }}/tools/apollo/test-data/arrow.yml"
+        GALAXY_SHARED_DIR: "${{ github.workspace }}/apollo_shared_dir"
+      run: ./bootstrap_apollo.sh
+    - name: Prepare specific job_conf for Apollo tools
+      if: ${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') }}
+      uses: danielr1996/envsubst-action@1.0.0
+      env:
+        APOLLO_REMOTE: "${{ matrix.apollo }}"
+        BLAT_ENABLED: "1"
+        ARROW_GLOBAL_CONFIG_PATH: "${{ runner.workspace }}/galaxy-tools/tools/apollo/test-data/arrow.yml"
+        GALAXY_SHARED_DIR: "${{ runner.workspace }}/galaxy-tools/apollo_shared_dir"
+        DEFAULT_MOUNTS: "$defaults"
+      with:
+        input: "${{ github.workspace }}/job_conf_apollo.xml"
+        output: "${{ github.workspace }}/job_conf_apollo_subst.xml"
     - name: Planemo test
       uses: galaxyproject/planemo-ci-action@v1
-      env:
-        APOLLO_REMOTE: ${{ matrix.apollo }}
       id: test
+      env:
+        APOLLO_REMOTE: "${{ matrix.apollo }}"
+        BLAT_ENABLED: "1"
+        ARROW_GLOBAL_CONFIG_PATH: "${{ github.workspace }}/tools/apollo/test-data/arrow.yml"
+        GALAXY_SHARED_DIR: "${{ github.workspace }}/apollo_shared_dir"
       with:
         mode: test
         repository-list: ${{ needs.setup.outputs.repository-list }}
@@ -314,8 +328,9 @@ jobs:
         galaxy-slots: ${{ steps.cpu-cores.outputs.count }}
         # Limit each test to 15 minutes
         test_timeout: 900
+        additional-planemo-options: "${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') && format('--job_config_file {0}/job_conf_apollo_subst.xml', github.workspace) || '' }}"
     - name: Show Apollo logs
-      if: ${{ contains('apollo', needs.setup.outputs.tool-list) }}
+      if: ${{ contains(needs.setup.outputs.repository-list, 'tools/apollo') }}
       run: docker logs apollo
     - uses: actions/upload-artifact@v3
       with:
@@ -370,7 +385,7 @@ jobs:
   deploy:
     name: Deploy
     needs: [setup, lint, flake8, lintr, combine_outputs]
-    if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' ) && github.repository_owner == 'galaxyproject' }}
+    if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' ) && github.repository_owner == 'galaxy-genome-annotation' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:

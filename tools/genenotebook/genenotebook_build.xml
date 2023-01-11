@@ -29,10 +29,6 @@
     #end for
 #end for
 
-## TODO create genenotebook datatype
-## TODO check user accounts
-## TODO gxit
-
 @ZIP_GNB@
     ]]></command>
     <inputs>
@@ -57,6 +53,9 @@
                 <param name="genome" value="genome.fa" />
             </repeat>
             <output name="gnb_db" file="output/genome.tar.bz2" compare="sim_size" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+            </assert_stdout>
         </test>
         <test>
             <repeat name="genomes">
@@ -67,6 +66,10 @@
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot.tar.bz2" compare="sim_size" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+                <has_text text="addAnnotationTrack succesfully inserted 5 elements" />
+            </assert_stdout>
         </test>
         <test>
             <repeat name="genomes">
@@ -78,6 +81,11 @@
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot_ips.tar.bz2" compare="sim_size" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+                <has_text text="addAnnotationTrack succesfully inserted 5 elements" />
+                <has_text text="addInterproscan succesfully inserted 5 elements" />
+            </assert_stdout>
         </test>
         <test>
             <param name="existing" value="output/genome.tar.bz2" />
@@ -86,6 +94,9 @@
                 <param name="genome" value="genome.fa" />
             </repeat>
             <output name="gnb_db" file="output/genome_reload.tar.bz2" compare="sim_size" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+            </assert_stdout>
         </test>
         <test>
             <repeat name="genomes">
@@ -97,7 +108,13 @@
                     <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
                 </repeat>
             </repeat>
-            <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" />
+            <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" delta="15000" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+                <has_text text="addAnnotationTrack succesfully inserted 5 elements" />
+                <has_text text="addInterproscan succesfully inserted 5 elements" />
+                <has_text text="addEggnog succesfully inserted undefined elements" />
+            </assert_stdout>
         </test>
     </tests>
     <help><![CDATA[

@@ -4,7 +4,9 @@
   <macros>
     <import>macros.xml</import>
   </macros>
-  <expand macro="requirements"/>
+  <expand macro="requirements">
+    <requirement type="package" version="3.2.7">rsync</requirement>
+  </expand>
   <code file="webapollo.py"/>
   <command detect_errors="aggressive"><![CDATA[
 mkdir -p '$jbrowse.files_path/'

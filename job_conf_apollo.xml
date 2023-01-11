@@ -1,0 +1,30 @@
+<!-- Override the default planemo job_conf file to allow passing env vars to apollo tools -->
+<!-- see https://github.com/galaxyproject/planemo-ci-action/issues/39 -->
+<job_conf>
+    <plugins>
+        <plugin id="planemo_runner" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner" workers="4"/>
+    </plugins>
+    <handlers>
+    </handlers>
+    <destinations default="planemo_dest">
+        <destination id="planemo_dest" runner="planemo_runner">
+            <param id="require_container">false</param>
+            <param id="docker_enabled">true</param>
+            <param id="docker_sudo">false</param>
+            <param id="docker_sudo_cmd">sudo</param>
+            <param id="docker_cmd">docker</param>
+            <param id="docker_volumes">${DEFAULT_MOUNTS},${RUNNER_WORKSPACE}/galaxy-tools/apollo_shared_dir:rw</param>
+            <param id="docker_run_extra_arguments">--network host -e APOLLO_REMOTE='${APOLLO_REMOTE}' -e BLAT_ENABLED='1' -e ARROW_GLOBAL_CONFIG_PATH='${RUNNER_WORKSPACE}/galaxy-tools/tools/apollo/test-data/arrow.yml' -e GALAXY_SHARED_DIR='${RUNNER_WORKSPACE}/galaxy-tools/apollo_shared_dir'</param>
+            <env id="APOLLO_REMOTE">${APOLLO_REMOTE}</env>
+            <env id="BLAT_ENABLED">1</env>
+            <env id="ARROW_GLOBAL_CONFIG_PATH">${RUNNER_WORKSPACE}/galaxy-tools/tools/apollo/test-data/arrow.yml</env>
+            <env id="GALAXY_SHARED_DIR">${RUNNER_WORKSPACE}/galaxy-tools/apollo_shared_dir</env>
+        </destination>
+        <destination id="upload_dest" runner="planemo_runner">
+            <param id="docker_enabled">false</param>
+        </destination>
+    </destinations>
+    <tools>
+        <tool id="upload1" destination="upload_dest" />
+    </tools>
+</job_conf>

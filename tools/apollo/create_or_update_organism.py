@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     # Cleanup if existing
     if not IsRemote():
-        if(os.path.exists(args.jbrowse)):
+        if os.path.exists(args.jbrowse):
             shutil.rmtree(args.jbrowse)
         # Copy files
         shutil.copytree(args.jbrowse_src, args.jbrowse, symlinks=True)

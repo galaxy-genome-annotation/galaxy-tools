@@ -5,8 +5,14 @@ import collections
 import json
 import logging
 import os
+import sys
 import time
 from abc import abstractmethod
+
+if sys.version_info.major == 3 and sys.version_info.minor >= 10:
+    from collections.abc import MutableMapping
+else:
+    from collections import MutableMapping
 
 import requests
 
@@ -29,7 +35,7 @@ log = logging.getLogger()
 # of https://github.com/tkem/cachetools/    #
 #############################################
 
-class DefaultMapping(collections.MutableMapping):
+class DefaultMapping(MutableMapping):
 
     __slots__ = ()
 
@@ -436,7 +442,6 @@ class WebApolloInstance(object):
     def __init__(self):
 
         if 'ARROW_GLOBAL_CONFIG_PATH' in os.environ:
-
             with open(os.environ['ARROW_GLOBAL_CONFIG_PATH'], 'r') as config:
                 conf = yaml.safe_load(config)
                 try:
