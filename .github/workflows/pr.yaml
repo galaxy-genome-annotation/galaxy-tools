@@ -328,7 +328,7 @@ jobs:
         galaxy-slots: ${{ steps.cpu-cores.outputs.count }}
         # Limit each test to 15 minutes
         test_timeout: 900
-        additional-planemo-options: "--job_config_file ${{ github.workspace }}/job_conf_apollo_subst.xml"
+        additional-planemo-options: "${{ contains('tools/apollo', needs.setup.outputs.repository-list) && format('--job_config_file {0}/job_conf_apollo_subst.xml', github.workspace) || '' }}"
     - name: Show Apollo logs
       if: ${{ contains('tools/apollo', needs.setup.outputs.repository-list) }}
       run: docker logs apollo
