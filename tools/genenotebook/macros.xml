@@ -2,12 +2,12 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="@TOOL_VERSION@">genenotebook</requirement>
+            <requirement type="package" version="@TOOL_VERSION@">genoboo</requirement>
             <yield/>
         </requirements>
     </xml>
 
-    <token name="@TOOL_VERSION@">0.3.2</token>
+    <token name="@TOOL_VERSION@">0.4.0</token>
     <token name="@WRAPPER_VERSION@">@TOOL_VERSION@+galaxy0</token>
 
     <xml name="citation">
