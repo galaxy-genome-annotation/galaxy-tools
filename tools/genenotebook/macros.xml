@@ -24,8 +24,8 @@
     For some unknwon reason, unixSocketPrefix needs an absolute path
     -->
     <token name="@START_GNB@"><![CDATA[
-        export GNB_PORT=\$(bash '$__tool_directory__/find_free_port.sh');
-        export MONGO_URI=\$(pwd | sed 's|/|%2F|g');
+        export GNB_PORT="\$(bash '$__tool_directory__/find_free_port.sh')";
+        export MONGO_URI="\$(pwd | sed 's|/|%2F|g')";
         #if $existing
             tar -xf '${existing}' mongo_db;
         #else
