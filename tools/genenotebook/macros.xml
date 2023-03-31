@@ -16,6 +16,19 @@
         </citations>
     </xml>
 
+    <xml name="sanitized">
+        <sanitizer>
+            <valid initial="string.printable">
+                <remove value="&apos;"/>
+            </valid>
+            <mapping initial="none">
+                <add source="&apos;" target="&apos;&quot;&apos;&quot;&apos;"/>
+                <add source="(" target="\("/>
+                <add source=")" target="\)"/>
+            </mapping>
+        </sanitizer>
+    </xml>
+
     <token name="@CONNECT_INFO@">-u admin -p admin --port \$GNB_PORT</token>
 
     <!--

@@ -9,12 +9,25 @@
 @START_GNB@
 
 #for genome in $genomes:
-    genenotebook add genome @CONNECT_INFO@ --name '${genome.name}' '${genome.genome}';
+    genoboo add genome @CONNECT_INFO@ --name '${genome.name}' ${genome.public} '${genome.genome}';
 
     #for annot in $genome.annots:
-        genenotebook add annotation @CONNECT_INFO@ --genome-name '${genome.name}' '${annot.annotation}';
+        genoboo add annotation @CONNECT_INFO@ --name '${genome.name}'
+        #if $annot.prot_naming.method == 'regex'
+            #if $annot.prot_naming.re_protein:
+            --re_protein '$annot.prot_naming.re_protein'
+            #end if
+            #if $annot.prot_naming.re_protein_capture:
+            --re_protein_capture '$annot.prot_naming.re_protein_capture'
+            #end if
+        #elif $annot.prot_naming.method == "attr"
+            #if $annot.prot_naming.protein_id_attr:
+            --attr_protein '$annot.prot_naming.attr_protein'
+            #end if
+        #end if
+        '${annot.annotation}';
         #if $annot.interproscan:
-            genenotebook add interproscan @CONNECT_INFO@ --format
+            genoboo add interproscan @CONNECT_INFO@ --format
             #if $annot.interproscan.is_of_type('gff3'):
                 gff3
             #else:
@@ -24,8 +37,25 @@
         #end if
 
         #if $annot.eggnog:
-            genenotebook add eggnog @CONNECT_INFO@ '${annot.eggnog}';
+            genoboo add eggnog @CONNECT_INFO@ '${annot.eggnog}';
         #end if
+
+        #if $annot.blast_cond.blast_choice == "yes":
+            genoboo add blast @CONNECT_INFO@
+                --format 'xml'
+                --algorithm '${annot.blast_cond.algorithm}'
+                --matrix '${annot.blast_cond.matrix}'
+                --database '${annot.blast_cond.database}'
+                '${annot.blast_cond.blast}';
+        #end if
+
+        #for exp in $annot.expression:
+            genoboo add transcriptome @CONNECT_INFO@
+                --sample-name '${exp.sample_name}'
+                --replica-group '${exp.replica_group}'
+                --sample-description '${exp.sample_description}'
+                '${exp.counts}';
+        #end for
     #end for
 #end for
 
@@ -36,10 +66,51 @@
         <repeat name="genomes" title="Genomes">
             <param argument="--name" label="Name" type="text" help="Reference genome name" />
             <param name="genome" label="Genome sequence" type="data" format="fasta" />
+            <param name="public" label="Public access" type="boolean" truevalue="--public" falsevalue="" value="false" />
             <repeat name="annots" title="Annotations">
                 <param name="annotation" label="Annotation" type="data" format="gff3" />
+                <conditional name="prot_naming">
+                    <param name="method" type="select" label="Protein naming method">
+                        <option value="none">No specific names for proteins</option>
+                        <option value="regex">Based on mRNA name with regular expression</option>
+                        <option value="attr">From GFF attribute</option>
+                    </param>
+                    <when value="none" />
+                    <when value="regex">
+                        <param argument="--re_protein_capture" label="Regex protein capture" type="text" help="Regular expression to capture groups in mRNA name to use in 'Regex protein'" value="^(.*?)-R([A-Z]+)$">
+                            <expand macro="sanitized"/>
+                        </param>
+                        <param argument="--re_protein" label="Regex protein" type="text" help="Replacement string for the protein name using capturing groups defined in 'Regex protein capture'" value="$1-P$2">
+                            <expand macro="sanitized"/>
+                        </param>
+                    </when>
+                    <when value="attr">
+                        <param argument="--attr_protein" label="Protein id attribute" type="text" help="Attribute containing the protein uniquename. It is searched at the mRNA level, and if not found at CDS level." value="protein_id"/>
+                    </when>
+                </conditional>
                 <param name="interproscan" label="InterProScan results" optional="true" type="data" format="tsv,gff3" />
                 <param name="eggnog" label="EggNOG-Mapper results" optional="true" type="data" format="tsv" />
+
+                <conditional name="blast_cond">
+                    <param name="blast_choice" type="select" label="Import Blast or Diamond results">
+                        <option value="no" selected="true">No</option>
+                        <option value="yes">Yes</option>
+                    </param>
+                    <when value="no" />
+                    <when value="yes">
+                        <param name="blast" label="Blast or Diamond results" optional="false" type="data" format="xml" />
+                        <param argument="--algorithm" label="Algorithm" optional="false" type="text" help="e.g. blastx, blastp" />
+                        <param argument="--matrix" label="Matrix" optional="false" type="text" help="e.g. BLOSUM90, BLOSUM80, PAM100" />
+                        <param argument="--database" label="database" optional="false" type="text" help="e.g. Non-reundant protein sequences (nr)" />
+                    </when>
+                </conditional>
+
+                <repeat name="expression" title="Expression data">
+                    <param name="counts" label="Expression data" optional="true" type="data" format="tsv" />
+                    <param argument="--sample-name" name="sample_name" label="Unique sample name" type="text" />
+                    <param argument="--replica-group" name="replica_group" label="Identifier to group samples that belong to the same experiment" type="text" />
+                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" type="text" />
+                </repeat>
             </repeat>
         </repeat>
     </inputs>
@@ -59,6 +130,17 @@
         </test>
         <test>
             <repeat name="genomes">
+                <param name="name" value="Test org" />
+                <param name="public" value="true" />
+                <param name="genome" value="genome.fa" />
+            </repeat>
+            <output name="gnb_db" file="output/genome.tar.bz2" compare="sim_size" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+            </assert_stdout>
+        </test>
+        <test>
+            <repeat name="genomes">
                 <param name="name" value="Test org 2" />
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
@@ -68,7 +150,7 @@
             <output name="gnb_db" file="output/genome_annot.tar.bz2" compare="sim_size" />
             <assert_stdout>
                 <has_text text="addGenome succesfully inserted 1 elements" />
-                <has_text text="addAnnotationTrack succesfully inserted 5 elements" />
+                <has_text text="addAnnotation succesfully inserted 5 elements" />
             </assert_stdout>
         </test>
         <test>
@@ -83,7 +165,7 @@
             <output name="gnb_db" file="output/genome_annot_ips.tar.bz2" compare="sim_size" />
             <assert_stdout>
                 <has_text text="addGenome succesfully inserted 1 elements" />
-                <has_text text="addAnnotationTrack succesfully inserted 5 elements" />
+                <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addInterproscan succesfully inserted 5 elements" />
             </assert_stdout>
         </test>
@@ -111,9 +193,46 @@
             <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" delta="15000" />
             <assert_stdout>
                 <has_text text="addGenome succesfully inserted 1 elements" />
-                <has_text text="addAnnotationTrack succesfully inserted 5 elements" />
+                <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addInterproscan succesfully inserted 5 elements" />
-                <has_text text="addEggnog succesfully inserted undefined elements" />
+                <has_text text="addEggnog succesfully inserted 4 elements" />
+            </assert_stdout>
+        </test>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <repeat name="annots">
+                    <param name="annotation" value="annot.gff" />
+
+                    <conditional name="prot_naming">
+                        <param name="method" value="regex"/>
+                        <param name="re_protein_capture" value="^(.*?)-T([0-9]+)$" />
+                        <param name="re_protein" value="$1-P$2" />
+                    </conditional>
+
+                    <conditional name="blast_cond">
+                        <param name="blast_choice" value="yes"/>
+                        <param name="blast" value="blast.xml" ftype="xml" />
+                        <param name="algorithm" value="blastx" />
+                        <param name="matrix" value="BLOSUM80" />
+                        <param name="database" value="Non-reundant garbage (nrg)" />
+                    </conditional>
+
+                    <repeat name="expression">
+                        <param name="counts" value="exp.tsv" ftype="tsv" />
+                        <param name="sample_name" value="Sample1_rep1" />
+                        <param name="replica_group" value="Sample1" />
+                        <param name="sample_description" value="Pointless experiment" />
+                    </repeat>
+                </repeat>
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot_ips_en_bl_exp.tar.bz2" compare="sim_size" delta="15000" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+                <has_text text="addAnnotation succesfully inserted 5 elements" />
+                <has_text text="addSimilarSequence succesfully inserted 1 elements" />
+                <has_text text="addTranscriptome succesfully inserted 1 elements" />
             </assert_stdout>
         </test>
     </tests>
@@ -121,6 +240,8 @@
 Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool (to be written).
 
 The resulting GeneNoteBook will contain the default user accounts created on the first launch. You are responsible to change them if you ever want to put your result online.
+
+The current version is based on a forked version of GeneNoteBook including several various improvements (https://github.com/gogepp/genoboo/).
     ]]></help>
     <expand macro="citation" />
 </tool>
