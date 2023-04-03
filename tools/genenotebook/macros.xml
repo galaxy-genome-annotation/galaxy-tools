@@ -2,18 +2,31 @@
 <macros>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="@TOOL_VERSION@">genenotebook</requirement>
+            <requirement type="package" version="@TOOL_VERSION@">genoboo</requirement>
             <yield/>
         </requirements>
     </xml>
 
-    <token name="@TOOL_VERSION@">0.3.2</token>
+    <token name="@TOOL_VERSION@">0.4.1</token>
     <token name="@WRAPPER_VERSION@">@TOOL_VERSION@+galaxy0</token>
 
     <xml name="citation">
         <citations>
             <citation type="doi">10.1093/bioinformatics/btz491</citation>
         </citations>
+    </xml>
+
+    <xml name="sanitized">
+        <sanitizer>
+            <valid initial="string.printable">
+                <remove value="&apos;"/>
+            </valid>
+            <mapping initial="none">
+                <add source="&apos;" target="&apos;&quot;&apos;&quot;&apos;"/>
+                <add source="(" target="\("/>
+                <add source=")" target="\)"/>
+            </mapping>
+        </sanitizer>
     </xml>
 
     <token name="@CONNECT_INFO@">-u admin -p admin --port \$GNB_PORT</token>
@@ -24,8 +37,8 @@
     For some unknwon reason, unixSocketPrefix needs an absolute path
     -->
     <token name="@START_GNB@"><![CDATA[
-        export GNB_PORT=\$(bash '$__tool_directory__/find_free_port.sh');
-        export MONGO_URI=\$(pwd | sed 's|/|%2F|g');
+        export GNB_PORT="\$(bash '$__tool_directory__/find_free_port.sh')";
+        export MONGO_URI="\$(pwd | sed 's|/|%2F|g')";
         #if $existing
             tar -xf '${existing}' mongo_db;
         #else

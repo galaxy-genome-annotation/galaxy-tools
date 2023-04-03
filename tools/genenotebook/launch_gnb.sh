@@ -4,10 +4,8 @@ set -e
 
 mongod --dbpath ./mongo_db/ --unixSocketPrefix `pwd` --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid &
 
-sleep 5
+sleep 8
 
-# "waiting for connections on port" is for mongodb 4x
-#if ! grep -q "waiting for connections on port" ./mongod.log; then
 # "Listening on" is for mongodb 5x
 if ! grep -q "Listening on" ./mongod.log; then
   echo "Failed to launch MongoDB:" 1>&2;
@@ -19,7 +17,7 @@ fi;
 TMP_STORAGE=$(pwd)/tmp_storage
 mkdir "$TMP_STORAGE"
 
-genenotebook run --storage-path "$TMP_STORAGE" --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
+genoboo run --storage-path "$TMP_STORAGE" --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
 
 export GNB_PID=$!
 
