@@ -17,6 +17,8 @@ fi;
 TMP_STORAGE=$(pwd)/tmp_storage
 mkdir "$TMP_STORAGE"
 
+export NODE_OPTIONS="--max-old-space-size=$((${GALAXY_MEMORY_MB:-8192} * 75 / 100))"
+
 genoboo run --storage-path "$TMP_STORAGE" --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
 
 export GNB_PID=$!
