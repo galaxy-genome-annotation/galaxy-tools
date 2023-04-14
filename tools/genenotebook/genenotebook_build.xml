@@ -5,7 +5,7 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements" />
-    <command detect_errors="aggressive"><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
 @START_GNB@
 
 #for genome in $genomes:
@@ -40,13 +40,20 @@
             genoboo add eggnog @CONNECT_INFO@ '${annot.eggnog}';
         #end if
 
-        #if $annot.blast_cond.blast_choice == "yes":
+        #if $annot.blast_cond.blast_choice == "blast":
             genoboo add blast @CONNECT_INFO@
                 --format 'xml'
                 --algorithm '${annot.blast_cond.algorithm}'
                 --matrix '${annot.blast_cond.matrix}'
                 --database '${annot.blast_cond.database}'
                 '${annot.blast_cond.blast}';
+        #elif $annot.blast_cond.blast_choice == "diamond":
+            genoboo add diamond @CONNECT_INFO@
+                --format 'xml'
+                --algorithm '${annot.blast_cond.algorithm}'
+                --matrix '${annot.blast_cond.matrix}'
+                --database '${annot.blast_cond.database}'
+                '${annot.blast_cond.diamond}';
         #end if
 
         #for exp in $annot.expression:
@@ -94,11 +101,18 @@
                 <conditional name="blast_cond">
                     <param name="blast_choice" type="select" label="Import Blast or Diamond results">
                         <option value="no" selected="true">No</option>
-                        <option value="yes">Yes</option>
+                        <option value="blast">Blast</option>
+                        <option value="diamond">Diamond</option>
                     </param>
                     <when value="no" />
-                    <when value="yes">
-                        <param name="blast" label="Blast or Diamond results" optional="false" type="data" format="xml" />
+                    <when value="blast">
+                        <param name="blast" label="Blast results (xml)" optional="false" type="data" format="xml" />
+                        <param argument="--algorithm" label="Algorithm" optional="false" type="text" help="e.g. blastx, blastp" />
+                        <param argument="--matrix" label="Matrix" optional="false" type="text" help="e.g. BLOSUM90, BLOSUM80, PAM100" />
+                        <param argument="--database" label="database" optional="false" type="text" help="e.g. Non-reundant protein sequences (nr)" />
+                    </when>
+                    <when value="diamond">
+                        <param name="diamond" label="Diamond results (xml)" optional="false" type="data" format="xml" />
                         <param argument="--algorithm" label="Algorithm" optional="false" type="text" help="e.g. blastx, blastp" />
                         <param argument="--matrix" label="Matrix" optional="false" type="text" help="e.g. BLOSUM90, BLOSUM80, PAM100" />
                         <param argument="--database" label="database" optional="false" type="text" help="e.g. Non-reundant protein sequences (nr)" />
@@ -166,7 +180,7 @@
             <assert_stdout>
                 <has_text text="addGenome succesfully inserted 1 elements" />
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
-                <has_text text="addInterproscan succesfully inserted 5 elements" />
+                <has_text text="addInterproscan succesfully inserted 3 elements" />
             </assert_stdout>
         </test>
         <test>
@@ -194,7 +208,7 @@
             <assert_stdout>
                 <has_text text="addGenome succesfully inserted 1 elements" />
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
-                <has_text text="addInterproscan succesfully inserted 5 elements" />
+                <has_text text="addInterproscan succesfully inserted 3 elements" />
                 <has_text text="addEggnog succesfully inserted 4 elements" />
             </assert_stdout>
         </test>
@@ -212,10 +226,47 @@
                     </conditional>
 
                     <conditional name="blast_cond">
-                        <param name="blast_choice" value="yes"/>
+                        <param name="blast_choice" value="blast"/>
                         <param name="blast" value="blast.xml" ftype="xml" />
                         <param name="algorithm" value="blastx" />
                         <param name="matrix" value="BLOSUM80" />
+                        <param name="database" value="Non-reundant garbage (nrg)" />
+                    </conditional>
+
+                    <repeat name="expression">
+                        <param name="counts" value="exp.tsv" ftype="tsv" />
+                        <param name="sample_name" value="Sample1_rep1" />
+                        <param name="replica_group" value="Sample1" />
+                        <param name="sample_description" value="Pointless experiment" />
+                    </repeat>
+                </repeat>
+            </repeat>
+            <output name="gnb_db" file="output/genome_annot_ips_en_bl_exp.tar.bz2" compare="sim_size" delta="15000" />
+            <assert_stdout>
+                <has_text text="addGenome succesfully inserted 1 elements" />
+                <has_text text="addAnnotation succesfully inserted 5 elements" />
+                <has_text text="addSimilarSequence succesfully inserted 1 elements" />
+                <has_text text="addTranscriptome succesfully inserted 1 elements" />
+            </assert_stdout>
+        </test>
+        <test>
+            <repeat name="genomes">
+                <param name="name" value="Test org 2" />
+                <param name="genome" value="genome.fa" />
+                <repeat name="annots">
+                    <param name="annotation" value="annot.gff" />
+
+                    <conditional name="prot_naming">
+                        <param name="method" value="regex"/>
+                        <param name="re_protein_capture" value="^(.*?)-T([0-9]+)$" />
+                        <param name="re_protein" value="$1-P$2" />
+                    </conditional>
+
+                    <conditional name="blast_cond">
+                        <param name="blast_choice" value="diamond"/>
+                        <param name="diamond" value="blast.xml" ftype="xml" />
+                        <param name="algorithm" value="blastx" />
+                        <param name="matrix" value="BLOSUM62" />
                         <param name="database" value="Non-reundant garbage (nrg)" />
                     </conditional>
 
