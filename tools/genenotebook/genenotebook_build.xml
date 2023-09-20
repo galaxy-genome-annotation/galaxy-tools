@@ -288,7 +288,7 @@
         </test>
     </tests>
     <help><![CDATA[
-Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "View a GeneNoteBook" interactive tool (to be written).
+Build a GeneNoteBook by loading data into a MongoDB database. The resulting dataset can then be displayed with the "GeneNoteBook viewer" interactive tool.
 
 The resulting GeneNoteBook will contain the default user accounts created on the first launch. You are responsible to change them if you ever want to put your result online.
 
