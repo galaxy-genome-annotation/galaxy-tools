@@ -57,11 +57,16 @@
         #end if
 
         #for exp in $annot.expression:
-            genoboo add transcriptome @CONNECT_INFO@
-                --sample-name '${exp.sample_name}'
-                --replica-group '${exp.replica_group}'
-                --sample-description '${exp.sample_description}'
-                '${exp.counts}';
+                genoboo add expression @CONNECT_INFO@
+                    #for replica in $exp.replicas:
+                        --replicas '${replica.replicas}'
+                    #end for
+                    #for replica_group_name in $exp.expression_replicas_names:
+                        --sample-description '${replica_group_name.replica_names}'
+                    #end for
+                    --sample-description '${exp.sample_description}'
+                    '${exp.public}'
+                    '${exp.counts}';
         #end for
     #end for
 #end for
@@ -121,9 +126,14 @@
 
                 <repeat name="expression" title="Expression data">
                     <param name="counts" label="Expression data" optional="true" type="data" format="tsv" />
-                    <param argument="--sample-name" name="sample_name" label="Unique sample name" type="text" />
-                    <param argument="--replica-group" name="replica_group" label="Identifier to group samples that belong to the same experiment" type="text" />
-                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" type="text" />
+                    <repeat name="expression_replicas" title="Expression replicas">
+                        <param argument="--replicas" name="replicas" label="Comma-separated replica column positions" type="text" help="Comma-separated column positions, which are part of the same replica group. Can be set multiple times for multiple groups. The replica group name will be the first column, unless replica-names is set" />
+                    </repeat>
+                    <repeat name="expression_replicas_names" title="Expression replicas">
+                        <param argument="--replica-names" name="replica_names" label="Identifier to group samples that belong to the same experiment" type="text"  help="Name of the replica group. Will defaut to the first column header if not set. Can be set multiple time (for each replica group). Will match replica groups in order, whether they are multiple of single columns."/>
+                    </repeat>
+                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" type="text" help="Name of the replica group. Will defaut to the first column header if not set. Can be set multiple time (for each replica group). Will match replica groups in order, whether they are multiple or single columns." />
+                    <param name="public" label="Public access" type="boolean" truevalue="--public" falsevalue="" value="false" />
                 </repeat>
             </repeat>
         </repeat>
@@ -235,8 +245,12 @@
 
                     <repeat name="expression">
                         <param name="counts" value="exp.tsv" ftype="tsv" />
-                        <param name="sample_name" value="Sample1_rep1" />
-                        <param name="replica_group" value="Sample1" />
+                        <repeat name="expression_replicas">
+                            <param name="replicas" value="1,2" />
+                        </repeat>
+                        <repeat name="expression_replicas_names">
+                            <param name="replica_names" value="ReplicaName1" />
+                        </repeat>
                         <param name="sample_description" value="Pointless experiment" />
                     </repeat>
                 </repeat>
@@ -246,7 +260,7 @@
                 <has_text text="addGenome succesfully inserted 1 elements" />
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addSimilarSequence succesfully inserted 1 elements" />
-                <has_text text="addTranscriptome succesfully inserted 1 elements" />
+                <has_text text="addExpression succesfully inserted 4 elements" />
             </assert_stdout>
         </test>
         <test>
@@ -272,8 +286,12 @@
 
                     <repeat name="expression">
                         <param name="counts" value="exp.tsv" ftype="tsv" />
-                        <param name="sample_name" value="Sample1_rep1" />
-                        <param name="replica_group" value="Sample1" />
+                        <repeat name="expression_replicas">
+                            <param name="replicas" value="1,2" />
+                        </repeat>
+                        <repeat name="expression_replicas_names">
+                            <param name="replica_names" value="ReplicaName1" />
+                        </repeat>
                         <param name="sample_description" value="Pointless experiment" />
                     </repeat>
                 </repeat>
@@ -283,7 +301,7 @@
                 <has_text text="addGenome succesfully inserted 1 elements" />
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addSimilarSequence succesfully inserted 1 elements" />
-                <has_text text="addTranscriptome succesfully inserted 1 elements" />
+                <has_text text="addExpression succesfully inserted 4 elements" />
             </assert_stdout>
         </test>
     </tests>

@@ -1,2 +1,2 @@
-target_id	length	eff_length	est_counts	tpm
-MMUCEDO_000001-T1	1221	1021.99	21	1.80368
+gene	Sample1	Sample2	Sample3	Sample4
+MMUCEDO_000001-T1	1000	2000	3000	4000
