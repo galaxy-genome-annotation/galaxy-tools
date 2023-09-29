@@ -58,14 +58,15 @@
 
         #for exp in $annot.expression:
                 genoboo add expression @CONNECT_INFO@
-                    #for replica in $exp.replicas:
+		    --sample-description '${exp.sample_description}'
+		    ${exp.public}
+                    #for replica in $exp.expression_replicas:
                         --replicas '${replica.replicas}'
                     #end for
                     #for replica_group_name in $exp.expression_replicas_names:
-                        --sample-description '${replica_group_name.replica_names}'
+                        --replica-names '${replica_group_name.replica_names}'
                     #end for
-                    --sample-description '${exp.sample_description}'
-                    '${exp.public}'
+                    --
                     '${exp.counts}';
         #end for
     #end for
