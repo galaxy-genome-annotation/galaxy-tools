@@ -246,13 +246,8 @@
 
                     <repeat name="expression">
                         <param name="counts" value="exp.tsv" ftype="tsv" />
-                        <repeat name="expression_replicas">
-                            <param name="replicas" value="1,2" />
-                        </repeat>
-                        <repeat name="expression_replicas_names">
-                            <param name="replica_names" value="ReplicaName1" />
-                        </repeat>
                         <param name="sample_description" value="Pointless experiment" />
+			<param name="public" value="true" />
                     </repeat>
                 </repeat>
             </repeat>
@@ -289,9 +284,11 @@
                         <param name="counts" value="exp.tsv" ftype="tsv" />
                         <repeat name="expression_replicas">
                             <param name="replicas" value="1,2" />
+                            <param name="replicas" value="3,4" />
                         </repeat>
                         <repeat name="expression_replicas_names">
                             <param name="replica_names" value="ReplicaName1" />
+                            <param name="replica_names" value="ReplicaName2" />
                         </repeat>
                         <param name="sample_description" value="Pointless experiment" />
                     </repeat>
