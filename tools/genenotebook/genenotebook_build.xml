@@ -129,7 +129,7 @@
                         <param argument="--replicas" name="replicas" label="Comma-separated replica column positions" type="text" help="Comma-separated column positions, which are part of the same replica group. Can be set multiple times for multiple groups. The replica group name will be the first column, unless replica-names is set" />
                         <param argument="--replica-names" name="replica_names" label="Identifier to group samples that belong to the same experiment" type="text"  help="Name of the replica group. Will defaut to the first column header if not set. Can be set multiple time (for each replica group). Will match replica groups in order, whether they are multiple of single columns."/>
                     </repeat>
-                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" />
+                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" type="text" />
                     <param name="public" label="Public access" type="boolean" truevalue="--public" falsevalue="" value="false" />
                 </repeat>
             </repeat>
