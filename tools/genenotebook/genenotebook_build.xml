@@ -213,6 +213,7 @@
                     <param name="annotation" value="annot.gff" />
                     <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                     <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
+                    <param name="hectar" value="hectar.tsv" ftype="tsv" />
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" delta="15000" />
