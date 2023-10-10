@@ -40,6 +40,10 @@
             genoboo add eggnog @CONNECT_INFO@ '${annot.eggnog}';
         #end if
 
+        #if $annot.hectar:
+            genoboo add hectar @CONNECT_INFO@ '${annot.hectar}';
+        #end if
+
         #if $annot.blast_cond.blast_choice == "blast":
             genoboo add blast @CONNECT_INFO@
                 --format 'xml'
@@ -101,6 +105,7 @@
                 </conditional>
                 <param name="interproscan" label="InterProScan results" optional="true" type="data" format="tsv,gff3" />
                 <param name="eggnog" label="EggNOG-Mapper results" optional="true" type="data" format="tsv" />
+                <param name="hectar" label="Hectar results" optional="true" type="data" format="tsv" />
 
                 <conditional name="blast_cond">
                     <param name="blast_choice" type="select" label="Import Blast or Diamond results">
