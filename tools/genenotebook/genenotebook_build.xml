@@ -40,6 +40,10 @@
             genoboo add eggnog @CONNECT_INFO@ '${annot.eggnog}';
         #end if
 
+        #if $annot.hectar:
+            genoboo add hectar @CONNECT_INFO@ '${annot.hectar}';
+        #end if
+
         #if $annot.blast_cond.blast_choice == "blast":
             genoboo add blast @CONNECT_INFO@
                 --format 'xml'
@@ -57,11 +61,15 @@
         #end if
 
         #for exp in $annot.expression:
-            genoboo add transcriptome @CONNECT_INFO@
-                --sample-name '${exp.sample_name}'
-                --replica-group '${exp.replica_group}'
-                --sample-description '${exp.sample_description}'
-                '${exp.counts}';
+                genoboo add expression @CONNECT_INFO@
+                    --sample-description ''
+                    ${exp.public}
+                    #for replica in $exp.expression_replicas:
+                        --replicas '${replica.replicas}'
+                        --replica-names '${replica.replica_names}'
+                    #end for
+                    --
+                    '${exp.counts}';
         #end for
     #end for
 #end for
@@ -97,6 +105,7 @@
                 </conditional>
                 <param name="interproscan" label="InterProScan results" optional="true" type="data" format="tsv,gff3" />
                 <param name="eggnog" label="EggNOG-Mapper results" optional="true" type="data" format="tsv" />
+                <param name="hectar" label="Hectar results" optional="true" type="data" format="tsv" />
 
                 <conditional name="blast_cond">
                     <param name="blast_choice" type="select" label="Import Blast or Diamond results">
@@ -120,10 +129,12 @@
                 </conditional>
 
                 <repeat name="expression" title="Expression data">
-                    <param name="counts" label="Expression data" optional="true" type="data" format="tsv" />
-                    <param argument="--sample-name" name="sample_name" label="Unique sample name" type="text" />
-                    <param argument="--replica-group" name="replica_group" label="Identifier to group samples that belong to the same experiment" type="text" />
-                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" type="text" />
+                    <param name="counts" label="Expression data tabular file" help="One line per mRNA, first column is mRNA ID, each other columns is an experimental condition. TPM values preferably." optional="false" type="data" format="tsv" />
+                    <param name="public" label="Public access" type="boolean" truevalue="--public" falsevalue="" value="false" />
+                    <repeat name="expression_replicas" title="Expression replicas">
+                        <param argument="--replica-names" label="Name of a replica group" type="text"/>
+                        <param argument="--replicas" label="Comma-separated list of columns of replicas (e.g. 1,2,3)" type="text" help="Comma-separated list of column positions, which are part of the same replica group. Columns not mentionned in any replica group will be considered to be a single replica experiment." />
+                    </repeat>
                 </repeat>
             </repeat>
         </repeat>
@@ -202,6 +213,7 @@
                     <param name="annotation" value="annot.gff" />
                     <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                     <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
+                    <param name="hectar" value="hectar.tsv" ftype="tsv" />
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot_ips_en.tar.bz2" compare="sim_size" delta="15000" />
@@ -235,9 +247,7 @@
 
                     <repeat name="expression">
                         <param name="counts" value="exp.tsv" ftype="tsv" />
-                        <param name="sample_name" value="Sample1_rep1" />
-                        <param name="replica_group" value="Sample1" />
-                        <param name="sample_description" value="Pointless experiment" />
+                        <param name="public" value="true" />
                     </repeat>
                 </repeat>
             </repeat>
@@ -246,7 +256,7 @@
                 <has_text text="addGenome succesfully inserted 1 elements" />
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addSimilarSequence succesfully inserted 1 elements" />
-                <has_text text="addTranscriptome succesfully inserted 1 elements" />
+                <has_text text="addExpression succesfully inserted 4 elements" />
             </assert_stdout>
         </test>
         <test>
@@ -272,9 +282,14 @@
 
                     <repeat name="expression">
                         <param name="counts" value="exp.tsv" ftype="tsv" />
-                        <param name="sample_name" value="Sample1_rep1" />
-                        <param name="replica_group" value="Sample1" />
-                        <param name="sample_description" value="Pointless experiment" />
+                        <repeat name="expression_replicas">
+                            <param name="replicas" value="1,2" />
+                            <param name="replica_names" value="ReplicaName1" />
+                        </repeat>
+                        <repeat name="expression_replicas">
+                            <param name="replicas" value="3,4" />
+                            <param name="replica_names" value="ReplicaName2" />
+                        </repeat>
                     </repeat>
                 </repeat>
             </repeat>
@@ -283,7 +298,7 @@
                 <has_text text="addGenome succesfully inserted 1 elements" />
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addSimilarSequence succesfully inserted 1 elements" />
-                <has_text text="addTranscriptome succesfully inserted 1 elements" />
+                <has_text text="addExpression succesfully inserted 4 elements" />
             </assert_stdout>
         </test>
     </tests>
