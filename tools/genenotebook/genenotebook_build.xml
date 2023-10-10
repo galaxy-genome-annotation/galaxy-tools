@@ -58,8 +58,8 @@
 
         #for exp in $annot.expression:
                 genoboo add expression @CONNECT_INFO@
-		    --sample-description '${exp.sample_description}'
-		    ${exp.public}
+                    --sample-description ''
+                    ${exp.public}
                     #for replica in $exp.expression_replicas:
                         --replicas '${replica.replicas}'
                         --replica-names '${replica.replica_names}'
@@ -124,13 +124,12 @@
                 </conditional>
 
                 <repeat name="expression" title="Expression data">
-                    <param name="counts" label="Expression data" optional="true" type="data" format="tsv" />
-                    <repeat name="expression_replicas" title="Expression replicas">
-                        <param argument="--replicas" name="replicas" label="Comma-separated replica column positions" type="text" help="Comma-separated column positions, which are part of the same replica group. Can be set multiple times for multiple groups. The replica group name will be the first column, unless replica-names is set" />
-                        <param argument="--replica-names" name="replica_names" label="Identifier to group samples that belong to the same experiment" type="text"  help="Name of the replica group. Will defaut to the first column header if not set. Can be set multiple time (for each replica group). Will match replica groups in order, whether they are multiple of single columns."/>
-                    </repeat>
-                    <param argument="--sample-description" name="sample_description" label="Description of the experiment" type="text" />
+                    <param name="counts" label="Expression data tabular file" help="One line per mRNA, first column is mRNA ID, each other columns is an experimental condition. TPM values preferably." optional="false" type="data" format="tsv" />
                     <param name="public" label="Public access" type="boolean" truevalue="--public" falsevalue="" value="false" />
+                    <repeat name="expression_replicas" title="Expression replicas">
+                        <param argument="--replica-names" label="Name of a replica group" type="text"/>
+                        <param argument="--replicas" label="Comma-separated list of columns of replicas (e.g. 1,2,3)" type="text" help="Comma-separated list of column positions, which are part of the same replica group. Columns not mentionned in any replica group will be considered to be a single replica experiment." />
+                    </repeat>
                 </repeat>
             </repeat>
         </repeat>
@@ -242,7 +241,6 @@
 
                     <repeat name="expression">
                         <param name="counts" value="exp.tsv" ftype="tsv" />
-                        <param name="sample_description" value="Pointless experiment" />
                         <param name="public" value="true" />
                     </repeat>
                 </repeat>
@@ -286,7 +284,6 @@
                             <param name="replicas" value="3,4" />
                             <param name="replica_names" value="ReplicaName2" />
                         </repeat>
-                        <param name="sample_description" value="Pointless experiment" />
                     </repeat>
                 </repeat>
             </repeat>
