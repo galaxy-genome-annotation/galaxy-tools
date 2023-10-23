@@ -175,6 +175,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot.tar.bz2" compare="sim_size" />
@@ -189,6 +190,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
                     <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                 </repeat>
             </repeat>
@@ -216,6 +218,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
                     <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                     <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
                     <param name="hectar" value="hectar.tsv" ftype="tsv" />
@@ -235,6 +238,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
 
                     <conditional name="prot_naming">
                         <param name="method" value="regex"/>
@@ -270,6 +274,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
 
                     <conditional name="prot_naming">
                         <param name="method" value="regex"/>
