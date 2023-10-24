@@ -12,7 +12,7 @@
     genoboo add genome @CONNECT_INFO@ --name '${genome.name}' ${genome.public} '${genome.genome}';
 
     #for annot in $genome.annots:
-        genoboo add annotation @CONNECT_INFO@ --name '${genome.name}'
+        genoboo add annotation @CONNECT_INFO@ --name '${genome.name}' --annot '${annot.annot}'
         #if $annot.prot_naming.method == 'regex'
             #if $annot.prot_naming.re_protein:
             --re_protein '$annot.prot_naming.re_protein'
@@ -33,19 +33,21 @@
             #else:
                 tsv
             #end if
+            --annot '${annot.annot}'
             '${annot.interproscan}';
         #end if
 
         #if $annot.eggnog:
-            genoboo add eggnog @CONNECT_INFO@ '${annot.eggnog}';
+            genoboo add eggnog @CONNECT_INFO@ --annot '${annot.annot}' '${annot.eggnog}';
         #end if
 
         #if $annot.hectar:
-            genoboo add hectar @CONNECT_INFO@ '${annot.hectar}';
+            genoboo add hectar @CONNECT_INFO@ --annot '${annot.annot}' '${annot.hectar}';
         #end if
 
         #if $annot.blast_cond.blast_choice == "blast":
             genoboo add blast @CONNECT_INFO@
+                --annot '${annot.annot}'
                 --format 'xml'
                 --algorithm '${annot.blast_cond.algorithm}'
                 --matrix '${annot.blast_cond.matrix}'
@@ -53,6 +55,7 @@
                 '${annot.blast_cond.blast}';
         #elif $annot.blast_cond.blast_choice == "diamond":
             genoboo add diamond @CONNECT_INFO@
+                --annot '${annot.annot}'
                 --format 'xml'
                 --algorithm '${annot.blast_cond.algorithm}'
                 --matrix '${annot.blast_cond.matrix}'
@@ -62,6 +65,7 @@
 
         #for exp in $annot.expression:
                 genoboo add expression @CONNECT_INFO@
+                    --annot '${annot.annot}'
                     --sample-description ''
                     ${exp.public}
                     #for replica in $exp.expression_replicas:
@@ -84,6 +88,7 @@
             <param name="public" label="Public access" type="boolean" truevalue="--public" falsevalue="" value="false" />
             <repeat name="annots" title="Annotations">
                 <param name="annotation" label="Annotation" type="data" format="gff3" />
+                <param argument="--annot" label="Annotation name" type="text" help="Annotation name" />
                 <conditional name="prot_naming">
                     <param name="method" type="select" label="Protein naming method">
                         <option value="none">No specific names for proteins</option>
@@ -170,6 +175,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
                 </repeat>
             </repeat>
             <output name="gnb_db" file="output/genome_annot.tar.bz2" compare="sim_size" />
@@ -184,6 +190,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
                     <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                 </repeat>
             </repeat>
@@ -211,6 +218,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
                     <param name="interproscan" value="interproscan.tsv" ftype="tsv" />
                     <param name="eggnog" value="eggnog.tsv" ftype="tsv" />
                     <param name="hectar" value="hectar.tsv" ftype="tsv" />
@@ -230,6 +238,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
 
                     <conditional name="prot_naming">
                         <param name="method" value="regex"/>
@@ -265,6 +274,7 @@
                 <param name="genome" value="genome.fa" />
                 <repeat name="annots">
                     <param name="annotation" value="annot.gff" />
+                    <param name="annot" value="My annotation" />
 
                     <conditional name="prot_naming">
                         <param name="method" value="regex"/>
