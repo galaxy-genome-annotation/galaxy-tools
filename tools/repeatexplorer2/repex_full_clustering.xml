@@ -24,27 +24,26 @@
          -opt $advanced_options.options.options
         #end if 
       #end if
-      ${FastaFile}  >stdout.log 2> stderr.log ;
-      echo "STDOUT CONTENT:" >> ${log} ;
-      cat stdout.log >> ${log} ;
-      echo "STDERR CONTENT:" >> ${log};
-      cat stderr.log >> ${log} &amp;&amp;
-      /opt/repex_tarean/stderr_filter.py stderr.log &amp;&amp;
-      cd tarean_output &amp;&amp;
-      zip -r  ${ReportArchive}.zip * &amp;&amp;
-      mv  ${ReportArchive}.zip ${ReportArchive} &amp;&amp;
-      cp index.html ${ReportFile} &amp;&amp;
-      mkdir -p ${ReportFile.extra_files_path} &amp;&amp;
-      cp -r --parents libdir ${ReportFile.extra_files_path} &amp;&amp;
-      cp -r --parents seqclust/clustering/superclusters ${ReportFile.extra_files_path} &amp;&amp;
-      cp -r --parents seqclust/clustering/clusters ${ReportFile.extra_files_path} &amp;&amp;
-      cp seqclust/clustering/hitsort.cls ${ReportFile.extra_files_path}/seqclust/clustering/hitsort.cls &amp;&amp;
-      cp *.png ${ReportFile.extra_files_path}/ &amp;&amp;
-      cp *.csv ${ReportFile.extra_files_path}/ &amp;&amp;
-      cp *.html ${ReportFile.extra_files_path}/  &amp;&amp;
-      cp *.css ${ReportFile.extra_files_path}/  &amp;&amp;
-      cp *.fasta ${ReportFile.extra_files_path}/ 2>>$log  &amp;&amp; rm -r ../tarean_output || :
-
+      ${FastaFile}  >stdout.log 2> stderr.log &&
+      echo "STDOUT CONTENT:" >> ${log} &&
+      cat stdout.log >> ${log} &&
+      echo "STDERR CONTENT:" >> ${log} &&
+      cat stderr.log >> ${log} &&
+      /opt/repex_tarean/stderr_filter.py stderr.log &&
+      cd tarean_output &&
+      zip -r  ${ReportArchive}.zip * &&
+      mv  ${ReportArchive}.zip ${ReportArchive} &&
+      cp index.html ${ReportFile} &&
+      mkdir -p ${ReportFile.extra_files_path} &&
+      cp -r --parents libdir ${ReportFile.extra_files_path} &&
+      cp -r --parents seqclust/clustering/superclusters ${ReportFile.extra_files_path} &&
+      cp -r --parents seqclust/clustering/clusters ${ReportFile.extra_files_path} &&
+      cp seqclust/clustering/hitsort.cls ${ReportFile.extra_files_path}/seqclust/clustering/hitsort.cls &&
+      cp *.png ${ReportFile.extra_files_path}/ &&
+      cp *.csv ${ReportFile.extra_files_path}/ &&
+      cp *.html ${ReportFile.extra_files_path}/  &&
+      cp *.css ${ReportFile.extra_files_path}/  &&
+      cp *.fasta ${ReportFile.extra_files_path}/ 2>>$log 
       ]]></command>
  <inputs>
 	<param name="FastaFile" label="NGS reads" type="data" format="fasta"
@@ -62,51 +61,48 @@
     </when>
   </conditional>
 
-
-  <param name="taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
-    <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
-    <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
-    <option value="METAZOA3.0" >Metazoa version 3.0</option>
-    <option value="METAZOA2.0" >Metazoa version 2.0</option>
-    <!-- Modify setting in config.py accordingly -->
-  </param>
-
-  <conditional name="advanced_options">
-    <param name="advanced" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Advanced options" />
-    <when value="false">
-      <!-- pass -->
-    </when>
-    <when value="true">
-      <conditional name="comparative">
-        <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
-	      <when value="false">
-          <!-- do nothing here -->
+    <param name="taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
+        <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
+        <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
+        <option value="METAZOA3.0" >Metazoa version 3.0</option>
+        <option value="METAZOA2.0" >Metazoa version 2.0</option>
+        <!-- Modify setting in config.py accordingly -->
+    </param>
+    <conditional name="advanced_options">
+        <param name="advanced" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Advanced options" />
+        <when value="false">
+              <!-- pass -->
         </when>
         <when value="true">
-   		    <param name="prefix_length" label="Group code length" type="integer" value="3" min="1" max="10" help="For comparative analysis, reads from different samples are distinguished by sample codes included as prefix to the read names. See example below."/>
-        </when>
-      </conditional>
+              <conditional name="comparative">
+                    <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
+                    <when value="false">
+                    <!-- do nothing here -->
+                    </when>
+                    <when value="true">
+       		            <param name="prefix_length" label="Group code length" type="integer" value="3" min="1" max="10" help="For comparative analysis, reads from different samples are distinguished by sample codes included as prefix to the read names. See example below."/>
+                    </when>
+              </conditional>
+              <conditional name="blastx">
+                    <param name="options_blastx" type="select" label="Select parameters for protein domain search">
+                          <option value="BLASTX_W2" selected="false">blastx with word size 2 (the most sensitive, slowest)</option>
+                          <option value="BLASTX_W3" selected="true">blastx with word size 3 (default)</option>
+                          <option value="DIAMOND" selected="false">diamond program (the least sensitive, fastest)</option>
+                    </param>
+              </conditional>
 
-      <conditional name="blastx">
-        <param name="options_blastx" type="select" label="Select parameters for protein domain search">
-          <option value="BLASTX_W2" selected="false">blastx with word size 2 (the most sensitive, slowest)</option>
-          <option value="BLASTX_W3" selected="true">blastx with word size 3 (default)</option>
-          <option value="DIAMOND" selected="false">diamond program (the least sensitive, fastest)</option>
-        </param>
-      </conditional>
-
-      <conditional name="options">
-        <param name="options" type="select" label="Similarity search options">
-          <option value="ILLUMINA" selected="true">Default </option>
-          <option value="ILLUMINA_DUST_OFF" selected="false">Masking of low complexity repeats disabled </option>
-
-          <!-- <option value="ILLUMINA_SENSITIVE_MGBLAST" selected="false">Illumina reads, sensitive search (search parameters: mgblast,  min PID 80, -W8) slow, experimental feature!</option> -->
-          <!-- <option value="ILLUMINA_SENSITIVE_BLASTPLUS" selected="false">Illumina reads, more sensitive search (search parameters: blastn,  min PID 80, -W6) extremely slow, experimental feature!</option> -->
-          <!-- <option value="OXFORD_NANOPORE" selected="false"> -->
-          <!--   Pseudo short reads simulated from Oxford Nanopore data, experimental feature! -->
-          <!-- </option> -->
-        </param>
-      </conditional>
+          <conditional name="options">
+            <param name="options" type="select" label="Similarity search options">
+              <option value="ILLUMINA" selected="true">Default </option>
+              <option value="ILLUMINA_DUST_OFF" selected="false">Masking of low complexity repeats disabled </option>
+    
+              <!-- <option value="ILLUMINA_SENSITIVE_MGBLAST" selected="false">Illumina reads, sensitive search (search parameters: mgblast,  min PID 80, -W8) slow, experimental feature!</option> -->
+              <!-- <option value="ILLUMINA_SENSITIVE_BLASTPLUS" selected="false">Illumina reads, more sensitive search (search parameters: blastn,  min PID 80, -W6) extremely slow, experimental feature!</option> -->
+              <!-- <option value="OXFORD_NANOPORE" selected="false"> -->
+              <!--   Pseudo short reads simulated from Oxford Nanopore data, experimental feature! -->
+              <!-- </option> -->
+            </param>
+          </conditional>
       
       <conditional name="custom_library">
 	      <param name="options_custom_library" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Use custom repeat database"/>
@@ -144,14 +140,11 @@
                         value="-l select=1:ncpus=16:mem=112gb:scratch_local=50gb -l walltime=720:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=64000000,TAREAN_CPU=15" />
                </when>
      </conditional>
- 
-
-
  </inputs>
     <outputs>
-	<data name="log" format="txt" label="RepeatExplorer2 - log file"/> 
-	<data name="ReportArchive" format="zip" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/> 
-	<data name="ReportFile" format="html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/> 
+    	<data name="log" format="txt" label="RepeatExplorer2 - log file"/> 
+	    <data name="ReportArchive" format="zip" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/> 
+	    <data name="ReportFile" format="html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/> 
     </outputs>
 
     <help><![CDATA[
