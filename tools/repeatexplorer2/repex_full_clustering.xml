@@ -1,16 +1,10 @@
-<tool id="repeatexplorer2" name="RepeatExplorer2 clustering: " version="2.3.8.1" >
-    <stdio>
-      <regex match="lastdb: can't open file: NEAR" source="stderr" level="fatal" description="Version of last is too old, use ver 956 or higher\n" />
-      <regex match="Traceback" source="stderr" level="fatal" description="Unknown error" />
-      <regex match="error" source="stderr" level="fatal" description="Unknown error" />
-      <regex match="Warning" source="stderr" level="warning" description="Unknown error" />
-      <exit_code range="1:" level="fatal" description="Error" />
-    </stdio>
-    <description>Improved version or repeat discovery and characterization using graph-based sequence clustering</description>
-   <requirements>
-     <container type="singularity">library://repeatexplorer/default/repex_tarean:0.3.8-dbaa07f</container>
-   </requirements>
-<command>
+<tool id="repeatexplorer2" name="RepeatExplorer2 clustering: " version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+  <description>Improved version or repeat discovery and characterization using graph-based sequence clustering</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+<command><![CDATA[
       export PYTHONHASHSEED=0;
       seqclust --sample ${read_sampling.sample} --output_dir=tarean_output --logfile=${log} --cleanup $paired --taxon $taxon
 
@@ -51,7 +45,7 @@
       cp *.css ${ReportFile.extra_files_path}/  &amp;&amp;
       cp *.fasta ${ReportFile.extra_files_path}/ 2>>$log  &amp;&amp; rm -r ../tarean_output || :
 
-    </command>
+      ]]></command>
  <inputs>
 	<param name="FastaFile" label="NGS reads" type="data" format="fasta"
 	       help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
@@ -160,7 +154,7 @@
 	<data name="ReportFile" format="html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/> 
     </outputs>
 
-    <help>
+    <help><![CDATA[
       **HELP**
       
       RepeatExplorer2 clustering is a computational pipeline for unsupervised
@@ -298,6 +292,7 @@
       downloadable **zip archive**. Additionally a **log file** reporting
       the progress of the computational pipeline is provided.
       
-    </help>
-
-</tool>
+      ]]></help>
+      <expand macro="citations"/>
+  </tool>
+  

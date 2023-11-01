@@ -1,0 +1,21 @@
+<macros>
+    <token name="@TOOL_VERSION@">2.3.8</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">23.0</token>
+    <xml name="requirements">
+        <requirements>
+            <container type="docker">kavonrtep/repeatexplorer:@TOOL_VERSION@</container>
+        </requirements>
+    </xml>
+    <xml name="citations">
+        <citations>
+            <citation type="bibtex">@software{repeatexplorer2,
+                author = {kavonrtep},
+                year = {2023},
+                title = {repeatexplorer2},
+                publisher = {GitHub},
+                url = {https://github.com/kavonrtep/galaxy_packages}
+                      }</citation>
+        </citations>
+    </xml>
+</macros>
