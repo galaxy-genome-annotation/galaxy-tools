@@ -28,6 +28,10 @@
       #if $advanced.mincl:
         --mincl "${advanced.mincl}"
       #end if
+      --assembly_min "${advanced.assembly_min}"
+      #if $advanced.keep_names:
+        --keep_names
+      #end if
       "${FastaFile}"
       &&
 
@@ -38,22 +42,6 @@
       ## pick up the html index
       cp "${ReportFile.extra_files_path}/index.html" ./index.html
 
-      ## #if $advanced_options.advanced:
-      ## --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
-      ## --assembly_min $advanced_options.assembly_min_cluster_size
-
-      ##   #if $advanced_options.comparative.options_comparative:
-      ##     --prefix_length $advanced_options.comparative.prefix_length
-      ##   #end if
-      
-      ##   #if $advanced_options.custom_library.options_custom_library:
-      ##  	  -d $advanced_options.custom_library.library extra_database
-      ##   #end if
-        
-      ##   #if $advanced_options.options.options:
-      ##    -opt $advanced_options.options.options
-      ##   #end if 
-      ## #end if
       ]]></command>
   <inputs>
     <param name="FastaFile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
@@ -67,23 +55,8 @@
     </param>
     <section name="advanced" title="Advanced options" expanded="false">
       <param argument="--mincl" label="Cluster size threshold  for detailed analysis" type="float" value="" min="0.0001" max="100" optional="true" help="Minimal size (as percentage of input reads) of the smallest cluster which is analyzed; clusters with less than 20 reads are not considered."/>
-
-      <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
-      <param name="prefix_length" label="Group code length" type="integer" value="3" min="1" max="10" help="For comparative analysis, reads from different samples are distinguished by sample codes included as prefix to the read names. See example below."/>
-      <param name="options_blastx" type="select" label="Select parameters for protein domain search">
-        <option value="BLASTX_W2" selected="false">blastx with word size 2 (the most sensitive, slowest)</option>
-        <option value="BLASTX_W3" selected="true">blastx with word size 3 (default)</option>
-        <option value="DIAMOND" selected="false">diamond program (the least sensitive, fastest)</option>
-      </param>
-      <param name="options" type="select" label="Similarity search options">
-        <option value="ILLUMINA" selected="true">Default </option>
-        <option value="ILLUMINA_DUST_OFF" selected="false">Masking of low complexity repeats disabled </option>
-      </param>
-      <param name="options_custom_library" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Use custom repeat database"/>
-      <param name="library" format="fasta" type="data" label="Custom repeat database" help="The database should contain DNA sequences in FASTA format. The required format for sequence IDs is : '&gt;reapeatname#class/subclass'"/>
-      <param name="automatic_filtering" label="Perform automatic filtering of abundant satellite repeats" help="Automatic filtering identifies the most abundant tandem repeats and partially removes their reads from the analysis. This enables to analyze higher proportions of other less abundant repeats." type="boolean" truevalue="--automatic_filtering" falsevalue="" checked="false"/>
-      <param name="keep_names" label="Keep original read names" type="boolean" truevalue="--keep_names" falsevalue="" checked="false" help="By default, reads are renamed using integers. Use this option to keep original names."/>
-      <param name="assembly_min_cluster_size" type="integer" label="Minimal cluster size for assembly" value="5" min="2" max="100"/>
+      <param argument="--assembly_min" type="integer" label="Minimal cluster size for assembly" value="5" min="2" max="100"/>
+      <param argument="--keep_names" label="Keep original read names" type="boolean" checked="false" help="By default, reads are renamed using integers. Use this option to keep original names."/>
     </section>
   </inputs>
   <outputs>
@@ -103,6 +76,9 @@
       </output>
       <output name="ReportFile" file="test1_out.html">
       </output>
+      <assert_contents>
+        <has_text text="Clustering summary"/>
+      </assert_contents>
     </test>
     <!-- test2: read subsample -->
     <test expect_num_outputs="2">
@@ -116,23 +92,29 @@
         </assert_contents>
       </output>
       <output name="ReportFile" file="test2_out.html">
-    </output>
+        <assert_contents>
+          <has_text text="Clustering summary"/>
+        </assert_contents>
+      </output>
     </test>
-        <!-- test3: advanced params -->
-        <test expect_num_outputs="2">
-          <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
-          <param name="paired" value="True"/>
-          <param name="taxon" value="VIRIDIPLANTAE3.0"/>
-          <param name="mincl" value="0.01"/>
-          <output name="ReportArchive" file="test3_out.tar">
-            <assert_contents>
-              <has_size value="33873920" delta="3000000"/>
-            </assert_contents>
-          </output>
-          <output name="ReportFile" file="test3_out.html">
-          </output>
-        </test>
-    
+    <!-- test3: advanced params -->
+    <test expect_num_outputs="2">
+      <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+      <param name="paired" value="True"/>
+      <param name="taxon" value="VIRIDIPLANTAE3.0"/>
+      <param name="mincl" value="0.01"/>
+      <param name="keep_names" value="True"/>
+      <output name="ReportArchive" file="test3_out.tar">
+        <assert_contents>
+          <has_size value="33873920" delta="3000000"/>
+        </assert_contents>
+      </output>
+      <output name="ReportFile" file="test3_out.html">
+        <assert_contents>
+          <has_text text="Clustering summary"/>
+        </assert_contents>
+      </output>
+    </test>
   </tests>
   <help><![CDATA[
       **HELP**
