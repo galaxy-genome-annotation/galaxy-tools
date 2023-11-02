@@ -25,6 +25,9 @@
       #end if
       --taxon "${taxon}"
       --output_dir="${ReportFile.extra_files_path}"
+      #if $advanced.mincl:
+        --mincl "${advanced.mincl}"
+      #end if
       "${FastaFile}"
       &&
 
@@ -63,6 +66,8 @@
       <option value="METAZOA2.0">Metazoa version 2.0</option>
     </param>
     <section name="advanced" title="Advanced options" expanded="false">
+      <param argument="--mincl" label="Cluster size threshold  for detailed analysis" type="float" value="" min="0.0001" max="100" optional="true" help="Minimal size (as percentage of input reads) of the smallest cluster which is analyzed; clusters with less than 20 reads are not considered."/>
+
       <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
       <param name="prefix_length" label="Group code length" type="integer" value="3" min="1" max="10" help="For comparative analysis, reads from different samples are distinguished by sample codes included as prefix to the read names. See example below."/>
       <param name="options_blastx" type="select" label="Select parameters for protein domain search">
@@ -76,7 +81,6 @@
       </param>
       <param name="options_custom_library" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Use custom repeat database"/>
       <param name="library" format="fasta" type="data" label="Custom repeat database" help="The database should contain DNA sequences in FASTA format. The required format for sequence IDs is : '&gt;reapeatname#class/subclass'"/>
-      <param name="size_threshold" label="Cluster size threshold  for detailed analysis" type="float" value="0.01" min="0.0001" max="100" help="Minimal size (as percentage of input reads) of the smallest cluster which is analyzed; clusters with less than 20 reads are not considered."/>
       <param name="automatic_filtering" label="Perform automatic filtering of abundant satellite repeats" help="Automatic filtering identifies the most abundant tandem repeats and partially removes their reads from the analysis. This enables to analyze higher proportions of other less abundant repeats." type="boolean" truevalue="--automatic_filtering" falsevalue="" checked="false"/>
       <param name="keep_names" label="Keep original read names" type="boolean" truevalue="--keep_names" falsevalue="" checked="false" help="By default, reads are renamed using integers. Use this option to keep original names."/>
       <param name="assembly_min_cluster_size" type="integer" label="Minimal cluster size for assembly" value="5" min="2" max="100"/>
@@ -114,6 +118,21 @@
       <output name="ReportFile" file="test2_out.html">
     </output>
     </test>
+        <!-- test3: advanced params -->
+        <test expect_num_outputs="2">
+          <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+          <param name="paired" value="True"/>
+          <param name="taxon" value="VIRIDIPLANTAE3.0"/>
+          <param name="mincl" value="0.01"/>
+          <output name="ReportArchive" file="test3_out.tar">
+            <assert_contents>
+              <has_size value="33873920" delta="3000000"/>
+            </assert_contents>
+          </output>
+          <output name="ReportFile" file="test3_out.html">
+          </output>
+        </test>
+    
   </tests>
   <help><![CDATA[
       **HELP**
