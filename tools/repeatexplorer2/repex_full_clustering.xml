@@ -60,7 +60,7 @@
     </section>
   </inputs>
   <outputs>
-    <data name="ReportArchive" format="tar" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/>
+    <data name="ReportArchive" format="tar" label="RepeatExplorer2 - Archive with HTML report from on ${on_string}"/>
     <data name="reportfile" format="html" from_work_dir="index.html" label="RepeatExplorer - HTML report on ${on_string}"/>
   </outputs>
   <tests>
