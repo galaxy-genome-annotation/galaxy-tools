@@ -42,7 +42,7 @@
   <inputs>
     <param name="fastafile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
     <param argument="--paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, they must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
-    <param argument="--sample" type="integer" optional="true" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset."/>
+    <param argument="--sample" type="integer" min="2" optional="true" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset."/>
     <param argument="--taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
       <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0</option>
       <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
