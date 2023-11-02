@@ -1,11 +1,13 @@
-<tool id="repeatexplorer2" name="RepeatExplorer2 clustering: " version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
-  <description>Improved version or repeat discovery and characterization using graph-based sequence clustering</description>
-    <macros>
-        <import>macros.xml</import>
-    </macros>
-    <expand macro="requirements"/>
-<command><![CDATA[
-      export PYTHONHASHSEED=0;
+<tool id="repeatexplorer2" name="RepeatExplorer2 clustering:" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+  <description>Improved version of repeat discovery and characterization using graph-based sequence clustering</description>
+  <macros>
+    <import>macros.xml</import>
+  </macros>
+  <expand macro="requirements"/>
+  <command><![CDATA[
+      
+      export PYTHONHASHSEED=0 &&
+
       /repex_tarean/seqclust
       --sample '${read_sampling.sample}'
       --output_dir=tarean_output
@@ -29,130 +31,90 @@
          -opt $advanced_options.options.options
         #end if 
       #end if
-      ${FastaFile}  >stdout.log 2> stderr.log &&
-      echo "STDOUT CONTENT:" >> ${log} &&
-      cat stdout.log >> ${log} &&
-      echo "STDERR CONTENT:" >> ${log} &&
-      cat stderr.log >> ${log} &&
-      /opt/repex_tarean/stderr_filter.py stderr.log &&
-      cd tarean_output &&
-      zip -r  ${ReportArchive}.zip * &&
-      mv  ${ReportArchive}.zip ${ReportArchive} &&
-      cp index.html ${ReportFile} &&
-      mkdir -p ${ReportFile.extra_files_path} &&
-      cp -r --parents libdir ${ReportFile.extra_files_path} &&
-      cp -r --parents seqclust/clustering/superclusters ${ReportFile.extra_files_path} &&
-      cp -r --parents seqclust/clustering/clusters ${ReportFile.extra_files_path} &&
-      cp seqclust/clustering/hitsort.cls ${ReportFile.extra_files_path}/seqclust/clustering/hitsort.cls &&
-      cp *.png ${ReportFile.extra_files_path}/ &&
-      cp *.csv ${ReportFile.extra_files_path}/ &&
-      cp *.html ${ReportFile.extra_files_path}/  &&
-      cp *.css ${ReportFile.extra_files_path}/  &&
-      cp *.fasta ${ReportFile.extra_files_path}/ 2>>$log 
+      ${FastaFile}  
       ]]></command>
- <inputs>
-	<param name="FastaFile" label="NGS reads" type="data" format="fasta"
-	       help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
-  <param name="paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, left- and right-hand reads must be interlaced and all pairs must be complete. Example of the correct format is provided in the help below." />
- 
-  <conditional name="read_sampling">
-    <param name="do_sampling" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Read sampling" help="Use this option if you want to analyze only a part of the reads" />
-    <when value="false">
-      <!-- pass -->
-      <param name="sample" label="Sample size" hidden="True" type="integer" value="0" help="Number of analyzed reads"/>
-    </when>
-    <when value="true">
-      <param name="sample" label="Sample size" type="integer" value="500000" min="10000" help="Number of analyzed reads"/>
-    </when>
-  </conditional>
-
+  <inputs>
+    <param name="FastaFile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
+    <param name="paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, left- and right-hand reads must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
+    <param name="subsample_size" type="integer" optional="true" value="" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use."/>
     <param name="taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
-        <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
-        <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
-        <option value="METAZOA3.0" >Metazoa version 3.0</option>
-        <option value="METAZOA2.0" >Metazoa version 2.0</option>
-        <!-- Modify setting in config.py accordingly -->
+      <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
+      <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
+      <option value="METAZOA3.0">Metazoa version 3.0</option>
+      <option value="METAZOA2.0">Metazoa version 2.0</option>
+      <!-- Modify setting in config.py accordingly -->
     </param>
     <conditional name="advanced_options">
-        <param name="advanced" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Advanced options" />
-        <when value="false">
-              <!-- pass -->
-        </when>
-        <when value="true">
-              <conditional name="comparative">
-                    <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
-                    <when value="false">
-                    <!-- do nothing here -->
-                    </when>
-                    <when value="true">
-       		            <param name="prefix_length" label="Group code length" type="integer" value="3" min="1" max="10" help="For comparative analysis, reads from different samples are distinguished by sample codes included as prefix to the read names. See example below."/>
-                    </when>
-              </conditional>
-              <conditional name="blastx">
-                    <param name="options_blastx" type="select" label="Select parameters for protein domain search">
-                          <option value="BLASTX_W2" selected="false">blastx with word size 2 (the most sensitive, slowest)</option>
-                          <option value="BLASTX_W3" selected="true">blastx with word size 3 (default)</option>
-                          <option value="DIAMOND" selected="false">diamond program (the least sensitive, fastest)</option>
-                    </param>
-              </conditional>
-
-          <conditional name="options">
-            <param name="options" type="select" label="Similarity search options">
-              <option value="ILLUMINA" selected="true">Default </option>
-              <option value="ILLUMINA_DUST_OFF" selected="false">Masking of low complexity repeats disabled </option>
-    
-              <!-- <option value="ILLUMINA_SENSITIVE_MGBLAST" selected="false">Illumina reads, sensitive search (search parameters: mgblast,  min PID 80, -W8) slow, experimental feature!</option> -->
-              <!-- <option value="ILLUMINA_SENSITIVE_BLASTPLUS" selected="false">Illumina reads, more sensitive search (search parameters: blastn,  min PID 80, -W6) extremely slow, experimental feature!</option> -->
-              <!-- <option value="OXFORD_NANOPORE" selected="false"> -->
-              <!--   Pseudo short reads simulated from Oxford Nanopore data, experimental feature! -->
-              <!-- </option> -->
-            </param>
-          </conditional>
-      
-      <conditional name="custom_library">
-	      <param name="options_custom_library" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Use custom repeat database"/>
-	      <when value="false">
-          <!-- do nothing here -->
-        </when>
-        <when value="true">
-   		    <param name="library" format="fasta" type="data" label="Custom repeat database" help="The database should contain DNA sequences in FASTA format. The required format for sequence IDs is : '>reapeatname#class/subclass'"/>
-        </when>
-      </conditional>
-	    <param name="size_threshold" label="Cluster size threshold  for detailed analysis" type="float" value="0.01" min="0.0001" max="100" help ="Minimal size (as percentage of input reads) of the smallest cluster which is analyzed; clusters with less than 20 reads are not considered."/>
-      <param name="automatic_filtering" label="Perform automatic filtering of abundant satellite repeats" help="Automatic filtering identifies the most abundant tandem repeats and partially removes their reads from the analysis. This enables to analyze higher proportions of other less abundant repeats." type="boolean" truevalue="--automatic_filtering" falsevalue="" checked="false"/>
-      <param name="keep_names" label="Keep original read names" type="boolean" truevalue="--keep_names" falsevalue="" checked="false" help="By default, reads are renamed using integers. Use this option to keep original names."/>
-      <param name="assembly_min_cluster_size" type="integer" label="Minimal cluster size for assembly" value="5" min="2" max="100"/>
-    </when>
-  </conditional>
-
-       <conditional name="queue_definition">
-               <param name="queue_select" type="select" label="Select queue">
-                 <option value="basic_fast_queue">basic (max runtime 2 days, 4 GB RAM)</option>
-                 <option value="long_slow_queue">long (max runtime 2 weeks, 64 GB RAM)</option>
-                 <option value="extra_long_slow_queue">extra long (max runtime 4 weeks, 64 GB RAM)</option>
-               </param>
-               <when value="basic_fast_queue">
-                 <param name="queue_specification" type="text" label="Modify parameters (optional)"
-                        value="-l select=1:ncpus=10:mem=32gb:scratch_local=50gb -l walltime=48:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=4000000,TAREAN_CPU=4" />
-               </when>
-
-               <when value="long_slow_queue">
-                 <param name="queue_specification" type="text" label="Modify parameters (optional)"
-                        value="-l select=1:ncpus=16:mem=112gb:scratch_local=50gb -l walltime=336:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=64000000,TAREAN_CPU=15" />
-               </when>
-               <when value="extra_long_slow_queue">
-                 <param name="queue_specification" type="text" label="Modify parameters (optional)"
-                        value="-l select=1:ncpus=16:mem=112gb:scratch_local=50gb -l walltime=720:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=64000000,TAREAN_CPU=15" />
-               </when>
-     </conditional>
- </inputs>
-    <outputs>
-    	<data name="log" format="txt" label="RepeatExplorer2 - log file"/> 
-	    <data name="ReportArchive" format="zip" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/> 
-	    <data name="ReportFile" format="html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/> 
-    </outputs>
-
-    <help><![CDATA[
+      <param name="advanced" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Advanced options"/>
+      <when value="false">
+        <!-- pass -->
+      </when>
+      <when value="true">
+        <conditional name="comparative">
+          <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
+          <when value="false">
+            <!-- do nothing here -->
+          </when>
+          <when value="true">
+            <param name="prefix_length" label="Group code length" type="integer" value="3" min="1" max="10" help="For comparative analysis, reads from different samples are distinguished by sample codes included as prefix to the read names. See example below."/>
+          </when>
+        </conditional>
+        <conditional name="blastx">
+          <param name="options_blastx" type="select" label="Select parameters for protein domain search">
+            <option value="BLASTX_W2" selected="false">blastx with word size 2 (the most sensitive, slowest)</option>
+            <option value="BLASTX_W3" selected="true">blastx with word size 3 (default)</option>
+            <option value="DIAMOND" selected="false">diamond program (the least sensitive, fastest)</option>
+          </param>
+        </conditional>
+        <conditional name="options">
+          <param name="options" type="select" label="Similarity search options">
+            <option value="ILLUMINA" selected="true">Default </option>
+            <option value="ILLUMINA_DUST_OFF" selected="false">Masking of low complexity repeats disabled </option>
+            <!-- <option value="ILLUMINA_SENSITIVE_MGBLAST" selected="false">Illumina reads, sensitive search (search parameters: mgblast,  min PID 80, -W8) slow, experimental feature!</option> -->
+            <!-- <option value="ILLUMINA_SENSITIVE_BLASTPLUS" selected="false">Illumina reads, more sensitive search (search parameters: blastn,  min PID 80, -W6) extremely slow, experimental feature!</option> -->
+            <!-- <option value="OXFORD_NANOPORE" selected="false"> -->
+            <!--   Pseudo short reads simulated from Oxford Nanopore data, experimental feature! -->
+            <!-- </option> -->
+          </param>
+        </conditional>
+        <conditional name="custom_library">
+          <param name="options_custom_library" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Use custom repeat database"/>
+          <when value="false">
+            <!-- do nothing here -->
+          </when>
+          <when value="true">
+            <param name="library" format="fasta" type="data" label="Custom repeat database" help="The database should contain DNA sequences in FASTA format. The required format for sequence IDs is : '&gt;reapeatname#class/subclass'"/>
+          </when>
+        </conditional>
+        <param name="size_threshold" label="Cluster size threshold  for detailed analysis" type="float" value="0.01" min="0.0001" max="100" help="Minimal size (as percentage of input reads) of the smallest cluster which is analyzed; clusters with less than 20 reads are not considered."/>
+        <param name="automatic_filtering" label="Perform automatic filtering of abundant satellite repeats" help="Automatic filtering identifies the most abundant tandem repeats and partially removes their reads from the analysis. This enables to analyze higher proportions of other less abundant repeats." type="boolean" truevalue="--automatic_filtering" falsevalue="" checked="false"/>
+        <param name="keep_names" label="Keep original read names" type="boolean" truevalue="--keep_names" falsevalue="" checked="false" help="By default, reads are renamed using integers. Use this option to keep original names."/>
+        <param name="assembly_min_cluster_size" type="integer" label="Minimal cluster size for assembly" value="5" min="2" max="100"/>
+      </when>
+    </conditional>
+    <conditional name="queue_definition">
+      <param name="queue_select" type="select" label="Select queue">
+        <option value="basic_fast_queue">basic (max runtime 2 days, 4 GB RAM)</option>
+        <option value="long_slow_queue">long (max runtime 2 weeks, 64 GB RAM)</option>
+        <option value="extra_long_slow_queue">extra long (max runtime 4 weeks, 64 GB RAM)</option>
+      </param>
+      <when value="basic_fast_queue">
+        <param name="queue_specification" type="text" label="Modify parameters (optional)" value="-l select=1:ncpus=10:mem=32gb:scratch_local=50gb -l walltime=48:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=4000000,TAREAN_CPU=4"/>
+      </when>
+      <when value="long_slow_queue">
+        <param name="queue_specification" type="text" label="Modify parameters (optional)" value="-l select=1:ncpus=16:mem=112gb:scratch_local=50gb -l walltime=336:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=64000000,TAREAN_CPU=15"/>
+      </when>
+      <when value="extra_long_slow_queue">
+        <param name="queue_specification" type="text" label="Modify parameters (optional)" value="-l select=1:ncpus=16:mem=112gb:scratch_local=50gb -l walltime=720:00:00 -q elixirre@pbs.elixir-czech.cz -v TAREAN_MAX_MEM=64000000,TAREAN_CPU=15"/>
+      </when>
+    </conditional>
+  </inputs>
+  <outputs>
+    <data name="log" format="txt" label="RepeatExplorer2 - log file"/>
+    <data name="ReportArchive" format="zip" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/>
+    <data name="ReportFile" format="html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/>
+  </outputs>
+  <help><![CDATA[
       **HELP**
       
       RepeatExplorer2 clustering is a computational pipeline for unsupervised
@@ -291,6 +253,5 @@
       the progress of the computational pipeline is provided.
       
       ]]></help>
-      <expand macro="citations"/>
-  </tool>
-  
+  <expand macro="citations"/>
+</tool>

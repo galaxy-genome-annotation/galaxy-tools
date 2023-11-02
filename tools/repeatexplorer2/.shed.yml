@@ -1,20 +1,11 @@
+---
 categories:
-- Genome annotation
+  - Annotation
 description: Tool for annotation of repeats from unassembled shotgun reads.
-homepage_url: https://bitbucket.org/petrnovak/repex_tarean
+homepage_url: https://github.com/repeatexplorer/repex_tarean
+long_description: |
+  Tool for annotation of repeats from unassembled shotgun reads.
 name: repeatexplorer2
-owner: petr-novak
-exclude:
-  - do_not_track_info
-  - tmp
-  - test_data
-  - singularity
-  - todo_and_notes.md
-  - venv/.gitignore
-  - venv
-  - .ipynb_checkpoints
-  - .git
-  - .idea
-  - dante_ltr_workflow.odg
-  - dante_ltr_workflow.png
-  - changlog_builder.sh
+owner: gga
+remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/repeatexplorer2
+type: unrestricted

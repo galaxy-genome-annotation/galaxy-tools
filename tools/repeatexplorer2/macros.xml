@@ -10,11 +10,11 @@
     <xml name="citations">
         <citations>
             <citation type="bibtex">@software{repeatexplorer2,
-                author = {kavonrtep},
+                author = {repeatexplorer},
                 year = {2023},
                 title = {repeatexplorer2},
                 publisher = {GitHub},
-                url = {https://github.com/kavonrtep/galaxy_packages}
+                url = {https://github.com/repeatexplorer/repex_tarean}
                       }</citation>
         </citations>
     </xml>
