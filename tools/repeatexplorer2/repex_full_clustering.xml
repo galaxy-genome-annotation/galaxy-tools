@@ -9,42 +9,46 @@
       export PYTHONHASHSEED=0 &&
 
       /repex_tarean/seqclust
+      '$paired'
       #if $subsample_size:
         --sample '${subsample_size}'
       #end if
-      --output_dir=tarean_output
-      --logfile='${log}'
-      --cleanup '$paired'
       --taxon '$taxon'
-
-      #if $advanced_options.advanced:
-      --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
-      --assembly_min $advanced_options.assembly_min_cluster_size
-
-        #if $advanced_options.comparative.options_comparative:
-          --prefix_length $advanced_options.comparative.prefix_length
-        #end if
-      
-        #if $advanced_options.custom_library.options_custom_library:
-       	  -d $advanced_options.custom_library.library extra_database
-        #end if
-        
-        #if $advanced_options.options.options:
-         -opt $advanced_options.options.options
-        #end if 
-      #end if
+      --output_dir=output
+      --cpu \${GALAXY_SLOTS:-1}
       ${FastaFile}  
+
+      &&
+
+      tar -cvf '${ReportArchive}' --directory=output .
+
+
+      ## #if $advanced_options.advanced:
+      ## --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
+      ## --assembly_min $advanced_options.assembly_min_cluster_size
+
+      ##   #if $advanced_options.comparative.options_comparative:
+      ##     --prefix_length $advanced_options.comparative.prefix_length
+      ##   #end if
+      
+      ##   #if $advanced_options.custom_library.options_custom_library:
+      ##  	  -d $advanced_options.custom_library.library extra_database
+      ##   #end if
+        
+      ##   #if $advanced_options.options.options:
+      ##    -opt $advanced_options.options.options
+      ##   #end if 
+      ## #end if
       ]]></command>
   <inputs>
     <param name="FastaFile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
-    <param name="paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, left- and right-hand reads must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
-    <param name="subsample_size" type="integer" optional="true" value="" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use."/>
+    <param name="paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, they must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
+    <param name="subsample_size" type="integer" optional="true" value="" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset"/>
     <param name="taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
       <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
       <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
       <option value="METAZOA3.0">Metazoa version 3.0</option>
       <option value="METAZOA2.0">Metazoa version 2.0</option>
-      <!-- Modify setting in config.py accordingly -->
     </param>
     <section name="advanced" title="Advanced options" expanded="false">
       <param name="options_comparative" type="boolean" truevalue="true" falsevalue="false" checked="False" label="Perform comparative analysis" help="Use this options to analyze multiple samples simultaneously"/>
@@ -65,13 +69,40 @@
       <param name="keep_names" label="Keep original read names" type="boolean" truevalue="--keep_names" falsevalue="" checked="false" help="By default, reads are renamed using integers. Use this option to keep original names."/>
       <param name="assembly_min_cluster_size" type="integer" label="Minimal cluster size for assembly" value="5" min="2" max="100"/>
     </section>
-
   </inputs>
   <outputs>
-    <data name="log" format="txt" label="RepeatExplorer2 - log file"/>
-    <data name="ReportArchive" format="zip" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/>
-    <data name="ReportFile" format="html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/>
+    <data name="ReportArchive" format="tar" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/>
+    <data name="ReportFile" format="html" from_work_dir="output/index.html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/>
   </outputs>
+  <tests>
+    <!-- test1: basic function -->
+    <test expect_num_outputs="2">
+      <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+      <param name="paired" value="True"/>
+      <param name="taxon" value="VIRIDIPLANTAE3.0"/>
+      <output name="ReportArchive" file="test1_out.tar">
+        <assert_contents>
+          <has_size value="33873920" delta="3000000"/>
+        </assert_contents>
+      </output>
+      <output name="ReportFile" file="test1_out.html">
+      </output>
+    </test>
+    <!-- test2: read subsample -->
+    <test expect_num_outputs="2">
+      <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+      <param name="paired" value="True"/>
+      <param name="subsample_size" value="5000"/>
+      <param name="taxon" value="VIRIDIPLANTAE3.0"/>
+      <output name="ReportArchive" file="test2_out.tar">
+        <assert_contents>
+          <has_size value="17981440" delta="3000000"/>
+        </assert_contents>
+      </output>
+      <output name="ReportFile" file="test2_out.html">
+    </output>
+    </test>
+  </tests>
   <help><![CDATA[
       **HELP**
       
