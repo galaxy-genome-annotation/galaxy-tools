@@ -65,7 +65,7 @@
       <param name="fastafile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
       <param name="paired" value="True"/>
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
-      <output name="reportfile" file="test1_out.html">
+      <output name="reportfile">
       <assert_contents>
         <has_text text="Clustering summary"/>
       </assert_contents>
@@ -77,7 +77,7 @@
       <param name="paired" value="True"/>
       <param name="sample" value="5000"/>
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
-      <output name="reportfile" file="test2_out.html">
+      <output name="reportfile">
         <assert_contents>
           <has_text text="Clustering summary"/>
         </assert_contents>
@@ -90,7 +90,7 @@
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
       <param name="mincl" value="0.01"/>
       <param name="keep_names" value="True"/>
-      <output name="reportfile" file="test3_out.html">
+      <output name="reportfile">
         <assert_contents>
           <has_text text="Clustering summary"/>
         </assert_contents>
