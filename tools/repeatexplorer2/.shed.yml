@@ -1,4 +1,7 @@
 ---
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "{{ tool_name }} from the cactus suite"
 categories:
   - Genome annotation
 description: Tool for annotation of repeats from unassembled shotgun reads.
@@ -8,4 +11,10 @@ long_description: |
 name: repeatexplorer2
 owner: gga
 remote_repository_url: https://github.com/galaxy-genome-annotation/galaxy-tools/tree/master/tools/repeatexplorer2
+suite:
+  name: suite_repeatexplorer2
+  description: >
+    Tool for annotation of repeats from unassembled shotgun reads.
+  long_description: >
+    Tool for annotation of repeats from unassembled shotgun reads.
 type: unrestricted

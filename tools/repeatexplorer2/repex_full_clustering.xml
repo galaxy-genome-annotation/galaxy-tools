@@ -13,7 +13,7 @@
       &&
 
       ## output will go here
-      mkdir -p '${ReportFile.extra_files_path}'
+      mkdir -p '${reportfile.extra_files_path}'
       &&
 
       /repex_tarean/seqclust
@@ -24,7 +24,7 @@
         --sample '${sample}'
       #end if
       --taxon '${taxon}'
-      --output_dir='${ReportFile.extra_files_path}'
+      --output_dir='${reportfile.extra_files_path}'
       #if $advanced.mincl:
         --mincl '${advanced.mincl}'
       #end if
@@ -32,19 +32,15 @@
       #if $advanced.keep_names:
         --keep_names
       #end if
-      '${FastaFile}'
-      &&
-
-      ## archive the output
-      tar -cvf '${ReportArchive}' --directory='${ReportFile.extra_files_path}' .
+      '${fastafile}'
       &&
 
       ## pick up the html index
-      cp '${ReportFile.extra_files_path}/index.html' ./index.html
+      cp '${reportfile.extra_files_path}/index.html' ./index.html
 
       ]]></command>
   <inputs>
-    <param name="FastaFile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
+    <param name="fastafile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
     <param argument="--paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, they must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
     <param argument="--sample" type="integer" optional="true" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset."/>
     <param argument="--taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
@@ -60,56 +56,40 @@
     </section>
   </inputs>
   <outputs>
-    <data name="ReportArchive" format="tar" label="RepeatExplorer2 - Archive with HTML report from on ${on_string}"/>
     <data name="reportfile" format="html" from_work_dir="index.html" label="RepeatExplorer - HTML report on ${on_string}"/>
   </outputs>
   <tests>
     <!-- test1: basic function -->
-    <test expect_num_outputs="2">
-      <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+    <test expect_num_outputs="1">
+      <param name="fastafile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
       <param name="paired" value="True"/>
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
-      <output name="ReportArchive" file="test1_out.tar">
-        <assert_contents>
-          <has_size value="33873920" delta="3000000"/>
-        </assert_contents>
-      </output>
-      <output name="ReportFile" file="test1_out.html">
-      </output>
+      <output name="reportfile" file="test1_out.html">
       <assert_contents>
         <has_text text="Clustering summary"/>
       </assert_contents>
+    </output>
     </test>
     <!-- test2: read subsample -->
-    <test expect_num_outputs="2">
-      <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+    <test expect_num_outputs="1">
+      <param name="fastafile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
       <param name="paired" value="True"/>
       <param name="sample" value="5000"/>
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
-      <output name="ReportArchive" file="test2_out.tar">
-        <assert_contents>
-          <has_size value="17981440" delta="3000000"/>
-        </assert_contents>
-      </output>
-      <output name="ReportFile" file="test2_out.html">
+      <output name="reportfile" file="test2_out.html">
         <assert_contents>
           <has_text text="Clustering summary"/>
         </assert_contents>
       </output>
     </test>
     <!-- test3: advanced params -->
-    <test expect_num_outputs="2">
-      <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
+    <test expect_num_outputs="1">
+      <param name="fastafile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
       <param name="paired" value="True"/>
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
       <param name="mincl" value="0.01"/>
       <param name="keep_names" value="True"/>
-      <output name="ReportArchive" file="test3_out.tar">
-        <assert_contents>
-          <has_size value="33873920" delta="3000000"/>
-        </assert_contents>
-      </output>
-      <output name="ReportFile" file="test3_out.html">
+      <output name="reportfile" file="test3_out.html">
         <assert_contents>
           <has_text text="Clustering summary"/>
         </assert_contents>
