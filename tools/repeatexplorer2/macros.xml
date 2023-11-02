@@ -1,0 +1,29 @@
+<macros>
+    <token name="@TOOL_VERSION@">2.3.8</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">23.0</token>
+    <xml name="requirements">
+        <requirements>
+            <container type="docker">kavonrtep/repeatexplorer:@TOOL_VERSION@</container>
+        </requirements>
+    </xml>
+    <xml name="citations">
+        <citations>
+            <citation type="bibtex">@software{repeatexplorer2,
+                author = {repeatexplorer},
+                year = {2023},
+                title = {repeatexplorer2},
+                publisher = {GitHub},
+                url = {https://github.com/repeatexplorer/repex_tarean}
+                      }</citation>
+        </citations>
+    </xml>
+    <xml name="creator">
+        <creator>
+            <person name="Petr Novak" />
+            <organization name="Laboratory of Molecular Cytogenetics"  url="http://w3lamc.umbr.cas.cz/lamc" address="Institute of Plant Molecular Biology, Biology Centre CAS, Branisovska 31, Ceske Budejoice, Czech Republic"/>                
+            <person name="Tom Harrop"/>
+            <organization name="Galaxy Australia" url="https://site.usegalaxy.org.au"/>
+        </creator>
+    </xml>
+</macros>
