@@ -6,30 +6,34 @@
   <expand macro="requirements"/>
   <command><![CDATA[
       
+      export GALAXY_MEMORY_KB=\$((\${GALAXY_MEMORY_MB:-8192}*1024))
+      &&
+
       export PYTHONHASHSEED=0
       &&
 
       ## output will go here
-      mkdir -p ${ReportFile.extra_files_path}
+      mkdir -p "${ReportFile.extra_files_path}"
       &&
 
       /repex_tarean/seqclust
-      '$paired'
-      #if $subsample_size:
-        --sample '${subsample_size}'
-      #end if
-      --taxon '$taxon'
-      --output_dir=${ReportFile.extra_files_path}
       --cpu \${GALAXY_SLOTS:-1}
-      ${FastaFile}  
+      --max_memory \${GALAXY_MEMORY_KB}
+      "${paired}"
+      #if $sample:
+        --sample "${sample}"
+      #end if
+      --taxon "${taxon}"
+      --output_dir="${ReportFile.extra_files_path}"
+      "${FastaFile}"
       &&
 
       ## archive the output
-      tar -cvf '${ReportArchive}' --directory=${ReportFile.extra_files_path} .
+      tar -cvf "${ReportArchive}" --directory="${ReportFile.extra_files_path}" .
       &&
 
       ## pick up the html index
-      cp ${ReportFile.extra_files_path}/index.html ./index.html
+      cp "${ReportFile.extra_files_path}/index.html" ./index.html
 
       ## #if $advanced_options.advanced:
       ## --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
@@ -50,9 +54,9 @@
       ]]></command>
   <inputs>
     <param name="FastaFile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
-    <param name="paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, they must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
-    <param name="subsample_size" type="integer" optional="true" value="" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset."/>
-    <param name="taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
+    <param argument="--paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, they must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
+    <param argument="--sample" type="integer" optional="true" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset."/>
+    <param argument="--taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
       <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
       <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
       <option value="METAZOA3.0">Metazoa version 3.0</option>
@@ -100,7 +104,7 @@
     <test expect_num_outputs="2">
       <param name="FastaFile" value="LAS_paired_10k.fa.gz" ftype="fasta.gz"/>
       <param name="paired" value="True"/>
-      <param name="subsample_size" value="5000"/>
+      <param name="sample" value="5000"/>
       <param name="taxon" value="VIRIDIPLANTAE3.0"/>
       <output name="ReportArchive" file="test2_out.tar">
         <assert_contents>
