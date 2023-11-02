@@ -17,12 +17,27 @@
       --output_dir=output
       --cpu \${GALAXY_SLOTS:-1}
       ${FastaFile}  
-
       &&
 
+      ## archive the output
       tar -cvf '${ReportArchive}' --directory=output .
+      &&
 
-
+      ## collect stuff for the html report
+      mkdir -p ${ReportFile.extra_files_path} &&
+      (
+        cd output || exit 1 && 
+        cp -r --parents libdir ${ReportFile.extra_files_path} &&
+        cp -r --parents seqclust/clustering/superclusters ${ReportFile.extra_files_path} &&
+        cp -r --parents seqclust/clustering/clusters ${ReportFile.extra_files_path} &&
+        cp seqclust/clustering/hitsort.cls ${ReportFile.extra_files_path}/seqclust/clustering/hitsort.cls &&
+        cp *.png ${ReportFile.extra_files_path}/ &&
+        cp *.csv ${ReportFile.extra_files_path}/ &&
+        cp *.html ${ReportFile.extra_files_path}/  &&
+        cp *.css ${ReportFile.extra_files_path}/  &&
+        cp *.fasta ${ReportFile.extra_files_path}/
+      )
+      
       ## #if $advanced_options.advanced:
       ## --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
       ## --assembly_min $advanced_options.assembly_min_cluster_size
@@ -43,7 +58,7 @@
   <inputs>
     <param name="FastaFile" label="NGS reads" type="data" format="fasta" help="Input file must contain FASTA-formatted NGS reads. Illumina paired-end reads are recommended."/>
     <param name="paired" type="boolean" truevalue="--paired" falsevalue="" checked="True" label="Paired-end reads" help="If paired-end reads are used, they must be interleaved and all pairs must be complete. Example of the correct format is provided in the help below."/>
-    <param name="subsample_size" type="integer" optional="true" value="" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset"/>
+    <param name="subsample_size" type="integer" optional="true" value="" label="Subsample reads (number)" help="Use an integer &gt; 1 to select a specific number of reads to use. Leave this field blank to use the entire dataset."/>
     <param name="taxon" label="Select taxon and protein domain database version (REXdb)" type="select" help="Reference database of transposable element protein domains - REXdb - is used for annotation of repeats">
       <option value="VIRIDIPLANTAE3.0" selected="true">Viridiplantae version 3.0 </option>
       <option value="VIRIDIPLANTAE2.2" selected="true">Viridiplantae version 2.2</option>
