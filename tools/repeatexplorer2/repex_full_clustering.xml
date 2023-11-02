@@ -13,34 +13,34 @@
       &&
 
       ## output will go here
-      mkdir -p "${ReportFile.extra_files_path}"
+      mkdir -p '${ReportFile.extra_files_path}'
       &&
 
       /repex_tarean/seqclust
       --cpu \${GALAXY_SLOTS:-1}
       --max_memory \${GALAXY_MEMORY_KB}
-      "${paired}"
+      '${paired}'
       #if $sample:
-        --sample "${sample}"
+        --sample '${sample}'
       #end if
-      --taxon "${taxon}"
-      --output_dir="${ReportFile.extra_files_path}"
+      --taxon '${taxon}'
+      --output_dir='${ReportFile.extra_files_path}'
       #if $advanced.mincl:
-        --mincl "${advanced.mincl}"
+        --mincl '${advanced.mincl}'
       #end if
-      --assembly_min "${advanced.assembly_min}"
+      --assembly_min '${advanced.assembly_min}'
       #if $advanced.keep_names:
         --keep_names
       #end if
-      "${FastaFile}"
+      '${FastaFile}'
       &&
 
       ## archive the output
-      tar -cvf "${ReportArchive}" --directory="${ReportFile.extra_files_path}" .
+      tar -cvf '${ReportArchive}' --directory='${ReportFile.extra_files_path}' .
       &&
 
       ## pick up the html index
-      cp "${ReportFile.extra_files_path}/index.html" ./index.html
+      cp '${ReportFile.extra_files_path}/index.html' ./index.html
 
       ]]></command>
   <inputs>
