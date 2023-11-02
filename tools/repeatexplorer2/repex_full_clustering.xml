@@ -6,7 +6,12 @@
     <expand macro="requirements"/>
 <command><![CDATA[
       export PYTHONHASHSEED=0;
-      seqclust --sample ${read_sampling.sample} --output_dir=tarean_output --logfile=${log} --cleanup $paired --taxon $taxon
+      /repex_tarean/seqclust
+      --sample '${read_sampling.sample}'
+      --output_dir=tarean_output
+      --logfile='${log}'
+      --cleanup '$paired'
+      --taxon '$taxon'
 
       #if $advanced_options.advanced:
       --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
