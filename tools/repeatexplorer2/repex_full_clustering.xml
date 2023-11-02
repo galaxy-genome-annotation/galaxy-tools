@@ -6,7 +6,12 @@
   <expand macro="requirements"/>
   <command><![CDATA[
       
-      export PYTHONHASHSEED=0 &&
+      export PYTHONHASHSEED=0
+      &&
+
+      ## output will go here
+      mkdir -p ${ReportFile.extra_files_path}
+      &&
 
       /repex_tarean/seqclust
       '$paired'
@@ -14,30 +19,18 @@
         --sample '${subsample_size}'
       #end if
       --taxon '$taxon'
-      --output_dir=output
+      --output_dir=${ReportFile.extra_files_path}
       --cpu \${GALAXY_SLOTS:-1}
       ${FastaFile}  
       &&
 
       ## archive the output
-      tar -cvf '${ReportArchive}' --directory=output .
+      tar -cvf '${ReportArchive}' --directory=${ReportFile.extra_files_path} .
       &&
 
-      ## collect stuff for the html report
-      mkdir -p ${ReportFile.extra_files_path} &&
-      (
-        cd output || exit 1 && 
-        cp -r --parents libdir ${ReportFile.extra_files_path} &&
-        cp -r --parents seqclust/clustering/superclusters ${ReportFile.extra_files_path} &&
-        cp -r --parents seqclust/clustering/clusters ${ReportFile.extra_files_path} &&
-        cp seqclust/clustering/hitsort.cls ${ReportFile.extra_files_path}/seqclust/clustering/hitsort.cls &&
-        cp *.png ${ReportFile.extra_files_path}/ &&
-        cp *.csv ${ReportFile.extra_files_path}/ &&
-        cp *.html ${ReportFile.extra_files_path}/  &&
-        cp *.css ${ReportFile.extra_files_path}/  &&
-        cp *.fasta ${ReportFile.extra_files_path}/
-      )
-      
+      ## pick up the html index
+      cp ${ReportFile.extra_files_path}/index.html ./index.html
+
       ## #if $advanced_options.advanced:
       ## --mincl $advanced_options.size_threshold $advanced_options.keep_names $advanced_options.automatic_filtering  -D $advanced_options.blastx.options_blastx
       ## --assembly_min $advanced_options.assembly_min_cluster_size
@@ -87,7 +80,7 @@
   </inputs>
   <outputs>
     <data name="ReportArchive" format="tar" label="RepeatExplorer2 - Archive with HTML report from data ${FastaFile.hid}"/>
-    <data name="ReportFile" format="html" from_work_dir="output/index.html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/>
+    <data name="ReportFile" format="html" from_work_dir="index.html" label="RepeatExplorer2 - HTML report from data ${FastaFile.hid}"/>
   </outputs>
   <tests>
     <!-- test1: basic function -->
