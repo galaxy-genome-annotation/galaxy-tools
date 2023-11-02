@@ -18,4 +18,12 @@
                       }</citation>
         </citations>
     </xml>
+    <xml name="creator">
+        <creator>
+            <person name="Petr Novak" />
+            <organization name="Laboratory of Molecular Cytogenetics"  url="http://w3lamc.umbr.cas.cz/lamc" address="Institute of Plant Molecular Biology, Biology Centre CAS, Branisovska 31, Ceske Budejoice, Czech Republic"/>                
+            <person name="Tom Harrop"/>
+            <organization name="Galaxy Australia" url="https://site.usegalaxy.org.au"/>
+        </creator>
+    </xml>
 </macros>
