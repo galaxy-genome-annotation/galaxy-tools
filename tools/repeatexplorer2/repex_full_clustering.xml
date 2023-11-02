@@ -1,4 +1,4 @@
-<tool id="repeatexplorer2" name="RepeatExplorer2 clustering:" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+<tool id="repeatexplorer_clusterin" name="RepeatExplorer (clustering)" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
   <description>Improved version of repeat discovery and characterization using graph-based sequence clustering</description>
   <macros>
     <import>macros.xml</import>
