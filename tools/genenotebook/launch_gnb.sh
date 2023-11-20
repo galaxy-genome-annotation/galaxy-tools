@@ -4,7 +4,7 @@ set -e
 
 mongod --dbpath ./mongo_db/ --unixSocketPrefix `pwd` --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid &
 
-sleep 8
+sleep 15
 
 # "Listening on" is for mongodb 5x
 if ! grep -q "Listening on" ./mongod.log; then
