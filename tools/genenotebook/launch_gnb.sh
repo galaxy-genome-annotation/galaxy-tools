@@ -26,8 +26,6 @@ while ! grep -q "Listening on" ./mongod.log; do
   sleep 3
 done;
 
-echo "Mongod is ready, starting gnb now on port ${GNB_PORT} and with mongodb://${MONGO_URI}%2Fmongodb-27017.sock/genenotebook"
-
 TMP_STORAGE=$(pwd)/tmp_storage
 mkdir "$TMP_STORAGE"
 
@@ -35,6 +33,10 @@ mkdir "$TMP_STORAGE"
 touch gnb.log
 
 export NODE_OPTIONS="--max-old-space-size=$((${GALAXY_MEMORY_MB:-8192} * 75 / 100))"
+
+# Find free port at the last moment
+export GNB_PORT=$(bash "$(dirname "${BASH_SOURCE[0]}")/find_free_port.sh")
+echo "Mongod is ready, starting gnb now on port ${GNB_PORT} and with mongodb://${MONGO_URI}%2Fmongodb-27017.sock/genenotebook"
 
 genoboo run --storage-path "$TMP_STORAGE" --port ${GNB_PORT} --mongo-url mongodb://$MONGO_URI%2Fmongodb-27017.sock/genenotebook > ./gnb.log 2>&1 &
 
