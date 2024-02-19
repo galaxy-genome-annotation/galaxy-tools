@@ -59,4 +59,8 @@ while ! grep -q "GeneNoteBook server started, serving" ./gnb.log; do
   sleep 3
 done;
 
+# Make sure that gnb is working, and that it's serving on the expected port
+curl http://127.0.0.1/healthcheck > /dev/null
+grep -q "Healthcheck OK" ./gnb.log
+
 echo "GNB is ready"
