@@ -7,7 +7,7 @@
         </requirements>
     </xml>
 
-    <token name="@TOOL_VERSION@">0.4.12</token>
+    <token name="@TOOL_VERSION@">0.4.13</token>
     <token name="@WRAPPER_VERSION@">@TOOL_VERSION@+galaxy0</token>
 
     <xml name="citation">
@@ -37,7 +37,6 @@
     For some unknwon reason, unixSocketPrefix needs an absolute path
     -->
     <token name="@START_GNB@"><![CDATA[
-        export GNB_PORT="\$(bash '$__tool_directory__/find_free_port.sh')";
         export MONGO_URI="\$(pwd | sed 's|/|%2F|g')";
         #if $existing
             tar -xf '${existing}' mongo_db;
