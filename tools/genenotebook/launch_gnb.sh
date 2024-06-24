@@ -60,7 +60,22 @@ while ! grep -q "GeneNoteBook server started, serving" ./gnb.log; do
 done;
 
 # Make sure that gnb is working, and that it's serving on the expected port
-curl "http://127.0.0.1:${GNB_PORT}/healthcheck" > /dev/null
+# Wait a bit for curl to work, just in case. Dump the logs if it does not
+
+tries_curl=0
+
+while ! curl -s "http://127.0.0.1:${GNB_PORT}/healthcheck"; do
+  tries_curl=$((tries_curl + 1))
+  if [ "$tries_curl" -ge 100 ]; then
+    echo "Healthcheck is not working, stopping:" 1>&2;
+    cat ./gnb.log 1>&2;
+    kill $GNB_PID $(<"./mongo.pid");
+    exit 1;
+  fi
+
+  sleep 3
+done;
+
 grep -q "Healthcheck OK" ./gnb.log
 
 echo "GNB is ready"
