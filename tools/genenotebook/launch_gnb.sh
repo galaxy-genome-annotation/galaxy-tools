@@ -17,13 +17,13 @@ while ! grep -q "Listening on" ./mongod.log; do
 
   tries=$((tries + 1))
 
-  if [ "$tries" -ge 30 ]; then
+  if [ "$tries" -ge 50 ]; then
     echo "Failed to launch MongoDB:" 1>&2;
     cat ./mongod.log 1>&2;
     exit 1;
   fi
 
-  sleep 3
+  sleep 5
 done;
 
 TMP_STORAGE=$(pwd)/tmp_storage
