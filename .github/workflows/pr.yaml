@@ -30,7 +30,7 @@ jobs:
       commit-range: ${{ steps.discover.outputs.commit-range }}
     strategy:
       matrix:
-        python-version: ['3.7']
+        python-version: ['3.7.17']
     steps:
     - name: Print github context properties
       run: |
@@ -98,7 +98,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7']
+        python-version: ['3.7.17']
     steps:
     - uses: actions/checkout@v3
       with:
@@ -134,7 +134,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7']
+        python-version: ['3.7.17']
     steps:
     - uses: actions/checkout@v3
       with:
@@ -349,7 +349,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7']
+        python-version: ['3.7.17']
     steps:
     - uses: actions/download-artifact@v3
       with:
@@ -389,7 +389,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7']
+        python-version: ['3.7.17']
     steps:
     - uses: actions/checkout@v3
       with:
