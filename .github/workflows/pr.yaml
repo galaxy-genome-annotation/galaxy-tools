@@ -194,7 +194,7 @@ jobs:
       uses: r-lib/actions/setup-r-dependencies@v2
       with:
         packages: |
-          any::argparse 
+          any::argparse
           any::styler
     - name: lintr
       run: |
@@ -327,7 +327,7 @@ jobs:
       run: docker logs apollo
     - uses: actions/upload-artifact@v4
       with:
-        name: 'Tool test output ${{ matrix.chunk }}'
+        name: 'Tool test output ${{ matrix.chunk }} apollo:${{ matrix.apollo }}'
         path: upload
 
   # - combine the results of the test chunks (which will never fail due
