@@ -377,7 +377,7 @@ jobs:
         mode: check
     - name: Check if all test chunks succeeded
       run: |
-        NFILES=$(ls artifacts/ | grep "Tool test output" | wc -l)
+        NFILES=$(ls artifacts/ | grep "Tool test output" | grep apollo_0 | wc -l)
         if [[ "${{ needs.setup.outputs.chunk-count }}" != "$NFILES" ]]; then
           exit 1
         fi
