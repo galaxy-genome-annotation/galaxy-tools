@@ -13,12 +13,12 @@ echo "Waiting while mongod starts up"
 
 tries=0
 
-# "Listening on" is for mongodb 5x
+# "Listening on" is for mongodb 100x
 while ! grep -q "Listening on" ./mongod.log; do
 
   tries=$((tries + 1))
 
-  if [ "$tries" -ge 50 ]; then
+  if [ "$tries" -ge 100 ]; then
     echo "Failed to launch MongoDB:" 1>&2;
     cat ./mongod.log 1>&2;
     cat ./mongod_boot.log 1>&2;
@@ -79,5 +79,9 @@ while ! curl -s "http://127.0.0.1:${GNB_PORT}/healthcheck"; do
 done;
 
 grep -q "Healthcheck OK" ./gnb.log
+
+# More sleep just in case
+
+sleep 30
 
 echo "GNB is ready"
