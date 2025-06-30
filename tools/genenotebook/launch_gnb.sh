@@ -4,9 +4,10 @@ set -e
 
 # Make sure the file always exists even on first grep
 touch mongod.log
+touch mongod_boot.log
 
 echo "Starting mongod, listening on unix socket in $(pwd)"
-mongod --dbpath ./mongo_db/ --unixSocketPrefix "$(pwd)" --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid &
+mongod --dbpath ./mongo_db/ --unixSocketPrefix "$(pwd)" --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid > ./mongod_boot.log 2>&1 &
 
 echo "Waiting while mongod starts up"
 
@@ -20,6 +21,7 @@ while ! grep -q "Listening on" ./mongod.log; do
   if [ "$tries" -ge 50 ]; then
     echo "Failed to launch MongoDB:" 1>&2;
     cat ./mongod.log 1>&2;
+    cat ./mongod_boot.log 1>&2;
     exit 1;
   fi
 
