@@ -4,24 +4,22 @@ set -e
 
 # Make sure the file always exists even on first grep
 touch mongod.log
-touch mongod_boot.log
 
 echo "Starting mongod, listening on unix socket in $(pwd)"
-mongod --dbpath ./mongo_db/ --unixSocketPrefix "$(pwd)" --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid > ./mongod_boot.log 2>&1 &
+mongod --dbpath ./mongo_db/ --unixSocketPrefix "$(pwd)" --bind_ip fake_socket --logpath ./mongod.log --pidfilepath ./mongo.pid &
 
 echo "Waiting while mongod starts up"
 
 tries=0
 
-# "Listening on" is for mongodb 50x
+# "Listening on" is for mongodb 150x
 while ! grep -q "Listening on" ./mongod.log; do
 
   tries=$((tries + 1))
 
-  if [ "$tries" -ge 50 ]; then
+  if [ "$tries" -ge 150 ]; then
     echo "Failed to launch MongoDB:" 1>&2;
     cat ./mongod.log 1>&2;
-    cat ./mongod_boot.log 1>&2;
     exit 1;
   fi
 
@@ -51,7 +49,7 @@ while ! grep -q "GeneNoteBook server started, serving" ./gnb.log; do
   tries_gnb=$((tries_gnb + 1))
 
   # GNB can take a while to start depending on storage (accessing many many small js files)
-  if [ "$tries_gnb" -ge 150 ]; then
+  if [ "$tries_gnb" -ge 250 ]; then
     echo "Failed to launch GeneNoteBook:" 1>&2;
     cat ./gnb.log 1>&2;
     kill $GNB_PID $(<"./mongo.pid");
@@ -68,7 +66,7 @@ tries_curl=0
 
 while ! curl -s "http://127.0.0.1:${GNB_PORT}/healthcheck"; do
   tries_curl=$((tries_curl + 1))
-  if [ "$tries_curl" -ge 100 ]; then
+  if [ "$tries_curl" -ge 200 ]; then
     echo "Healthcheck is not working, stopping:" 1>&2;
     cat ./gnb.log 1>&2;
     kill $GNB_PID $(<"./mongo.pid");
@@ -79,5 +77,7 @@ while ! curl -s "http://127.0.0.1:${GNB_PORT}/healthcheck"; do
 done;
 
 grep -q "Healthcheck OK" ./gnb.log
+
+sleep 30
 
 echo "GNB is ready"
