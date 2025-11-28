@@ -16,4 +16,5 @@ sleep 5
 # Kill MongoDB
 kill $(<"./mongo.pid")
 
-sleep 5
+# Wait to make sure the process is actually killed
+sleep 60
