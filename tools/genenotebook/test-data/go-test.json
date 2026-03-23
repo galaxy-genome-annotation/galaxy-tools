@@ -1,0 +1,66 @@
+{
+  "graphs" : [ {
+    "id" : "http://purl.obolibrary.org/obo/go.owl",
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/GO_0000001",
+      "lbl" : "mitochondrion inheritance",
+      "type" : "CLASS",
+      "meta" : {
+        "definition" : {
+          "val" : "The distribution of mitochondria, including the mitochondrial genome, into daughter cells after mitosis or meiosis, mediated by interactions between mitochondria and the cytoskeleton.",
+          "xrefs" : [ "GOC:mcc", "PMID:10873824", "PMID:11389764" ]
+        },
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "mitochondrial inheritance"
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        } ]
+      }
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0000002",
+      "lbl" : "obsolete mitochondrial genome maintenance",
+      "type" : "CLASS",
+      "meta" : {
+        "definition" : {
+          "val" : "OBSOLETE. The maintenance of the structure and integrity of the mitochondrial genome; includes replication and segregation of the mitochondrial chromosome.",
+          "xrefs" : [ "GOC:ai", "GOC:vw" ]
+        },
+        "comments" : [ "This term described phenotypic observations for multiple processes (including transport/lipid metabolism/ DNA metabolism/ fission/ fusion etc)" ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        } ],
+        "deprecated" : true
+      }
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0000003",
+      "lbl" : "obsolete reproduction",
+      "type" : "CLASS",
+      "meta" : {
+        "definition" : {
+          "val" : "OBSOLETE. The production of new individuals that contain some portion of genetic material inherited from one or more parent organisms.",
+          "xrefs" : [ "GOC:go_curators", "GOC:isa_complete", "GOC:jl", "ISBN:0198506732" ]
+        },
+        "comments" : [ "The reason for obsoletion is that this term is equivalent to reproductive process." ],
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "reproductive physiological process"
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0100001",
+          "val" : "http://purl.obolibrary.org/obo/GO_0022414"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "GO:0072407"
+        }],
+        "deprecated" : true
+      }
+    }]
+  }]
+}

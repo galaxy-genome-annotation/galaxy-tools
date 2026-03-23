@@ -9,7 +9,7 @@
 @START_GNB@
 
 #for genome in $genomes:
-    genoboo add genome @CONNECT_INFO@ --name '${genome.name}' ${genome.public} '${genome.genome}';
+    genoboo add genome @CONNECT_INFO@ --silent --name '${genome.name}' ${genome.public} '${genome.genome}';
 
     #for annot in $genome.annots:
         genoboo add annotation @CONNECT_INFO@ --name '${genome.name}' --annot '${annot.annot}'
@@ -38,7 +38,13 @@
         #end if
 
         #if $annot.eggnog:
-            genoboo add eggnog @CONNECT_INFO@ --annot '${annot.annot}' '${annot.eggnog}';
+            genoboo add eggnog @CONNECT_INFO@
+                --silent
+                --annot '${annot.annot}'
+                #if $goterms
+                --gofile '${goterms}'
+                #end if
+                '${annot.eggnog}';
         #end if
 
         #if $annot.hectar:
@@ -66,6 +72,7 @@
         #for exp in $annot.expression:
                 genoboo add expression @CONNECT_INFO@
                     --annot '${annot.annot}'
+                    --genome '${genome.name}'
                     --sample-description ''
                     ${exp.public}
                     #for replica in $exp.expression_replicas:
@@ -82,6 +89,7 @@
     ]]></command>
     <inputs>
         <param name="existing" type="data" format="genenotebook" optional="true" label="Load data in an existing GeneNoteBook database" help="Leave empty to start a new database from scratch" />
+        <param name="goterms" type="data" format="json" optional="true" label="Optional go-basic json file for eggnog"/>
         <repeat name="genomes" title="Genomes">
             <param argument="--name" label="Name" type="text" help="Reference genome name" />
             <param name="genome" label="Genome sequence" type="data" format="fasta" />
@@ -213,6 +221,7 @@
             </assert_stdout>
         </test>
         <test>
+            <param name="goterms" value="go-test.json" />
             <repeat name="genomes">
                 <param name="name" value="Test org 2" />
                 <param name="genome" value="genome.fa" />
@@ -230,6 +239,7 @@
                 <has_text text="addAnnotation succesfully inserted 5 elements" />
                 <has_text text="addInterproscan succesfully inserted 3 elements" />
                 <has_text text="addEggnog succesfully inserted 4 elements" />
+                <has_text text="Loading GO annotation from" />
             </assert_stdout>
         </test>
         <test>
